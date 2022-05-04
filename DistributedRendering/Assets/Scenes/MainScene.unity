@@ -412,7 +412,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff566db571400e542b3466acff21ae0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _target: {fileID: 963194228}
+  _moveDistanceOfSecond: 2
+  _targetTransform: {fileID: 1457468833}
 --- !u!1 &1457468829
 GameObject:
   m_ObjectHideFlags: 0
