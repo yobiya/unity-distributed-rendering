@@ -1,0 +1,12 @@
+@startuml ui_class
+
+class UnityEngile.MonoBehaviour
+class UnityEngile.AnyUI
+note bottom
+  Buttonなどの
+  Unityの組み込みUI
+endnote
+
+UnityEngile.MonoBehaviour <|-- UnityEngile.AnyUI
+
+@enduml
