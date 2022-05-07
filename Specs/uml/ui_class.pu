@@ -7,6 +7,17 @@ note bottom
   Unityの組み込みUI
 endnote
 
+interface IAnyUIView
+class AnyAccessorUIView
+note bottom
+  AnyUIと同じ種類のUIのアクセッサ
+  AnyUIと同じGameObjectにアタッチして
+  AnyUIの操作を行う
+endnote
+
 UnityEngile.MonoBehaviour <|-- UnityEngile.AnyUI
+UnityEngile.MonoBehaviour <|-- AnyAccessorUIView
+IAnyUIView <|.. AnyAccessorUIView
+UnityEngile.AnyUI <--* AnyAccessorUIView
 
 @enduml
