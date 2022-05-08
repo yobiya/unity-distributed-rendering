@@ -15,9 +15,15 @@ note bottom
   AnyUIの操作を行う
 endnote
 
+class AnyUIViewController
+note bottom
+  UIViewの操作を行う
+endnote
+
 UnityEngile.MonoBehaviour <|-- UnityEngile.AnyUI
 UnityEngile.MonoBehaviour <|-- AnyAccessorUIView
 IAnyUIView <|.. AnyAccessorUIView
 UnityEngile.AnyUI <--* AnyAccessorUIView
+IAnyUIView <--* AnyUIViewController
 
 @enduml
