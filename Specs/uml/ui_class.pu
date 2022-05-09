@@ -8,11 +8,12 @@ note bottom
 endnote
 
 interface IAnyUIView
-class AnyAccessorUIView
+class AnyUIViewAdapter
 note bottom
-  AnyUIと同じ種類のUIのアクセッサ
-  AnyUIと同じGameObjectにアタッチして
-  AnyUIの操作を行う
+  AnyUIをIAnyUIViewインターフェイスから
+  操作するための機能
+
+  Adapterデザインパターン
 endnote
 
 class AnyUIViewController
@@ -21,9 +22,9 @@ note bottom
 endnote
 
 UnityEngile.MonoBehaviour <|-- UnityEngile.AnyUI
-UnityEngile.MonoBehaviour <|-- AnyAccessorUIView
-IAnyUIView <|.. AnyAccessorUIView
-UnityEngile.AnyUI <--* AnyAccessorUIView
+UnityEngile.MonoBehaviour <|-- AnyUIViewAdapter
+IAnyUIView <|.. AnyUIViewAdapter
+UnityEngile.AnyUI <--* AnyUIViewAdapter
 IAnyUIView <--* AnyUIViewController
 
 @enduml
