@@ -6,20 +6,14 @@ using UnityEngine.TestTools;
 
 public class ConnectUIViewControllerTest
 {
-    // A Test behaves as an ordinary method
     [Test]
-    public void ConnectUIViewControllerTestSimplePasses()
+    public void ConnectUIViewController()
     {
-        // Use the Assert class to test conditions
-    }
+        var controller = new RenderingServerConnectingUIViewController();
 
-    // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
-    // `yield return null;` to skip a frame.
-    [UnityTest]
-    public IEnumerator ConnectUIViewControllerTestWithEnumeratorPasses()
-    {
-        // Use the Assert class to test conditions.
-        // Use yield to skip a frame.
-        yield return null;
+        bool isRequestConnecting = false;
+        controller.OnRequestConnecting += () => isRequestConnecting = true;
+
+        Assert.IsTrue(isRequestConnecting);
     }
 }
