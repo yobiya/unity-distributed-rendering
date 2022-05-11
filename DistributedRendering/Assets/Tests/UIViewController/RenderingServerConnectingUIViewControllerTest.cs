@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-public class ConnectUIViewControllerTest
+public class RenderingServerConnectingUIViewControllerTest
 {
     private class UICollection : RenderingServerConnectingUIViewController.IUICollection
     {
