@@ -17,4 +17,8 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
 
         _uiCollection.ConnectingRequestButton.OnClicked += () => OnRequestConnecting?.Invoke();
     }
+
+    public void ShowConnecting()
+    {
+    }
 }

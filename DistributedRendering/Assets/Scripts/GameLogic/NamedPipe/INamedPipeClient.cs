@@ -1,6 +1,6 @@
 public interface INamedPipeClient
 {
-    bool IsConnecting { get; }
+    bool IsConnected { get; }
 
     void Connect();
     void Write(string text);

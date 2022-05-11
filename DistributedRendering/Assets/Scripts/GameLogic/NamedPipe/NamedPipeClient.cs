@@ -6,7 +6,7 @@ public class NamedPipeClient : INamedPipeClient
     private readonly NamedPipeClientStream _pipeClient;
     private StreamWriter _pipeWriter;
 
-    public bool IsConnecting { get; private set; } = false;
+    public bool IsConnected { get; private set; } = false;
 
     public NamedPipeClient(string serverName, string pipeName)
     {
@@ -27,7 +27,7 @@ public class NamedPipeClient : INamedPipeClient
 
         _pipeWriter = new StreamWriter(_pipeClient);
 
-        IsConnecting = true;
+        IsConnected = true;
     }
 
     public void Write(string text)

@@ -10,6 +10,10 @@ public class RenderingServerConnectingProcPart
         _renderingServerConnectingUIViewController = renderingServerConnectingUIViewController;
         _namedPipeClient = namedPipeClient;
 
-        _renderingServerConnectingUIViewController.OnRequestConnecting += _namedPipeClient.Connect;
+        _renderingServerConnectingUIViewController.OnRequestConnecting += () =>
+        {
+            _namedPipeClient.Connect();
+            _renderingServerConnectingUIViewController.ShowConnecting();
+        };
     }
 }
