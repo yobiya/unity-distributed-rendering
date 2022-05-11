@@ -16,4 +16,8 @@ public class RenderingServerConnectingProcPart
             _renderingServerConnectingUIViewController.ShowConnecting();
         };
     }
+
+    public void Update(float dt)
+    {
+    }
 }

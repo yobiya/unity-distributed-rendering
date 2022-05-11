@@ -20,5 +20,11 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
 
     public void ShowConnecting()
     {
+        throw new NotImplementedException();
+    }
+
+    public void ShowConnected()
+    {
+        throw new NotImplementedException();
     }
 }
