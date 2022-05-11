@@ -1,6 +1,6 @@
 using System;
 
-public class RenderingServerConnectingUIViewController
+public class RenderingServerConnectingUIViewController : IRenderingServerConnectingUIViewController
 {
     public interface IUICollection
     {
