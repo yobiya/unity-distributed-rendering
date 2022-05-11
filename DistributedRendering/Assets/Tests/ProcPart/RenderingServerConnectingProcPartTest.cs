@@ -8,7 +8,7 @@ public class RenderingServerConnectingProcPartTest
     {
         public event Action OnRequestConnecting;
 
-        public void RequestConnect() {}
+        public void RequestConnect() => OnRequestConnecting?.Invoke();
     }
 
     class TestNamedPipeClient : INamedPipeClient
@@ -17,11 +17,7 @@ public class RenderingServerConnectingProcPartTest
 
         public bool IsConnecting { get; }
 
-        public void Connect()
-        {
-            isCalledConnect = true;
-        }
-
+        public void Connect() => isCalledConnect = true;
         public void Write(string text) {}
     }
 
