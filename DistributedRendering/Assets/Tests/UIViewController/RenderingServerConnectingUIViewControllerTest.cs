@@ -42,4 +42,18 @@ public class RenderingServerConnectingUIViewControllerTest
 
         Assert.IsTrue(isRequestConnecting);
     }
+
+    [Test]
+    public void ShowConnecting()
+    {
+        var collection = new UICollection();
+        var controller = new RenderingServerConnectingUIViewController(collection);
+
+        controller.ShowConnecting();
+
+        Assert.IsFalse(collection.connectingRequestButton.Active);
+        Assert.IsTrue(collection.connectingTextButton.Active);
+        Assert.IsFalse(collection.connectedTextButton.Active);
+        Assert.IsFalse(collection.failedTextButton.Active);
+    }
 }

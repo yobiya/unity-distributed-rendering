@@ -27,7 +27,10 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
 
     public void ShowConnecting()
     {
-        throw new NotImplementedException();
+        _uiCollection.ConnectingRequestButton.Active = false;
+        _uiCollection.ConnectingText.Active = true;
+        _uiCollection.ConnectedText.Active = false;
+        _uiCollection.FailedText.Active = false;
     }
 
     public void ShowConnected()
