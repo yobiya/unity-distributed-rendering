@@ -35,11 +35,17 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
 
     public void ShowConnected()
     {
-        throw new NotImplementedException();
+        _uiCollection.ConnectingRequestButton.Active = false;
+        _uiCollection.ConnectingText.Active = false;
+        _uiCollection.ConnectedText.Active = true;
+        _uiCollection.FailedText.Active = false;
     }
 
     public void ShowFailed()
     {
-        throw new NotImplementedException();
+        _uiCollection.ConnectingRequestButton.Active = false;
+        _uiCollection.ConnectingText.Active = false;
+        _uiCollection.ConnectedText.Active = false;
+        _uiCollection.FailedText.Active = true;
     }
 }
