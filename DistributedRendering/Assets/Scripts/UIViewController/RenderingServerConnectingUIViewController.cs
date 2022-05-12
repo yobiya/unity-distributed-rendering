@@ -5,6 +5,9 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
     public interface IUICollection
     {
         IButtonUIView ConnectingRequestButton { get; }
+        ITextUIView ConnectingText { get; }
+        ITextUIView ConnectedText { get; }
+        ITextUIView FailedText { get; }
     }
 
     private readonly IUICollection _uiCollection;

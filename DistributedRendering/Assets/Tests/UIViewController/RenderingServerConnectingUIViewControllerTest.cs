@@ -5,8 +5,14 @@ public class RenderingServerConnectingUIViewControllerTest
     private class UICollection : RenderingServerConnectingUIViewController.IUICollection
     {
         public TestButtonUIView connectingRequestButton = new TestButtonUIView();
+        public TestTextUIView connectingTextButton = new TestTextUIView();
+        public TestTextUIView connectedTextButton = new TestTextUIView();
+        public TestTextUIView failedTextButton = new TestTextUIView();
 
         public IButtonUIView ConnectingRequestButton => connectingRequestButton;
+        public ITextUIView ConnectingText => connectingTextButton;
+        public ITextUIView ConnectedText => connectedTextButton;
+        public ITextUIView FailedText => failedTextButton;
     }
 
     [Test]

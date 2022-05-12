@@ -1,9 +1,7 @@
 using System;
 
-public class TestButtonUIView : IButtonUIView
+public class TestButtonUIView : TestBaseUIView, IButtonUIView
 {
-    public bool Active { get; set; } = true;
-
     public event Action OnClicked;
 
     public void Click()
