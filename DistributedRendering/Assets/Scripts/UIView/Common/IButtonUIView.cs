@@ -1,6 +1,6 @@
 using System;
 
-public interface IButtonUIView
+public interface IButtonUIView : IBaseUIView
 {
-    public event Action OnClicked;
+    event Action OnClicked;
 }

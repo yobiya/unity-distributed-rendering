@@ -1,9 +1,8 @@
 using System;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class ButtonUIViewAdapter : MonoBehaviour, IButtonUIView
+public class ButtonUIViewAdapter : BaseUIViewAdapter, IButtonUIView
 {
     [SerializeField]
     private Button _button;
