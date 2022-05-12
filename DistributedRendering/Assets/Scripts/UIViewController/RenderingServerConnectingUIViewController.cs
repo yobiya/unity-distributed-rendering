@@ -27,4 +27,9 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
     {
         throw new NotImplementedException();
     }
+
+    public void ShowFailed()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -15,6 +15,7 @@ public class RenderingServerConnectingProcPart
         _renderingServerConnectingUIViewController = renderingServerConnectingUIViewController;
         _namedPipeClient = namedPipeClient;
         _namedPipeClient.OnConnected += _renderingServerConnectingUIViewController.ShowConnected;
+        _namedPipeClient.OnFailed += _renderingServerConnectingUIViewController.ShowFailed;
 
         _renderingServerConnectingUIViewController.OnRequestConnecting += () =>
         {

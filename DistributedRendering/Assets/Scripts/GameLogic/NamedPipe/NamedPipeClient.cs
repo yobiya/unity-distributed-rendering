@@ -8,6 +8,7 @@ public class NamedPipeClient : INamedPipeClient
     private StreamWriter _pipeWriter;
 
     public event Action OnConnected;
+    public event Action OnFailed;
 
     public NamedPipeClient(string serverName, string pipeName)
     {
@@ -23,6 +24,7 @@ public class NamedPipeClient : INamedPipeClient
         catch (System.Exception e)
         {
             UnityEngine.Debug.LogError(e.ToString());
+            OnFailed?.Invoke();
             return;
         }
 

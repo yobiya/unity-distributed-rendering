@@ -6,4 +6,5 @@ public interface IRenderingServerConnectingUIViewController
 
     void ShowConnecting();
     void ShowConnected();
+    void ShowFailed();
 }
