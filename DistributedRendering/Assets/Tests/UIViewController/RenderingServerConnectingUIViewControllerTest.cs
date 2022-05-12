@@ -16,6 +16,18 @@ public class RenderingServerConnectingUIViewControllerTest
     }
 
     [Test]
+    public void StartView()
+    {
+        var collection = new UICollection();
+        var controller = new RenderingServerConnectingUIViewController(collection);
+
+        Assert.IsTrue(collection.connectingRequestButton.Active);
+        Assert.IsFalse(collection.connectingTextButton.Active);
+        Assert.IsFalse(collection.connectedTextButton.Active);
+        Assert.IsFalse(collection.failedTextButton.Active);
+    }
+
+    [Test]
     public void ConnectUIViewController()
     {
         var collection = new UICollection();

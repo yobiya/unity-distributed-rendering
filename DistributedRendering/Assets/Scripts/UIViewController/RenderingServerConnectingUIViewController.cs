@@ -19,6 +19,10 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
         _uiCollection = uiCollection;
 
         _uiCollection.ConnectingRequestButton.OnClicked += () => OnRequestConnecting?.Invoke();
+        _uiCollection.ConnectingRequestButton.Active = true;
+        _uiCollection.ConnectingText.Active = false;
+        _uiCollection.ConnectedText.Active = false;
+        _uiCollection.FailedText.Active = false;
     }
 
     public void ShowConnecting()
