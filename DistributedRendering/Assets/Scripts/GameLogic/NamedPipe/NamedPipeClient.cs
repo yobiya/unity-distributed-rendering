@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.IO.Pipes;
 
@@ -6,18 +7,18 @@ public class NamedPipeClient : INamedPipeClient
     private readonly NamedPipeClientStream _pipeClient;
     private StreamWriter _pipeWriter;
 
-    public bool IsConnected { get; private set; } = false;
+    public event Action OnConnected;
 
     public NamedPipeClient(string serverName, string pipeName)
     {
         _pipeClient = new NamedPipeClientStream(serverName, pipeName, PipeDirection.Out);
     }
 
-    public void Connect()
+    public void Connect(int timeOutTime)
     {
         try
         {
-            _pipeClient.Connect(3000);
+            _pipeClient.Connect(timeOutTime);
         }
         catch (System.Exception e)
         {
@@ -27,7 +28,7 @@ public class NamedPipeClient : INamedPipeClient
 
         _pipeWriter = new StreamWriter(_pipeClient);
 
-        IsConnected = true;
+        OnConnected?.Invoke();
     }
 
     public void Write(string text)

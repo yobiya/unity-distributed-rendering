@@ -1,7 +1,9 @@
+using System;
+
 public interface INamedPipeClient
 {
-    bool IsConnected { get; }
+    event Action OnConnected;
 
-    void Connect();
+    void Connect(int timeOutTime);
     void Write(string text);
 }

@@ -23,10 +23,13 @@ public class RenderingServerConnectingProcPartTest
     {
         public bool isCalledConnect = false;
 
-        public bool IsConnected { get; private set; } = false;
+        public event Action OnConnected;
 
-        public void Connect() => isCalledConnect = true;
+        public void Connect(int timeOutTime) => isCalledConnect = true;
         public void Write(string text) {}
+
+        // テスト用メソッド
+        public void SuccessConnect() => OnConnected?.Invoke();
     }
 
     [Test]
@@ -45,12 +48,16 @@ public class RenderingServerConnectingProcPartTest
     public void ConnectingTest()
     {
         var renderingServerConnectingUIViewController = new TestRenderingServerConnectingUIViewController();
+
+        bool isConnected = false;
         var namedPipeClient = new TestNamedPipeClient();
+        namedPipeClient.OnConnected += () => isConnected = true;
+
         var procPart = new RenderingServerConnectingProcPart(renderingServerConnectingUIViewController, namedPipeClient);
 
         renderingServerConnectingUIViewController.RequestConnect();
 
-        Assert.IsFalse(namedPipeClient.IsConnected);
+        Assert.IsFalse(isConnected);
         Assert.IsTrue(renderingServerConnectingUIViewController.isCalledShowConnecting);
     }
 
@@ -58,26 +65,28 @@ public class RenderingServerConnectingProcPartTest
     public void ConnectSuccessTest()
     {
         var renderingServerConnectingUIViewController = new TestRenderingServerConnectingUIViewController();
+
+        bool isConnected = false;
         var namedPipeClient = new TestNamedPipeClient();
+        namedPipeClient.OnConnected += () => isConnected = true;
+
         var procPart = new RenderingServerConnectingProcPart(renderingServerConnectingUIViewController, namedPipeClient);
+
+        Assert.IsFalse(isConnected);
+        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnecting);
+        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnected);
 
         renderingServerConnectingUIViewController.RequestConnect();
 
-        Assert.IsFalse(namedPipeClient.IsConnected);
-        Assert.IsTrue(renderingServerConnectingUIViewController.isCalledShowConnecting);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnected);
-
-        procPart.Update(1.0f);
-
         // 接続中
-        Assert.IsFalse(namedPipeClient.IsConnected);
+        Assert.IsFalse(isConnected);
         Assert.IsTrue(renderingServerConnectingUIViewController.isCalledShowConnecting);
         Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnected);
 
-        procPart.Update(1.0f);
+        namedPipeClient.SuccessConnect();
 
         // 接続成功
-        Assert.IsTrue(namedPipeClient.IsConnected);
+        Assert.IsTrue(isConnected);
         Assert.IsTrue(renderingServerConnectingUIViewController.isCalledShowConnected);
     }
 }
