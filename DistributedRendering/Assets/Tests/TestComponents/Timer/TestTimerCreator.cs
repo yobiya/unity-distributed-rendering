@@ -1,21 +1,21 @@
 using System.Collections.Generic;
-using System.Threading;
 using Cysharp.Threading.Tasks;
 
 public class TestTimerCreator : ITimerCreator
 {
-    private List<CancellationTokenSource> _cancelationTokenSourceList;
+    private List<UniTaskCompletionSource> _sourceList = new List<UniTaskCompletionSource>();
 
     public async UniTask Create(float time)
     {
-        var source = new CancellationTokenSource();
-        _cancelationTokenSourceList.Add(source);
+        var completionSource = new UniTaskCompletionSource();
+        _sourceList.Add(completionSource);
 
-        await UniTask.Never(source.Token);
+        await completionSource.Task;
     }
 
     public void EndTimer(int index)
     {
-        _cancelationTokenSourceList[index].Cancel();
+        // タスクを終了させる
+        _sourceList[index].TrySetResult();
     }
 }
