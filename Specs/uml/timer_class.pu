@@ -1,0 +1,32 @@
+@startuml timer_class
+
+interface ITimer
+class Timer
+note bottom
+  実際の時間による
+  処理を行う
+endnote
+
+class TestTimer
+note bottom
+  時間による処理は行わずに
+  テストコードからの呼び出しで
+  時間が経過した処理を偽装する
+endnote
+
+interface ITimerCreator
+note left
+  対応するITimerの
+  実装を生成する
+endnote
+
+class TimerCreator
+class TestTimerCreator
+
+ITimer <|.. Timer
+ITimer <|.. TestTimer
+ITimerCreator <|.. TimerCreator
+ITimerCreator <|.. TestTimerCreator
+ITimer <-- ITimerCreator
+
+@enduml
