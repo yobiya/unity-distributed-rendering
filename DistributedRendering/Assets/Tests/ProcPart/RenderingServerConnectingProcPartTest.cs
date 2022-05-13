@@ -10,12 +10,14 @@ public class RenderingServerConnectingProcPartTest
         public bool isCalledShowConnecting = false;
         public bool isCalledShowConnected = false;
         public bool isCalledShowFailed = false;
+        public bool isCalledReset = false;
 
         public event Action OnRequestConnecting;
 
         public void ShowConnecting() => isCalledShowConnecting = true;
         public void ShowConnected() => isCalledShowConnected = true;
         public void ShowFailed() => isCalledShowFailed = true;
+        public void Reset() => isCalledReset = true;
 
         // テスト用メソッド
         public void RequestConnect() => OnRequestConnecting?.Invoke();
@@ -41,7 +43,7 @@ public class RenderingServerConnectingProcPartTest
     {
         var renderingServerConnectingUIViewController = new TestRenderingServerConnectingUIViewController();
         var namedPipeClient = new TestNamedPipeClient();
-        var procPart = new RenderingServerConnectingProcPart(renderingServerConnectingUIViewController, namedPipeClient);
+        var procPart = new RenderingServerConnectingProcPart(renderingServerConnectingUIViewController, namedPipeClient, new TestTimerCreator());
 
         renderingServerConnectingUIViewController.RequestConnect();
 
@@ -57,7 +59,7 @@ public class RenderingServerConnectingProcPartTest
         var namedPipeClient = new TestNamedPipeClient();
         namedPipeClient.OnConnected += () => isConnected = true;
 
-        var procPart = new RenderingServerConnectingProcPart(renderingServerConnectingUIViewController, namedPipeClient);
+        var procPart = new RenderingServerConnectingProcPart(renderingServerConnectingUIViewController, namedPipeClient, new TestTimerCreator());
 
         renderingServerConnectingUIViewController.RequestConnect();
 
@@ -76,13 +78,14 @@ public class RenderingServerConnectingProcPartTest
         namedPipeClient.OnConnected += () => isConnected = true;
         namedPipeClient.OnFailed += () => isFailed = true;
 
-        var procPart = new RenderingServerConnectingProcPart(renderingServerConnectingUIViewController, namedPipeClient);
+        var procPart = new RenderingServerConnectingProcPart(renderingServerConnectingUIViewController, namedPipeClient, new TestTimerCreator());
 
         Assert.IsFalse(isConnected);
         Assert.IsFalse(isFailed);
         Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnecting);
         Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnected);
         Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowFailed);
+        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledReset);
 
         renderingServerConnectingUIViewController.RequestConnect();
 
@@ -92,6 +95,7 @@ public class RenderingServerConnectingProcPartTest
         Assert.IsTrue(renderingServerConnectingUIViewController.isCalledShowConnecting);
         Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnected);
         Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowFailed);
+        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledReset);
 
         namedPipeClient.SuccessConnect();
 
@@ -100,6 +104,7 @@ public class RenderingServerConnectingProcPartTest
         Assert.IsFalse(isFailed);
         Assert.IsTrue(renderingServerConnectingUIViewController.isCalledShowConnected);
         Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowFailed);
+        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledReset);
     }
 
     [Test]
@@ -113,13 +118,20 @@ public class RenderingServerConnectingProcPartTest
         namedPipeClient.OnConnected += () => isConnected = true;
         namedPipeClient.OnFailed += () => isFailed = true;
 
-        var procPart = new RenderingServerConnectingProcPart(renderingServerConnectingUIViewController, namedPipeClient);
+        var timerCreator = new TestTimerCreator();
+
+        var procPart
+            = new RenderingServerConnectingProcPart(
+                renderingServerConnectingUIViewController,
+                namedPipeClient,
+                timerCreator);
 
         Assert.IsFalse(isConnected);
         Assert.IsFalse(isFailed);
         Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnecting);
         Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnected);
         Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowFailed);
+        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledReset);
 
         renderingServerConnectingUIViewController.RequestConnect();
 
@@ -129,6 +141,7 @@ public class RenderingServerConnectingProcPartTest
         Assert.IsTrue(renderingServerConnectingUIViewController.isCalledShowConnecting);
         Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnected);
         Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowFailed);
+        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledReset);
 
         namedPipeClient.FailConnect();
 
@@ -137,5 +150,12 @@ public class RenderingServerConnectingProcPartTest
         Assert.IsTrue(isFailed);
         Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnected);
         Assert.IsTrue(renderingServerConnectingUIViewController.isCalledShowFailed);
+        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledReset);
+
+        // 失敗表示の表示時間を終了させる
+        timerCreator.EndTimer(0);
+
+        // Resetメソッドが呼ばれる
+        Assert.IsTrue(renderingServerConnectingUIViewController.isCalledReset);
     }
 }
