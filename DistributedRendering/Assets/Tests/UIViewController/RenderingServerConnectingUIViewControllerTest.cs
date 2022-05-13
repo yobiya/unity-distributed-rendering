@@ -83,5 +83,12 @@ public class RenderingServerConnectingUIViewControllerTest
         Assert.IsFalse(collection.connectingText.Active);
         Assert.IsFalse(collection.connectedText.Active);
         Assert.IsTrue(collection.failedText.Active);
+
+        controller.Reset(); // 接続ボタンを再表示させる
+
+        Assert.IsTrue(collection.connectingRequestButton.Active);
+        Assert.IsFalse(collection.connectingText.Active);
+        Assert.IsFalse(collection.connectedText.Active);
+        Assert.IsFalse(collection.failedText.Active);
     }
 }
