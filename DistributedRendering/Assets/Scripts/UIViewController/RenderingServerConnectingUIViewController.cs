@@ -12,6 +12,8 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
 
     private readonly IUICollection _uiCollection;
 
+    public bool IsActive { get; set; }
+
     public event Action OnRequestConnecting;
 
     public RenderingServerConnectingUIViewController(IUICollection uiCollection)

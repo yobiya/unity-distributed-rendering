@@ -1,6 +1,6 @@
 using System;
 
-public class GameModeUIViewController
+public class GameModeUIViewController : IGameModeUIViewController
 {
     public interface IUICollection
     {
