@@ -5,11 +5,14 @@ public class GameModeProcPartTest
 {
     private class TestGameModeUIViewController : IGameModeUIViewController
     {
+        public bool IsActive { get; set; }
+
         public event Action OnSelectedGameClientMode;
         public event Action OnSelectedRenderingServerMode;
 
         // テスト用メソッド
         public void SelectGameClientMode() => OnSelectedGameClientMode?.Invoke();
+        public void SelectRenderingServerMode() => OnSelectedRenderingServerMode?.Invoke();
     }
 
     public class TestRenderingServerConnectingUIViewController : IRenderingServerConnectingUIViewController
@@ -30,7 +33,39 @@ public class GameModeProcPartTest
     }
 
     [Test]
+    public void StartView()
+    {
+        var gameModeUIViewController = new TestGameModeUIViewController();
+        var renderingServerConnectingUIViewController = new TestRenderingServerConnectingUIViewController();
+        var gameClientConnectingWaitUIViewController = new TestGameClientConnectingWaitUIViewController();
+        var procPart = new GameModeProcPart(gameModeUIViewController, renderingServerConnectingUIViewController, gameClientConnectingWaitUIViewController);
+
+        Assert.IsTrue(gameModeUIViewController.IsActive);
+        Assert.IsFalse(renderingServerConnectingUIViewController.IsActive);
+        Assert.IsFalse(gameClientConnectingWaitUIViewController.IsActive);
+    }
+
+    [Test]
     public void StartGameClientMode()
+    {
+        var gameModeUIViewController = new TestGameModeUIViewController();
+        var renderingServerConnectingUIViewController = new TestRenderingServerConnectingUIViewController();
+        var gameClientConnectingWaitUIViewController = new TestGameClientConnectingWaitUIViewController();
+        var procPart = new GameModeProcPart(gameModeUIViewController, renderingServerConnectingUIViewController, gameClientConnectingWaitUIViewController);
+
+        Assert.IsTrue(gameModeUIViewController.IsActive);
+        Assert.IsFalse(renderingServerConnectingUIViewController.IsActive);
+        Assert.IsFalse(gameClientConnectingWaitUIViewController.IsActive);
+
+        gameModeUIViewController.SelectGameClientMode();
+
+        Assert.IsFalse(gameModeUIViewController.IsActive);
+        Assert.IsTrue(renderingServerConnectingUIViewController.IsActive);
+        Assert.IsFalse(gameClientConnectingWaitUIViewController.IsActive);
+    }
+
+    [Test]
+    public void StartRenderingServerMode()
     {
         var gameModeUIViewController = new TestGameModeUIViewController();
         var renderingServerConnectingUIViewController = new TestRenderingServerConnectingUIViewController();
@@ -40,10 +75,10 @@ public class GameModeProcPartTest
         Assert.IsFalse(renderingServerConnectingUIViewController.IsActive);
         Assert.IsFalse(gameClientConnectingWaitUIViewController.IsActive);
 
-        gameModeUIViewController.SelectGameClientMode();
+        gameModeUIViewController.SelectRenderingServerMode();
 
-        Assert.IsTrue(renderingServerConnectingUIViewController.IsActive);
-        Assert.IsFalse(gameClientConnectingWaitUIViewController.IsActive);
-
+        Assert.IsFalse(gameModeUIViewController.IsActive);
+        Assert.IsFalse(renderingServerConnectingUIViewController.IsActive);
+        Assert.IsTrue(gameClientConnectingWaitUIViewController.IsActive);
     }
 }
