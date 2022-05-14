@@ -26,11 +26,21 @@ public class NamedPipeClient : INamedPipeClient
     private async Task StartConnect(int timeOutTime)
     {
         var mainThreadContext = SynchronizationContext.Current;
+        bool isTimeOut = false;
 
-        var task = _pipeClient.ConnectAsync(timeOutTime);
-        await task;
+        await Task.Run(() => 
+            {
+                try
+                {
+                    _pipeClient.Connect(timeOutTime);
+                }
+                catch (Exception)
+                {
+                    isTimeOut = true;
+                }
+            });
 
-        if (task.Status == TaskStatus.RanToCompletion)
+        if (!isTimeOut)
         {
             _pipeWriter = new StreamWriter(_pipeClient);
 
@@ -39,8 +49,6 @@ public class NamedPipeClient : INamedPipeClient
         }
         else
         {
-            UnityEngine.Debug.LogError("Failed connect : " + task.Status.ToString());
-
             // イベントはグラフィックの更新を行う可能性があるので、メインスレッドで呼び出す
             mainThreadContext.Post((_) => OnFailed?.Invoke(), null);
         }
