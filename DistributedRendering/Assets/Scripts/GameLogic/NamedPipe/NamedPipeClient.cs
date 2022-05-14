@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Threading;
+using System.Threading.Tasks;
 
 public class NamedPipeClient : INamedPipeClient
 {
@@ -17,20 +19,31 @@ public class NamedPipeClient : INamedPipeClient
 
     public void Connect(int timeOutTime)
     {
-        try
-        {
-            _pipeClient.Connect(timeOutTime);
-        }
-        catch (System.Exception e)
-        {
-            UnityEngine.Debug.LogError(e.ToString());
-            OnFailed?.Invoke();
-            return;
-        }
+        // 非同期処理の終了は待たない
+        var _ = StartConnect(timeOutTime);
+    }
 
-        _pipeWriter = new StreamWriter(_pipeClient);
+    private async Task StartConnect(int timeOutTime)
+    {
+        var mainThreadContext = SynchronizationContext.Current;
 
-        OnConnected?.Invoke();
+        var task = _pipeClient.ConnectAsync(timeOutTime);
+        await task;
+
+        if (task.Status == TaskStatus.RanToCompletion)
+        {
+            _pipeWriter = new StreamWriter(_pipeClient);
+
+            // イベントはグラフィックの更新を行う可能性があるので、メインスレッドで呼び出す
+            mainThreadContext.Post((_) => OnConnected?.Invoke(), null);
+        }
+        else
+        {
+            UnityEngine.Debug.LogError("Failed connect : " + task.Status.ToString());
+
+            // イベントはグラフィックの更新を行う可能性があるので、メインスレッドで呼び出す
+            mainThreadContext.Post((_) => OnFailed?.Invoke(), null);
+        }
     }
 
     public void Write(string text)
