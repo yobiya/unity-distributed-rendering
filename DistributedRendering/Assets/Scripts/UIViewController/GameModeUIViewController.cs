@@ -1,3 +1,5 @@
+using System;
+
 public class GameModeUIViewController
 {
     public interface IUICollection
@@ -8,11 +10,17 @@ public class GameModeUIViewController
 
     private readonly IUICollection _uiCollection;
 
+    public event Action OnSelectedGameClientMode;
+    public event Action OnSelectedRenderingServerMode;
+
     public GameModeUIViewController(IUICollection uiCollection)
     {
         _uiCollection = uiCollection;
 
         _uiCollection.GameClientModeButton.Active = true;
         _uiCollection.RenderingServerModeButton.Active = true;
+
+        _uiCollection.GameClientModeButton.OnClicked += () => OnSelectedGameClientMode?.Invoke();
+        _uiCollection.RenderingServerModeButton.OnClicked += () => OnSelectedRenderingServerMode?.Invoke();
     }
 }
