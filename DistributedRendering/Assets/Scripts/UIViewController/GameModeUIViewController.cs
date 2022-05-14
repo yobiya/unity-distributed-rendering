@@ -10,6 +10,8 @@ public class GameModeUIViewController : IGameModeUIViewController
 
     private readonly IUICollection _uiCollection;
 
+    public bool IsActive { get; set; }
+
     public event Action OnSelectedGameClientMode;
     public event Action OnSelectedRenderingServerMode;
 
