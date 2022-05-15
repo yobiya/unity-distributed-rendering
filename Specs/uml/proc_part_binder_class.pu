@@ -1,0 +1,37 @@
+@startuml proc_part_binder_class
+
+class ProcPartBinder
+note right
+  各ProcPart間で通知を行う場合の
+  バインド処理を行う
+
+  各ProcPartは動的に生成と破棄をされることはないので
+  バインド処理は一度だけ行われる
+endnote
+
+interface IAProcPart
+class AProcPart
+interface IBProcPart
+class BProcPart
+
+IAProcPart <|-- AProcPart
+IBProcPart <|-- BProcPart
+
+ProcPartBinder --> IAProcPart
+ProcPartBinder --> IBProcPart
+
+note as ProcPartNote
+  ProcPartBinderによって
+  イベントなどで相互の通知が行われるが
+  直接他のProcPartを知ることはない
+
+  インスタンスはシーンの開始時に生成されて
+  動的に生成と破棄が行われることはない
+  動的に生成と破棄が行われる要素は
+  各ProcPartの内部で行われる
+endnote
+
+AProcPart .. ProcPartNote
+BProcPart .. ProcPartNote
+
+@enduml
