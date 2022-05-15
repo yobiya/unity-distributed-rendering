@@ -1,32 +1,27 @@
 @startuml timer_class
 
-interface ITimer
-class Timer
-note bottom
-  実際の時間による
-  処理を行う
-endnote
+class UniTask
 
-class TestTimer
-note bottom
-  時間による処理は行わずに
-  テストコードからの呼び出しで
-  時間が経過した処理を偽装する
-endnote
-
-interface ITimerCreator
+interface ITimerCreator {
+  UniTask Create()
+}
 note left
-  対応するITimerの
-  実装を生成する
+  対応する時間の処理を行う
+  UniTask実装を生成する
 endnote
 
 class TimerCreator
-class TestTimerCreator
+class TestTimerCreator {
+  EndTimer(int index)
+}
+note left of TestTimerCreator::EndTimer
+  生成した順番を指定して
+  タイマーを停止させる
+  テスト用のメソッドを持つ
+endnote
 
-ITimer <|.. Timer
-ITimer <|.. TestTimer
 ITimerCreator <|.. TimerCreator
 ITimerCreator <|.. TestTimerCreator
-ITimer <-- ITimerCreator
+UniTask <-- ITimerCreator
 
 @enduml
