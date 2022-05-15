@@ -1,0 +1,13 @@
+@startuml game_mode_sequence
+
+GameModelUIViewController -> GameModelUIViewController : ゲームモードの選択
+GameModelUIViewController -> GameModeProcPart : 選択されたゲームモードを通知
+GameModeProcPart -> RenderingServerConnectingProcPart : 有効化
+note right
+  ゲームクライアントモードと
+  レンダリングサーバーモードで
+  処理の流れは同じ
+endnote
+RenderingServerConnectingProcPart -> RenderingServerConnectingUIViewController : 有効化
+
+@enduml
