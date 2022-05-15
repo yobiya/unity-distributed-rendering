@@ -10,6 +10,7 @@ DistributedRendering/[Bb]uilds/
 DistributedRendering/[Ll]ogs/
 DistributedRendering/[Mm]emoryCaptures/
 DistributedRendering/UserSettings/
+DistributedRendering/Assets/Packages/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
