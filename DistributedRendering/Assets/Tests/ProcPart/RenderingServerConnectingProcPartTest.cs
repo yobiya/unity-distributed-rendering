@@ -32,27 +32,9 @@ public class RenderingServerConnectingProcPartTest
                 new TestTimerCreator());
 
         renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
+
+        // 接続処理が呼び出されて、接続中の表示になる
         namedPipeClientMock.Verify(m => m.Connect(It.IsAny<int>()), Times.Once);
-    }
-
-    [Test]
-    public void ConnectingTest()
-    {
-        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
-
-        bool isConnected = false;
-        var namedPipeClient = new TestNamedPipeClient();
-        namedPipeClient.OnConnected += () => isConnected = true;
-
-        var procPart
-            = new RenderingServerConnectingProcPart(
-                renderingServerConnectingUIViewControllerMock.Object,
-                namedPipeClient,
-                new TestTimerCreator());
-
-        renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
-
-        Assert.IsFalse(isConnected);
         renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
     }
 
