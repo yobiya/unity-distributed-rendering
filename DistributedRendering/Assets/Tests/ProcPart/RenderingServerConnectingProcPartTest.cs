@@ -4,25 +4,6 @@ using NUnit.Framework;
 
 public class RenderingServerConnectingProcPartTest
 {
-    class TestRenderingServerConnectingUIViewController : IRenderingServerConnectingUIViewController
-    {
-        // テスト用変数
-        public bool isCalledShowConnecting = false;
-        public bool isCalledShowConnected = false;
-        public bool isCalledShowFailed = false;
-        public bool isCalledReset = false;
-
-        public event Action OnRequestConnecting;
-
-        public void ShowConnecting() => isCalledShowConnecting = true;
-        public void ShowConnected() => isCalledShowConnected = true;
-        public void ShowFailed() => isCalledShowFailed = true;
-        public void Reset() => isCalledReset = true;
-
-        // テスト用メソッド
-        public void RequestConnect() => OnRequestConnecting?.Invoke();
-    }
-
     class TestNamedPipeClient : INamedPipeClient
     {
         public bool isCalledConnect = false;
@@ -57,24 +38,28 @@ public class RenderingServerConnectingProcPartTest
     [Test]
     public void ConnectingTest()
     {
-        var renderingServerConnectingUIViewController = new TestRenderingServerConnectingUIViewController();
+        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
 
         bool isConnected = false;
         var namedPipeClient = new TestNamedPipeClient();
         namedPipeClient.OnConnected += () => isConnected = true;
 
-        var procPart = new RenderingServerConnectingProcPart(renderingServerConnectingUIViewController, namedPipeClient, new TestTimerCreator());
+        var procPart
+            = new RenderingServerConnectingProcPart(
+                renderingServerConnectingUIViewControllerMock.Object,
+                namedPipeClient,
+                new TestTimerCreator());
 
-        renderingServerConnectingUIViewController.RequestConnect();
+        renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
 
         Assert.IsFalse(isConnected);
-        Assert.IsTrue(renderingServerConnectingUIViewController.isCalledShowConnecting);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
     }
 
     [Test]
     public void ConnectSuccessTest()
     {
-        var renderingServerConnectingUIViewController = new TestRenderingServerConnectingUIViewController();
+        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
 
         bool isConnected = false;
         bool isFailed = false;
@@ -82,39 +67,44 @@ public class RenderingServerConnectingProcPartTest
         namedPipeClient.OnConnected += () => isConnected = true;
         namedPipeClient.OnFailed += () => isFailed = true;
 
-        var procPart = new RenderingServerConnectingProcPart(renderingServerConnectingUIViewController, namedPipeClient, new TestTimerCreator());
+        var procPart
+            = new RenderingServerConnectingProcPart(
+                renderingServerConnectingUIViewControllerMock.Object,
+                namedPipeClient,
+                new TestTimerCreator());
 
         Assert.IsFalse(isConnected);
         Assert.IsFalse(isFailed);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnecting);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnected);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowFailed);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledReset);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Never);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Never);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Never);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Never);
 
-        renderingServerConnectingUIViewController.RequestConnect();
+        renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
 
         // 接続中
         Assert.IsFalse(isConnected);
         Assert.IsFalse(isFailed);
-        Assert.IsTrue(renderingServerConnectingUIViewController.isCalledShowConnecting);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnected);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowFailed);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledReset);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Never);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Never);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Never);
 
         namedPipeClient.SuccessConnect();
 
         // 接続成功
         Assert.IsTrue(isConnected);
         Assert.IsFalse(isFailed);
-        Assert.IsTrue(renderingServerConnectingUIViewController.isCalledShowConnected);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowFailed);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledReset);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Once);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Never);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Never);
     }
 
     [Test]
     public void ConnectTimeOutTest()
     {
-        var renderingServerConnectingUIViewController = new TestRenderingServerConnectingUIViewController();
+        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
 
         bool isConnected = false;
         bool isFailed = false;
@@ -126,40 +116,44 @@ public class RenderingServerConnectingProcPartTest
 
         var procPart
             = new RenderingServerConnectingProcPart(
-                renderingServerConnectingUIViewController,
+                renderingServerConnectingUIViewControllerMock.Object,
                 namedPipeClient,
                 timerCreator);
 
         Assert.IsFalse(isConnected);
         Assert.IsFalse(isFailed);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnecting);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnected);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowFailed);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledReset);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Never);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Never);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Never);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Never);
 
-        renderingServerConnectingUIViewController.RequestConnect();
+        renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
 
         // 接続中
         Assert.IsFalse(isConnected);
         Assert.IsFalse(isFailed);
-        Assert.IsTrue(renderingServerConnectingUIViewController.isCalledShowConnecting);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnected);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowFailed);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledReset);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Never);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Never);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Never);
 
         namedPipeClient.FailConnect();
 
         // 接続失敗
         Assert.IsFalse(isConnected);
         Assert.IsTrue(isFailed);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledShowConnected);
-        Assert.IsTrue(renderingServerConnectingUIViewController.isCalledShowFailed);
-        Assert.IsFalse(renderingServerConnectingUIViewController.isCalledReset);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Never);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Once);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Never);
 
         // 失敗表示の表示時間を終了させる
         timerCreator.EndTimer(0);
 
         // Resetメソッドが呼ばれる
-        Assert.IsTrue(renderingServerConnectingUIViewController.isCalledReset);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Never);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Once);
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Once);
     }
 }
