@@ -1,84 +1,56 @@
 using System;
+using Moq;
 using NUnit.Framework;
 
 public class GameModeProcPartTest
 {
-    private class TestGameModeUIViewController : IGameModeUIViewController
+    [Test]
+    public void DefaultView()
     {
-        public bool IsActive { get; set; }
+        var gameModeUIViewControllerMock = new Mock<IGameModeUIViewController>();
+        var procPart = new GameModeProcPart(gameModeUIViewControllerMock.Object);
 
-        public event Action OnSelectedGameClientMode;
-        public event Action OnSelectedRenderingServerMode;
-
-        // テスト用メソッド
-        public void SelectGameClientMode() => OnSelectedGameClientMode?.Invoke();
-        public void SelectRenderingServerMode() => OnSelectedRenderingServerMode?.Invoke();
-    }
-
-    public class TestRenderingServerConnectingUIViewController : IRenderingServerConnectingUIViewController
-    {
-        public bool IsActive { get; set; } = false;
-
-        public event Action OnRequestConnecting;
-
-        public void Reset() {}
-        public void ShowConnected() {}
-        public void ShowConnecting() {}
-        public void ShowFailed() {}
-    }
-
-    public class TestGameClientConnectingWaitUIViewController : IGameClientConnectingWaitUIViewController
-    {
-        public bool IsActive { get; set; } = false;
+        // 初期状態では、UIは表示されている
+        gameModeUIViewControllerMock.VerifySet(m => m.IsActive = true);
     }
 
     [Test]
-    public void StartView()
+    public void SelectGameClientMode()
     {
-        var gameModeUIViewController = new TestGameModeUIViewController();
-        var renderingServerConnectingUIViewController = new TestRenderingServerConnectingUIViewController();
-        var gameClientConnectingWaitUIViewController = new TestGameClientConnectingWaitUIViewController();
-        var procPart = new GameModeProcPart(gameModeUIViewController, renderingServerConnectingUIViewController, gameClientConnectingWaitUIViewController);
+        var gameModeUIViewControllerMock = new Mock<IGameModeUIViewController>();
+        var procPart = new GameModeProcPart(gameModeUIViewControllerMock.Object);
 
-        Assert.IsTrue(gameModeUIViewController.IsActive);
-        Assert.IsFalse(renderingServerConnectingUIViewController.IsActive);
-        Assert.IsFalse(gameClientConnectingWaitUIViewController.IsActive);
+        bool isSelectedGameClientMode = false;
+        bool isSelectedRenderingServerMode = false;
+        procPart.OnSelectedGameClientMode += () => isSelectedGameClientMode = true;
+        procPart.OnSelectedRenderingServerMode += () => isSelectedRenderingServerMode = true;
+
+        // ゲームクライアントモードがUIから選択された
+        gameModeUIViewControllerMock.Raise(m => m.OnSelectedGameClientMode += null);
+
+        // モードが選択されたら、UIは非表示になる
+        gameModeUIViewControllerMock.VerifySet(m => m.IsActive = false);
+        Assert.IsTrue(isSelectedGameClientMode);
+        Assert.IsFalse(isSelectedRenderingServerMode);
     }
 
     [Test]
-    public void StartGameClientMode()
+    public void SelectRenderingServerMode()
     {
-        var gameModeUIViewController = new TestGameModeUIViewController();
-        var renderingServerConnectingUIViewController = new TestRenderingServerConnectingUIViewController();
-        var gameClientConnectingWaitUIViewController = new TestGameClientConnectingWaitUIViewController();
-        var procPart = new GameModeProcPart(gameModeUIViewController, renderingServerConnectingUIViewController, gameClientConnectingWaitUIViewController);
+        var gameModeUIViewControllerMock = new Mock<IGameModeUIViewController>();
+        var procPart = new GameModeProcPart(gameModeUIViewControllerMock.Object);
 
-        Assert.IsTrue(gameModeUIViewController.IsActive);
-        Assert.IsFalse(renderingServerConnectingUIViewController.IsActive);
-        Assert.IsFalse(gameClientConnectingWaitUIViewController.IsActive);
+        bool isSelectedGameClientMode = false;
+        bool isSelectedRenderingServerMode = false;
+        procPart.OnSelectedGameClientMode += () => isSelectedGameClientMode = true;
+        procPart.OnSelectedRenderingServerMode += () => isSelectedRenderingServerMode = true;
 
-        gameModeUIViewController.SelectGameClientMode();
+        // レンダリングサーバーモードがUIから選択された
+        gameModeUIViewControllerMock.Raise(m => m.OnSelectedRenderingServerMode += null);
 
-        Assert.IsFalse(gameModeUIViewController.IsActive);
-        Assert.IsTrue(renderingServerConnectingUIViewController.IsActive);
-        Assert.IsFalse(gameClientConnectingWaitUIViewController.IsActive);
-    }
-
-    [Test]
-    public void StartRenderingServerMode()
-    {
-        var gameModeUIViewController = new TestGameModeUIViewController();
-        var renderingServerConnectingUIViewController = new TestRenderingServerConnectingUIViewController();
-        var gameClientConnectingWaitUIViewController = new TestGameClientConnectingWaitUIViewController();
-        var procPart = new GameModeProcPart(gameModeUIViewController, renderingServerConnectingUIViewController, gameClientConnectingWaitUIViewController);
-
-        Assert.IsFalse(renderingServerConnectingUIViewController.IsActive);
-        Assert.IsFalse(gameClientConnectingWaitUIViewController.IsActive);
-
-        gameModeUIViewController.SelectRenderingServerMode();
-
-        Assert.IsFalse(gameModeUIViewController.IsActive);
-        Assert.IsFalse(renderingServerConnectingUIViewController.IsActive);
-        Assert.IsTrue(gameClientConnectingWaitUIViewController.IsActive);
+        // モードが選択されたら、UIは非表示になる
+        gameModeUIViewControllerMock.VerifySet(m => m.IsActive = false);
+        Assert.IsFalse(isSelectedGameClientMode);
+        Assert.IsTrue(isSelectedRenderingServerMode);
     }
 }
