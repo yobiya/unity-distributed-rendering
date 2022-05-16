@@ -4,12 +4,6 @@ using NUnit.Framework;
 
 public class RenderingServerConnectingProcPartTest
 {
-    public interface ITestRenderingServerConnectingUIViewController : IRenderingServerConnectingUIViewController
-    {
-        // 接続リクエストボタンが押された場合の処理を呼び出す
-        void RequestConnect();
-    }
-
     class TestRenderingServerConnectingUIViewController : IRenderingServerConnectingUIViewController
     {
         // テスト用変数
@@ -47,12 +41,7 @@ public class RenderingServerConnectingProcPartTest
     [Test]
     public void StartConnectTest()
     {
-        var renderingServerConnectingUIViewControllerMock = new Mock<ITestRenderingServerConnectingUIViewController>();
-        renderingServerConnectingUIViewControllerMock
-            .Setup(m => m.RequestConnect()).Callback(() => 
-                renderingServerConnectingUIViewControllerMock
-                    .Raise(x => x.OnRequestConnecting += null));
-
+        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
         var namedPipeClientMock = new Mock<INamedPipeClient>();
 
         var procPart
@@ -61,7 +50,7 @@ public class RenderingServerConnectingProcPartTest
                 namedPipeClientMock.Object,
                 new TestTimerCreator());
 
-        renderingServerConnectingUIViewControllerMock.Object.RequestConnect();
+        renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
         namedPipeClientMock.Verify(m => m.Connect(It.IsAny<int>()), Times.Once);
     }
 
