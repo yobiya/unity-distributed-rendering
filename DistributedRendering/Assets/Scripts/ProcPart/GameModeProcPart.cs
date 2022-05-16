@@ -1,6 +1,6 @@
 using System;
 
-public class GameModeProcPart
+public class GameModeProcPart : IGameModeProcPart
 {
     public event Action OnSelectedGameClientMode;
     public event Action OnSelectedRenderingServerMode;
