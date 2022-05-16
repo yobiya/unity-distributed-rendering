@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 
-public class RenderingServerConnectingProcPart
+public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcPart
 {
     private const int ConnectTimeOutTime = 3000;
     private const float FaildTextDisplayTime = 3.0f;
@@ -28,6 +28,11 @@ public class RenderingServerConnectingProcPart
         _namedPipeClient.OnFailed += () => CreateFaildTask().Forget();
 
         _timerCreator = timerCreator;
+    }
+
+    public void Activate()
+    {
+        throw new System.NotImplementedException();
     }
 
     private async UniTask CreateFaildTask()
