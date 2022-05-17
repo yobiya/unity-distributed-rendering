@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 
 public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcPart
@@ -9,7 +8,6 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
     private readonly IRenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
     private readonly INamedPipeClient _namedPipeClient;
     private readonly ITimerCreator _timerCreator;
-    private Task _connectTask;
 
     public RenderingServerConnectingProcPart(
         IRenderingServerConnectingUIViewController renderingServerConnectingUIViewController,
@@ -34,6 +32,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
     public void Activate()
     {
         _renderingServerConnectingUIViewController.IsActive = true;
+        _renderingServerConnectingUIViewController.ShowWaitUserInput();
     }
 
     private async UniTask CreateFaildTask()

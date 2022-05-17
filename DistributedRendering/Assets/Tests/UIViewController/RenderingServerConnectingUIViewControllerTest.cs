@@ -9,6 +9,8 @@ public class RenderingServerConnectingUIViewControllerTest
         public TestTextUIView connectedText = new TestTextUIView();
         public TestTextUIView failedText = new TestTextUIView();
 
+        public bool IsActive { get; set; }
+
         public IButtonUIView ConnectingRequestButton => connectingRequestButton;
         public ITextUIView ConnectingText => connectingText;
         public ITextUIView ConnectedText => connectedText;
@@ -16,11 +18,29 @@ public class RenderingServerConnectingUIViewControllerTest
     }
 
     [Test]
+    public void DefaultView()
+    {
+        var collection = new UICollection();
+        var sut = new RenderingServerConnectingUIViewController(collection);
+
+        // 表示を無効にする
+        sut.IsActive = false;
+
+        // UIの表示は無効になる
+        Assert.IsFalse(collection.IsActive);
+    }
+
+    [Test]
     public void StartView()
     {
         var collection = new UICollection();
-        var controller = new RenderingServerConnectingUIViewController(collection);
+        var sut = new RenderingServerConnectingUIViewController(collection);
 
+        // 初期の表示状態にする
+        sut.IsActive = true;
+        sut.ShowWaitUserInput();
+
+        Assert.IsTrue(collection.IsActive);
         Assert.IsTrue(collection.connectingRequestButton.Active);
         Assert.IsFalse(collection.connectingText.Active);
         Assert.IsFalse(collection.connectedText.Active);
@@ -31,10 +51,10 @@ public class RenderingServerConnectingUIViewControllerTest
     public void ConnectUIViewController()
     {
         var collection = new UICollection();
-        var controller = new RenderingServerConnectingUIViewController(collection);
+        var sut = new RenderingServerConnectingUIViewController(collection);
 
         bool isRequestConnecting = false;
-        controller.OnRequestConnecting += () => isRequestConnecting = true;
+        sut.OnRequestConnecting += () => isRequestConnecting = true;
 
         Assert.IsFalse(isRequestConnecting);
 
@@ -47,9 +67,9 @@ public class RenderingServerConnectingUIViewControllerTest
     public void ShowConnecting()
     {
         var collection = new UICollection();
-        var controller = new RenderingServerConnectingUIViewController(collection);
+        var sut = new RenderingServerConnectingUIViewController(collection);
 
-        controller.ShowConnecting();
+        sut.ShowConnecting();
 
         Assert.IsFalse(collection.connectingRequestButton.Active);
         Assert.IsTrue(collection.connectingText.Active);
@@ -61,9 +81,9 @@ public class RenderingServerConnectingUIViewControllerTest
     public void ShowConnected()
     {
         var collection = new UICollection();
-        var controller = new RenderingServerConnectingUIViewController(collection);
+        var sut = new RenderingServerConnectingUIViewController(collection);
 
-        controller.ShowConnected();
+        sut.ShowConnected();
 
         Assert.IsFalse(collection.connectingRequestButton.Active);
         Assert.IsFalse(collection.connectingText.Active);
@@ -75,16 +95,16 @@ public class RenderingServerConnectingUIViewControllerTest
     public void ShowFailed()
     {
         var collection = new UICollection();
-        var controller = new RenderingServerConnectingUIViewController(collection);
+        var sut = new RenderingServerConnectingUIViewController(collection);
 
-        controller.ShowFailed();
+        sut.ShowFailed();
 
         Assert.IsFalse(collection.connectingRequestButton.Active);
         Assert.IsFalse(collection.connectingText.Active);
         Assert.IsFalse(collection.connectedText.Active);
         Assert.IsTrue(collection.failedText.Active);
 
-        controller.Reset(); // 接続ボタンを再表示させる
+        sut.Reset(); // 接続ボタンを再表示させる
 
         Assert.IsTrue(collection.connectingRequestButton.Active);
         Assert.IsFalse(collection.connectingText.Active);

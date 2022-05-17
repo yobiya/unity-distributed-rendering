@@ -14,6 +14,12 @@ public class RenderingServerConnectingUICollection : MonoBehaviour, RenderingSer
     [SerializeField]
     private TextUIViewAdapter _failedText;
 
+    public bool IsActive
+    {
+        get => gameObject.activeSelf;
+        set => gameObject.SetActive(true);
+    }
+
     public IButtonUIView ConnectingRequestButton => _connectingRequestButton;
     public ITextUIView ConnectingText => _connectingText;
     public ITextUIView ConnectedText => _connectedText;

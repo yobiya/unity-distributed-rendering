@@ -6,6 +6,7 @@ public interface IRenderingServerConnectingUIViewController
 
     event Action OnRequestConnecting;
 
+    void ShowWaitUserInput();
     void ShowConnecting();
     void ShowConnected();
     void ShowFailed();

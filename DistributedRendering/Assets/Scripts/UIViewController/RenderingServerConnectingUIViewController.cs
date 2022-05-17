@@ -4,6 +4,8 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
 {
     public interface IUICollection
     {
+        bool IsActive { get; set; }
+
         IButtonUIView ConnectingRequestButton { get; }
         ITextUIView ConnectingText { get; }
         ITextUIView ConnectedText { get; }
@@ -12,7 +14,11 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
 
     private readonly IUICollection _uiCollection;
 
-    public bool IsActive { get; set; }
+    public bool IsActive
+    {
+        get => _uiCollection.IsActive;
+        set => _uiCollection.IsActive = value;
+    }
 
     public event Action OnRequestConnecting;
 
@@ -21,6 +27,11 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
         _uiCollection = uiCollection;
 
         _uiCollection.ConnectingRequestButton.OnClicked += () => OnRequestConnecting?.Invoke();
+        Reset();
+    }
+
+    public void ShowWaitUserInput()
+    {
         Reset();
     }
 
