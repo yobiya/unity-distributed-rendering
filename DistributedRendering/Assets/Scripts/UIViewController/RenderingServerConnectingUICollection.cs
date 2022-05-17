@@ -17,7 +17,7 @@ public class RenderingServerConnectingUICollection : MonoBehaviour, RenderingSer
     public bool IsActive
     {
         get => gameObject.activeSelf;
-        set => gameObject.SetActive(true);
+        set => gameObject.SetActive(value);
     }
 
     public IButtonUIView ConnectingRequestButton => _connectingRequestButton;
