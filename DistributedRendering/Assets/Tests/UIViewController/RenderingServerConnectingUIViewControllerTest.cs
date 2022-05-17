@@ -18,33 +18,32 @@ public class RenderingServerConnectingUIViewControllerTest
     }
 
     [Test]
-    public void DefaultView()
+    public void Activate()
     {
         var collection = new UICollection();
         var sut = new RenderingServerConnectingUIViewController(collection);
 
-        // 表示を無効にする
-        sut.IsActive = false;
-
-        // UIの表示は無効になる
-        Assert.IsFalse(collection.IsActive);
-    }
-
-    [Test]
-    public void StartView()
-    {
-        var collection = new UICollection();
-        var sut = new RenderingServerConnectingUIViewController(collection);
-
-        // 初期の表示状態にする
-        sut.IsActive = true;
-        sut.ShowWaitUserInput();
+        // 初期状態は有効になっているので、一度無効してからActivateを呼び出す
+        sut.Deactivate();
+        sut.Activate();
 
         Assert.IsTrue(collection.IsActive);
         Assert.IsTrue(collection.connectingRequestButton.Active);
         Assert.IsFalse(collection.connectingText.Active);
         Assert.IsFalse(collection.connectedText.Active);
         Assert.IsFalse(collection.failedText.Active);
+    }
+
+    [Test]
+    public void Deactivate()
+    {
+        var collection = new UICollection();
+        var sut = new RenderingServerConnectingUIViewController(collection);
+
+        sut.Deactivate();
+
+        // UIの表示は無効になる
+        Assert.IsFalse(collection.IsActive);
     }
 
     [Test]

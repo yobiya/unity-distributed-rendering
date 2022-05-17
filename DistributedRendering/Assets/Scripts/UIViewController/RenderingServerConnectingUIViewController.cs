@@ -14,12 +14,6 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
 
     private readonly IUICollection _uiCollection;
 
-    public bool IsActive
-    {
-        get => _uiCollection.IsActive;
-        set => _uiCollection.IsActive = value;
-    }
-
     public event Action OnRequestConnecting;
 
     public RenderingServerConnectingUIViewController(IUICollection uiCollection)
@@ -30,9 +24,14 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
         Reset();
     }
 
-    public void ShowWaitUserInput()
+    public void Activate()
     {
         Reset();
+    }
+
+    public void Deactivate()
+    {
+        _uiCollection.IsActive = false;
     }
 
     public void ShowConnecting()
@@ -61,6 +60,7 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
 
     public void Reset()
     {
+        _uiCollection.IsActive = true;
         _uiCollection.ConnectingRequestButton.Active = true;
         _uiCollection.ConnectingText.Active = false;
         _uiCollection.ConnectedText.Active = false;
