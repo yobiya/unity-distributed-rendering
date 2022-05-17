@@ -4,6 +4,21 @@ using NUnit.Framework;
 public class RenderingServerConnectingProcPartTest
 {
     [Test]
+    public void DefaultView()
+    {
+        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
+        var namedPipeClientMock = new Mock<INamedPipeClient>();
+
+        var procPart
+            = new RenderingServerConnectingProcPart(
+                renderingServerConnectingUIViewControllerMock.Object,
+                namedPipeClientMock.Object,
+                new TestTimerCreator());
+
+        renderingServerConnectingUIViewControllerMock.VerifySet(m => m.IsActive = false);
+    }
+
+    [Test]
     public void StartConnectTest()
     {
         var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
@@ -19,6 +34,12 @@ public class RenderingServerConnectingProcPartTest
                 renderingServerConnectingUIViewControllerMock.Object,
                 namedPipeClientMock.Object,
                 new TestTimerCreator());
+
+        // 処理を有効にする
+        procPart.Activate();
+
+        // 処理が有効になったらUIも有効になる
+        renderingServerConnectingUIViewControllerMock.VerifySet(m => m.IsActive = true);
 
         // 接続前は何も呼ばれない
         {

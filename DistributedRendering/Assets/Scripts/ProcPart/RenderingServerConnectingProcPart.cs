@@ -22,6 +22,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
             _namedPipeClient.Connect(ConnectTimeOutTime);
             _renderingServerConnectingUIViewController.ShowConnecting();
         };
+        _renderingServerConnectingUIViewController.IsActive = false;    // 初期状態では表示は無効にする
 
         _namedPipeClient = namedPipeClient;
         _namedPipeClient.OnConnected += _renderingServerConnectingUIViewController.ShowConnected;
@@ -32,7 +33,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
 
     public void Activate()
     {
-        throw new System.NotImplementedException();
+        _renderingServerConnectingUIViewController.IsActive = true;
     }
 
     private async UniTask CreateFaildTask()
