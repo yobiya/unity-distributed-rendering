@@ -7,6 +7,8 @@ public class GameModeUIViewControllerTest
         public TestButtonUIView gameClientModeButton = new TestButtonUIView();
         public TestButtonUIView renderingServerModeButton = new TestButtonUIView();
 
+        public bool IsActive { get; set; }
+
         public IButtonUIView GameClientModeButton => gameClientModeButton;
         public IButtonUIView RenderingServerModeButton => renderingServerModeButton;
     }
@@ -17,8 +19,8 @@ public class GameModeUIViewControllerTest
         var uiCollection = new UICollection();
         var uiViewController = new GameModeUIViewController(uiCollection);
 
-        Assert.IsTrue(uiCollection.gameClientModeButton.Active);
-        Assert.IsTrue(uiCollection.renderingServerModeButton.Active);
+        // 初期状態ではUIは有効になっている
+        Assert.IsTrue(uiCollection.IsActive);
     }
 
     [Test]
@@ -34,7 +36,9 @@ public class GameModeUIViewControllerTest
 
         uiCollection.gameClientModeButton.Click();
 
+        // ボタンが押されたらUIは無効になる
         Assert.IsTrue(isSelectedGameClientMode);
+        Assert.IsFalse(uiCollection.IsActive);
     }
 
     [Test]
@@ -50,6 +54,8 @@ public class GameModeUIViewControllerTest
 
         uiCollection.renderingServerModeButton.Click();
 
+        // ボタンが押されたらUIは無効になる
         Assert.IsTrue(isSelectedRenderingServerMode);
+        Assert.IsFalse(uiCollection.IsActive);
     }
 }
