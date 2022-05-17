@@ -4,18 +4,39 @@ using NUnit.Framework;
 public class RenderingServerConnectingProcPartTest
 {
     [Test]
-    public void DefaultView()
+    public void Activate()
     {
         var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
         var namedPipeClientMock = new Mock<INamedPipeClient>();
 
-        var procPart
+        var sut
             = new RenderingServerConnectingProcPart(
                 renderingServerConnectingUIViewControllerMock.Object,
                 namedPipeClientMock.Object,
                 new TestTimerCreator());
 
-        renderingServerConnectingUIViewControllerMock.VerifySet(m => m.IsActive = false);
+        // 初期状態は有効になっているので、一度無効してからActivateを呼び出す
+        sut.Deactivate();
+        sut.Activate();
+
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.Activate());
+    }
+
+    [Test]
+    public void Deactivate()
+    {
+        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
+        var namedPipeClientMock = new Mock<INamedPipeClient>();
+
+        var sut
+            = new RenderingServerConnectingProcPart(
+                renderingServerConnectingUIViewControllerMock.Object,
+                namedPipeClientMock.Object,
+                new TestTimerCreator());
+
+        sut.Deactivate();
+
+        renderingServerConnectingUIViewControllerMock.Verify(m => m.Deactivate());
     }
 
     [Test]
@@ -29,17 +50,11 @@ public class RenderingServerConnectingProcPartTest
         namedPipeClientMock.Object.OnConnected += () => isConnected = true;
         namedPipeClientMock.Object.OnFailed += () => isFailed = true;
 
-        var procPart
+        var sut
             = new RenderingServerConnectingProcPart(
                 renderingServerConnectingUIViewControllerMock.Object,
                 namedPipeClientMock.Object,
                 new TestTimerCreator());
-
-        // 処理を有効にする
-        procPart.Activate();
-
-        // 処理が有効になったらUIも有効になる
-        renderingServerConnectingUIViewControllerMock.VerifySet(m => m.IsActive = true);
 
         // 接続前は何も呼ばれない
         {
@@ -77,7 +92,7 @@ public class RenderingServerConnectingProcPartTest
         namedPipeClientMock.Object.OnConnected += () => isConnected = true;
         namedPipeClientMock.Object.OnFailed += () => isFailed = true;
 
-        var procPart
+        var sut
             = new RenderingServerConnectingProcPart(
                 renderingServerConnectingUIViewControllerMock.Object,
                 namedPipeClientMock.Object,
@@ -114,7 +129,7 @@ public class RenderingServerConnectingProcPartTest
 
         var timerCreator = new TestTimerCreator();
 
-        var procPart
+        var sut
             = new RenderingServerConnectingProcPart(
                 renderingServerConnectingUIViewControllerMock.Object,
                 namedPipeClientMock.Object,
