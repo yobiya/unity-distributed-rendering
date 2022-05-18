@@ -7,7 +7,11 @@ public class GameClientWaitConnectionProcPartTest
     public void Activate()
     {
         var gameClientWaitConnectionUIViewControlerMock = new Mock<IGameClientWaitConnectionUIViewControler>();
-        var sut = new GameClientWaitConnectionProcPart(gameClientWaitConnectionUIViewControlerMock.Object);
+        var namedPipeServerMock = new Mock<INamedPipeServer>();
+        var sut
+            = new GameClientWaitConnectionProcPart(
+                gameClientWaitConnectionUIViewControlerMock.Object,
+                namedPipeServerMock.Object);
 
         // 初期状態は有効になっているので、一度無効にする
         sut.Deactivate();
@@ -20,10 +24,47 @@ public class GameClientWaitConnectionProcPartTest
     public void Deactivate()
     {
         var gameClientWaitConnectionUIViewControlerMock = new Mock<IGameClientWaitConnectionUIViewControler>();
-        var sut = new GameClientWaitConnectionProcPart(gameClientWaitConnectionUIViewControlerMock.Object);
+        var namedPipeServerMock = new Mock<INamedPipeServer>();
+        var sut
+            = new GameClientWaitConnectionProcPart(
+                gameClientWaitConnectionUIViewControlerMock.Object,
+                namedPipeServerMock.Object);
 
         sut.Deactivate();
 
         gameClientWaitConnectionUIViewControlerMock.Verify(m => m.Deactivate(), Times.Once);
+    }
+
+    [Test]
+    public void StartWaitClientConnection()
+    {
+        var gameClientWaitConnectionUIViewControlerMock = new Mock<IGameClientWaitConnectionUIViewControler>();
+        var namedPipeServerMock = new Mock<INamedPipeServer>();
+        var sut
+            = new GameClientWaitConnectionProcPart(
+                gameClientWaitConnectionUIViewControlerMock.Object,
+                namedPipeServerMock.Object);
+
+        sut.StartWaitConnection();
+
+        namedPipeServerMock.Verify(m => m.WaitConnection(), Times.Once);
+        gameClientWaitConnectionUIViewControlerMock.Verify(m => m.ShowWaitConnection(), Times.Once);
+    }
+
+    [Test]
+    public void ConnectedClient()
+    {
+        var gameClientWaitConnectionUIViewControlerMock = new Mock<IGameClientWaitConnectionUIViewControler>();
+        var namedPipeServerMock = new Mock<INamedPipeServer>();
+        var sut
+            = new GameClientWaitConnectionProcPart(
+                gameClientWaitConnectionUIViewControlerMock.Object,
+                namedPipeServerMock.Object);
+
+        sut.StartWaitConnection();
+
+        namedPipeServerMock.Raise(m => m.OnConnected += null);
+
+        gameClientWaitConnectionUIViewControlerMock.Verify(m => m.ShowConnected(), Times.Once);
     }
 }
