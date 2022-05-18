@@ -1,4 +1,4 @@
 public interface IBaseUIView
 {
-    bool Active { get; set; }
+    bool IsActive { get; set; }
 }

@@ -1,4 +1,4 @@
 public class TestBaseUIView : IBaseUIView
 {
-    public bool Active { get; set; } = true;
+    public bool IsActive { get; set; } = true;
 }

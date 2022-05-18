@@ -36,34 +36,34 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
 
     public void ShowConnecting()
     {
-        _uiCollection.ConnectingRequestButton.Active = false;
-        _uiCollection.ConnectingText.Active = true;
-        _uiCollection.ConnectedText.Active = false;
-        _uiCollection.FailedText.Active = false;
+        _uiCollection.ConnectingRequestButton.IsActive = false;
+        _uiCollection.ConnectingText.IsActive = true;
+        _uiCollection.ConnectedText.IsActive = false;
+        _uiCollection.FailedText.IsActive = false;
     }
 
     public void ShowConnected()
     {
-        _uiCollection.ConnectingRequestButton.Active = false;
-        _uiCollection.ConnectingText.Active = false;
-        _uiCollection.ConnectedText.Active = true;
-        _uiCollection.FailedText.Active = false;
+        _uiCollection.ConnectingRequestButton.IsActive = false;
+        _uiCollection.ConnectingText.IsActive = false;
+        _uiCollection.ConnectedText.IsActive = true;
+        _uiCollection.FailedText.IsActive = false;
     }
 
     public void ShowFailed()
     {
-        _uiCollection.ConnectingRequestButton.Active = false;
-        _uiCollection.ConnectingText.Active = false;
-        _uiCollection.ConnectedText.Active = false;
-        _uiCollection.FailedText.Active = true;
+        _uiCollection.ConnectingRequestButton.IsActive = false;
+        _uiCollection.ConnectingText.IsActive = false;
+        _uiCollection.ConnectedText.IsActive = false;
+        _uiCollection.FailedText.IsActive = true;
     }
 
     public void Reset()
     {
         _uiCollection.IsActive = true;
-        _uiCollection.ConnectingRequestButton.Active = true;
-        _uiCollection.ConnectingText.Active = false;
-        _uiCollection.ConnectedText.Active = false;
-        _uiCollection.FailedText.Active = false;
+        _uiCollection.ConnectingRequestButton.IsActive = true;
+        _uiCollection.ConnectingText.IsActive = false;
+        _uiCollection.ConnectedText.IsActive = false;
+        _uiCollection.FailedText.IsActive = false;
     }
 }

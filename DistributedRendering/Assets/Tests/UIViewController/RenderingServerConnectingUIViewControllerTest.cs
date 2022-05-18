@@ -28,10 +28,10 @@ public class RenderingServerConnectingUIViewControllerTest
         sut.Activate();
 
         Assert.IsTrue(collection.IsActive);
-        Assert.IsTrue(collection.connectingRequestButton.Active);
-        Assert.IsFalse(collection.connectingText.Active);
-        Assert.IsFalse(collection.connectedText.Active);
-        Assert.IsFalse(collection.failedText.Active);
+        Assert.IsTrue(collection.connectingRequestButton.IsActive);
+        Assert.IsFalse(collection.connectingText.IsActive);
+        Assert.IsFalse(collection.connectedText.IsActive);
+        Assert.IsFalse(collection.failedText.IsActive);
     }
 
     [Test]
@@ -70,10 +70,10 @@ public class RenderingServerConnectingUIViewControllerTest
 
         sut.ShowConnecting();
 
-        Assert.IsFalse(collection.connectingRequestButton.Active);
-        Assert.IsTrue(collection.connectingText.Active);
-        Assert.IsFalse(collection.connectedText.Active);
-        Assert.IsFalse(collection.failedText.Active);
+        Assert.IsFalse(collection.connectingRequestButton.IsActive);
+        Assert.IsTrue(collection.connectingText.IsActive);
+        Assert.IsFalse(collection.connectedText.IsActive);
+        Assert.IsFalse(collection.failedText.IsActive);
     }
 
     [Test]
@@ -84,10 +84,10 @@ public class RenderingServerConnectingUIViewControllerTest
 
         sut.ShowConnected();
 
-        Assert.IsFalse(collection.connectingRequestButton.Active);
-        Assert.IsFalse(collection.connectingText.Active);
-        Assert.IsTrue(collection.connectedText.Active);
-        Assert.IsFalse(collection.failedText.Active);
+        Assert.IsFalse(collection.connectingRequestButton.IsActive);
+        Assert.IsFalse(collection.connectingText.IsActive);
+        Assert.IsTrue(collection.connectedText.IsActive);
+        Assert.IsFalse(collection.failedText.IsActive);
     }
 
     [Test]
@@ -98,16 +98,16 @@ public class RenderingServerConnectingUIViewControllerTest
 
         sut.ShowFailed();
 
-        Assert.IsFalse(collection.connectingRequestButton.Active);
-        Assert.IsFalse(collection.connectingText.Active);
-        Assert.IsFalse(collection.connectedText.Active);
-        Assert.IsTrue(collection.failedText.Active);
+        Assert.IsFalse(collection.connectingRequestButton.IsActive);
+        Assert.IsFalse(collection.connectingText.IsActive);
+        Assert.IsFalse(collection.connectedText.IsActive);
+        Assert.IsTrue(collection.failedText.IsActive);
 
         sut.Reset(); // 接続ボタンを再表示させる
 
-        Assert.IsTrue(collection.connectingRequestButton.Active);
-        Assert.IsFalse(collection.connectingText.Active);
-        Assert.IsFalse(collection.connectedText.Active);
-        Assert.IsFalse(collection.failedText.Active);
+        Assert.IsTrue(collection.connectingRequestButton.IsActive);
+        Assert.IsFalse(collection.connectingText.IsActive);
+        Assert.IsFalse(collection.connectedText.IsActive);
+        Assert.IsFalse(collection.failedText.IsActive);
     }
 }
