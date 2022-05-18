@@ -33,7 +33,7 @@ public class RootScript : MonoBehaviour
                     new TimerCreator());
         }
 
-        ProcPartBinder.Bind(_gameModeProcPart, _renderingServerConnectingProcPart);
+        ProcPartBinder.Bind(_gameModeProcPart, _renderingServerConnectingProcPart, null);
 
         // 初期状態で使用されないものを無効にする
         _renderingServerConnectingProcPart.Deactivate();
