@@ -1,13 +1,13 @@
 public class GameClientWaitConnectionUIViewControler : IGameClientWaitConnectionUIViewControler
 {
-    public interface UICollection
+    public interface IUICollection
     {
         bool IsActive { get; set; }
     };
 
-    private readonly UICollection _uiCollection;
+    private readonly IUICollection _uiCollection;
 
-    public GameClientWaitConnectionUIViewControler(UICollection uICollection)
+    public GameClientWaitConnectionUIViewControler(IUICollection uICollection)
     {
         _uiCollection = uICollection;
     }

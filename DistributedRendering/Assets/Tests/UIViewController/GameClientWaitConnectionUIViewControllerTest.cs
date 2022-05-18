@@ -2,7 +2,7 @@ using NUnit.Framework;
 
 public class GameClientWaitConnectionUIViewControllerTest
 {
-    class UICollection : GameClientWaitConnectionUIViewControler.UICollection
+    class UICollection : GameClientWaitConnectionUIViewControler.IUICollection
     {
         public bool IsActive { get; set; }
     }
