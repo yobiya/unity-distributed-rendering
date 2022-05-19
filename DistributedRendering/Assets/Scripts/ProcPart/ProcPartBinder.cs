@@ -6,6 +6,10 @@ public class ProcPartBinder
         IGameClientWaitConnectionProcPart gameClientWaitConnectionProcPart)
     {
         gameModeProcPart.OnSelectedGameClientMode += renderingServerConnectingProcPart.Activate;
-        gameModeProcPart.OnSelectedRenderingServerMode += gameClientWaitConnectionProcPart.Activate;
+        gameModeProcPart.OnSelectedRenderingServerMode += () =>
+        {
+            gameClientWaitConnectionProcPart.Activate();
+            gameClientWaitConnectionProcPart.StartWaitConnection();
+        };
     }
 }
