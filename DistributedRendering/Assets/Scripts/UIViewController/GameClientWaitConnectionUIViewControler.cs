@@ -3,6 +3,8 @@ public class GameClientWaitConnectionUIViewControler : IGameClientWaitConnection
     public interface IUICollection
     {
         bool IsActive { get; set; }
+        ITextUIView WaitConnectionText { get; }
+        ITextUIView ConnectedText { get; }
     };
 
     private readonly IUICollection _uiCollection;
@@ -24,11 +26,13 @@ public class GameClientWaitConnectionUIViewControler : IGameClientWaitConnection
 
     public void ShowWaitConnection()
     {
-        throw new System.NotImplementedException();
+        _uiCollection.WaitConnectionText.IsActive = true;
+        _uiCollection.ConnectedText.IsActive = false;
     }
 
     public void ShowConnected()
     {
-        throw new System.NotImplementedException();
+        _uiCollection.WaitConnectionText.IsActive = false;
+        _uiCollection.ConnectedText.IsActive = true;
     }
 }
