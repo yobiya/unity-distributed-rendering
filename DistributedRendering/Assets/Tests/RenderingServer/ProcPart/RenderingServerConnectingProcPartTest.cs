@@ -10,6 +10,13 @@ public class RenderingServerConnectingProcPartTest
         public Mock<IRenderingServerConnectingUIViewController> renderingServerConnectingUIViewControllerMock;
         public Mock<ITestMessageSendUIViewController> testMessageSendUIViewControllerMock;
         public Mock<INamedPipeClient> namedPipeClientMock;
+
+        public void MockVerifyNoOtherCalls()
+        {
+            renderingServerConnectingUIViewControllerMock.VerifyNoOtherCalls();
+            testMessageSendUIViewControllerMock.VerifyNoOtherCalls();
+            namedPipeClientMock.VerifyNoOtherCalls();
+        }
     }
 
     private TestCollection CreateSUT()
@@ -40,6 +47,7 @@ public class RenderingServerConnectingProcPartTest
         }
 
         var collection = new TestCollection();
+        collection.sut = sut;
         collection.renderingServerConnectingUIViewControllerMock = renderingServerConnectingUIViewControllerMock;
         collection.testMessageSendUIViewControllerMock = testMessageSendUIViewControllerMock;
         collection.namedPipeClientMock = namedPipeClientMock;
@@ -50,41 +58,26 @@ public class RenderingServerConnectingProcPartTest
     [Test]
     public void Activate()
     {
-        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
-        var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
-        var namedPipeClientMock = new Mock<INamedPipeClient>();
-
-        var sut
-            = new RenderingServerConnectingProcPart(
-                renderingServerConnectingUIViewControllerMock.Object,
-                testMessageSendUIViewControllerMock.Object,
-                namedPipeClientMock.Object,
-                new TestTimerCreator());
+        var collection = CreateSUT();
 
         // 初期状態は有効になっているので、一度無効してからActivateを呼び出す
-        sut.Deactivate();
-        sut.Activate();
+        collection.sut.Deactivate();
+        collection.sut.Activate();
 
-        renderingServerConnectingUIViewControllerMock.Verify(m => m.Activate());
+        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Deactivate());
+        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Activate());
+        collection.MockVerifyNoOtherCalls();
     }
 
     [Test]
     public void Deactivate()
     {
-        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
-        var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
-        var namedPipeClientMock = new Mock<INamedPipeClient>();
+        var collection = CreateSUT();
 
-        var sut
-            = new RenderingServerConnectingProcPart(
-                renderingServerConnectingUIViewControllerMock.Object,
-                testMessageSendUIViewControllerMock.Object,
-                namedPipeClientMock.Object,
-                new TestTimerCreator());
+        collection.sut.Deactivate();
 
-        sut.Deactivate();
-
-        renderingServerConnectingUIViewControllerMock.Verify(m => m.Deactivate());
+        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Deactivate());
+        collection.MockVerifyNoOtherCalls();
     }
 
     [Test]
@@ -152,9 +145,7 @@ public class RenderingServerConnectingProcPartTest
             collection.testMessageSendUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
         }
 
-        collection.renderingServerConnectingUIViewControllerMock.VerifyNoOtherCalls();
-        collection.testMessageSendUIViewControllerMock.VerifyNoOtherCalls();
-        collection.namedPipeClientMock.VerifyNoOtherCalls();
+        collection.MockVerifyNoOtherCalls();
     }
 
     [Test]
