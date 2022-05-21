@@ -1,3 +1,4 @@
+using System;
 using Moq;
 using NUnit.Framework;
 
@@ -17,12 +18,26 @@ public class RenderingServerConnectingProcPartTest
         var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
         var namedPipeClientMock = new Mock<INamedPipeClient>();
 
+        // イベントのVerifyができるように設定する
+        {
+            renderingServerConnectingUIViewControllerMock.SetupAdd(m => m.OnRequestConnecting += It.IsAny<Action>());
+            namedPipeClientMock.SetupAdd(m => m.OnConnected += It.IsAny<Action>()).Verifiable();
+            namedPipeClientMock.SetupAdd(m => m.OnFailed += It.IsAny<Action>()).Verifiable();
+        }
+
         var sut
             = new RenderingServerConnectingProcPart(
                 renderingServerConnectingUIViewControllerMock.Object,
                 testMessageSendUIViewControllerMock.Object,
                 namedPipeClientMock.Object,
                 new TestTimerCreator());
+
+        // コンストラクタで登録されたイベントのVerifyを行う
+        {
+            renderingServerConnectingUIViewControllerMock.VerifyAdd(m => m.OnRequestConnecting += It.IsAny<Action>(), Times.Once);
+            namedPipeClientMock.VerifyAdd(m => m.OnConnected += It.IsAny<Action>(), Times.Once);
+            namedPipeClientMock.VerifyAdd(m => m.OnFailed += It.IsAny<Action>(), Times.Once);
+        }
 
         var collection = new TestCollection();
         collection.renderingServerConnectingUIViewControllerMock = renderingServerConnectingUIViewControllerMock;
@@ -121,30 +136,25 @@ public class RenderingServerConnectingProcPartTest
     {
         var collection = CreateSUT();
 
-        bool isConnected = false;
-        bool isFailed = false;
-        collection.namedPipeClientMock.Object.OnConnected += () => isConnected = true;
-        collection.namedPipeClientMock.Object.OnFailed += () => isFailed = true;
-
         // UIから接続のリクエストが呼ばれる
         collection.renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
+        collection.namedPipeClientMock.Verify(m => m.Connect(It.IsAny<int>()));
 
         // 接続成功
         collection.namedPipeClientMock.Raise(m => m.OnConnected += null);
 
         {
-            Assert.IsTrue(isConnected);
-            Assert.IsFalse(isFailed);
-
             // UIが接続済みの表示になる
             collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
             collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Once);
-            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Never);
-            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Never);
 
             // テストメッセージ送信用のボタンが表示になる
             collection.testMessageSendUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
         }
+
+        collection.renderingServerConnectingUIViewControllerMock.VerifyNoOtherCalls();
+        collection.testMessageSendUIViewControllerMock.VerifyNoOtherCalls();
+        collection.namedPipeClientMock.VerifyNoOtherCalls();
     }
 
     [Test]
