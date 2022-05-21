@@ -6,11 +6,13 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
     private const float FaildTextDisplayTime = 3.0f;
 
     private readonly IRenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
+    private readonly ITestMessageSendUIViewController _testMessageSendUIViewController;
     private readonly INamedPipeClient _namedPipeClient;
     private readonly ITimerCreator _timerCreator;
 
     public RenderingServerConnectingProcPart(
         IRenderingServerConnectingUIViewController renderingServerConnectingUIViewController,
+        ITestMessageSendUIViewController testMessageSendUIViewController,
         INamedPipeClient namedPipeClient,
         ITimerCreator timerCreator)
     {
@@ -21,8 +23,14 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
             _renderingServerConnectingUIViewController.ShowConnecting();
         };
 
+        _testMessageSendUIViewController = testMessageSendUIViewController;
+
         _namedPipeClient = namedPipeClient;
-        _namedPipeClient.OnConnected += _renderingServerConnectingUIViewController.ShowConnected;
+        _namedPipeClient.OnConnected += () =>
+        {
+            _renderingServerConnectingUIViewController.ShowConnected();
+            _testMessageSendUIViewController.Activate();
+        };
         _namedPipeClient.OnFailed += () => CreateFaildTask().Forget();
 
         _timerCreator = timerCreator;

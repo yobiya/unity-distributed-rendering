@@ -7,11 +7,13 @@ public class RenderingServerConnectingProcPartTest
     public void Activate()
     {
         var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
+        var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
         var namedPipeClientMock = new Mock<INamedPipeClient>();
 
         var sut
             = new RenderingServerConnectingProcPart(
                 renderingServerConnectingUIViewControllerMock.Object,
+                testMessageSendUIViewControllerMock.Object,
                 namedPipeClientMock.Object,
                 new TestTimerCreator());
 
@@ -26,11 +28,13 @@ public class RenderingServerConnectingProcPartTest
     public void Deactivate()
     {
         var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
+        var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
         var namedPipeClientMock = new Mock<INamedPipeClient>();
 
         var sut
             = new RenderingServerConnectingProcPart(
                 renderingServerConnectingUIViewControllerMock.Object,
+                testMessageSendUIViewControllerMock.Object,
                 namedPipeClientMock.Object,
                 new TestTimerCreator());
 
@@ -43,6 +47,7 @@ public class RenderingServerConnectingProcPartTest
     public void StartConnectTest()
     {
         var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
+        var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
         var namedPipeClientMock = new Mock<INamedPipeClient>();
 
         bool isConnected = false;
@@ -53,6 +58,7 @@ public class RenderingServerConnectingProcPartTest
         var sut
             = new RenderingServerConnectingProcPart(
                 renderingServerConnectingUIViewControllerMock.Object,
+                testMessageSendUIViewControllerMock.Object,
                 namedPipeClientMock.Object,
                 new TestTimerCreator());
 
@@ -85,6 +91,7 @@ public class RenderingServerConnectingProcPartTest
     public void ConnectSuccessTest()
     {
         var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
+        var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
         var namedPipeClientMock = new Mock<INamedPipeClient>();
 
         bool isConnected = false;
@@ -95,6 +102,7 @@ public class RenderingServerConnectingProcPartTest
         var sut
             = new RenderingServerConnectingProcPart(
                 renderingServerConnectingUIViewControllerMock.Object,
+                testMessageSendUIViewControllerMock.Object,
                 namedPipeClientMock.Object,
                 new TestTimerCreator());
 
@@ -104,14 +112,18 @@ public class RenderingServerConnectingProcPartTest
         // 接続成功
         namedPipeClientMock.Raise(m => m.OnConnected += null);
 
-        // 接続が成功したら、UIが接続済みの表示になる
         {
             Assert.IsTrue(isConnected);
             Assert.IsFalse(isFailed);
+
+            // UIが接続済みの表示になる
             renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
             renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Once);
             renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Never);
             renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Never);
+
+            // テストメッセージ送信用のボタンが表示になる
+            testMessageSendUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
         }
     }
 
@@ -119,7 +131,7 @@ public class RenderingServerConnectingProcPartTest
     public void ConnectTimeOutTest()
     {
         var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
-
+        var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
         var namedPipeClientMock = new Mock<INamedPipeClient>();
 
         bool isConnected = false;
@@ -132,6 +144,7 @@ public class RenderingServerConnectingProcPartTest
         var sut
             = new RenderingServerConnectingProcPart(
                 renderingServerConnectingUIViewControllerMock.Object,
+                testMessageSendUIViewControllerMock.Object,
                 namedPipeClientMock.Object,
                 timerCreator);
 

@@ -9,6 +9,9 @@ public class RootScript : MonoBehaviour
     private RenderingServerConnectingUICollection _renderingServerConnectingUICollection;
 
     [SerializeField]
+    private TestMessageSendUICollection _testMessageSendUICollection;
+
+    [SerializeField]
     private GameClientWaitConnectionUICollection _gameClientWaitConnectionUICollection;
 
     private GameModeProcPart _gameModeProcPart;
@@ -18,6 +21,7 @@ public class RootScript : MonoBehaviour
     private GameModeUIViewController _gameModeUIViewController;
     private RenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
     private GameClientWaitConnectionUIViewControler _gameClientWaitConnectionUIViewControler;
+    private TestMessageSendUIViewController _testMessageSendUIViewController;
 
     void Start()
     {
@@ -29,9 +33,11 @@ public class RootScript : MonoBehaviour
         {
             var namedPipeClient = new NamedPipeClient(".", "test");
             _renderingServerConnectingUIViewController = new RenderingServerConnectingUIViewController(_renderingServerConnectingUICollection);
+            _testMessageSendUIViewController = new TestMessageSendUIViewController(_testMessageSendUICollection);
             _renderingServerConnectingProcPart
                 = new RenderingServerConnectingProcPart(
                     _renderingServerConnectingUIViewController,
+                    _testMessageSendUIViewController,
                     namedPipeClient,
                     new TimerCreator());
         }
