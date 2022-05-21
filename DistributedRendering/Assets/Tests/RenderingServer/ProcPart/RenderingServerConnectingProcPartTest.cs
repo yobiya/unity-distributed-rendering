@@ -3,6 +3,35 @@ using NUnit.Framework;
 
 public class RenderingServerConnectingProcPartTest
 {
+    struct TestCollection
+    {
+        public RenderingServerConnectingProcPart sut;
+        public Mock<IRenderingServerConnectingUIViewController> renderingServerConnectingUIViewControllerMock;
+        public Mock<ITestMessageSendUIViewController> testMessageSendUIViewControllerMock;
+        public Mock<INamedPipeClient> namedPipeClientMock;
+    }
+
+    private TestCollection CreateSUT()
+    {
+        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
+        var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
+        var namedPipeClientMock = new Mock<INamedPipeClient>();
+
+        var sut
+            = new RenderingServerConnectingProcPart(
+                renderingServerConnectingUIViewControllerMock.Object,
+                testMessageSendUIViewControllerMock.Object,
+                namedPipeClientMock.Object,
+                new TestTimerCreator());
+
+        var collection = new TestCollection();
+        collection.renderingServerConnectingUIViewControllerMock = renderingServerConnectingUIViewControllerMock;
+        collection.testMessageSendUIViewControllerMock = testMessageSendUIViewControllerMock;
+        collection.namedPipeClientMock = namedPipeClientMock;
+
+        return collection;
+    }
+
     [Test]
     public void Activate()
     {
@@ -90,40 +119,31 @@ public class RenderingServerConnectingProcPartTest
     [Test]
     public void ConnectSuccessTest()
     {
-        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
-        var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
-        var namedPipeClientMock = new Mock<INamedPipeClient>();
+        var collection = CreateSUT();
 
         bool isConnected = false;
         bool isFailed = false;
-        namedPipeClientMock.Object.OnConnected += () => isConnected = true;
-        namedPipeClientMock.Object.OnFailed += () => isFailed = true;
-
-        var sut
-            = new RenderingServerConnectingProcPart(
-                renderingServerConnectingUIViewControllerMock.Object,
-                testMessageSendUIViewControllerMock.Object,
-                namedPipeClientMock.Object,
-                new TestTimerCreator());
+        collection.namedPipeClientMock.Object.OnConnected += () => isConnected = true;
+        collection.namedPipeClientMock.Object.OnFailed += () => isFailed = true;
 
         // UIから接続のリクエストが呼ばれる
-        renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
+        collection.renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
 
         // 接続成功
-        namedPipeClientMock.Raise(m => m.OnConnected += null);
+        collection.namedPipeClientMock.Raise(m => m.OnConnected += null);
 
         {
             Assert.IsTrue(isConnected);
             Assert.IsFalse(isFailed);
 
             // UIが接続済みの表示になる
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Once);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Never);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Never);
+            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
+            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Once);
+            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Never);
+            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Never);
 
             // テストメッセージ送信用のボタンが表示になる
-            testMessageSendUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
+            collection.testMessageSendUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
         }
     }
 
