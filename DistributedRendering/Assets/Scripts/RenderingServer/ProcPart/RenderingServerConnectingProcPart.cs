@@ -24,6 +24,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
         };
 
         _testMessageSendUIViewController = testMessageSendUIViewController;
+        _testMessageSendUIViewController.OnSend += () => _namedPipeClient.Write("Test message.");
 
         _namedPipeClient = namedPipeClient;
         _namedPipeClient.OnConnected += () =>

@@ -30,6 +30,7 @@ public class RenderingServerConnectingProcPartTest
         // イベントのVerifyができるように設定する
         {
             renderingServerConnectingUIViewControllerMock.SetupAdd(m => m.OnRequestConnecting += It.IsAny<Action>());
+            testMessageSendUIViewControllerMock.SetupAdd(m => m.OnSend += It.IsAny<Action>());
             namedPipeClientMock.SetupAdd(m => m.OnConnected += It.IsAny<Action>()).Verifiable();
             namedPipeClientMock.SetupAdd(m => m.OnFailed += It.IsAny<Action>()).Verifiable();
         }
@@ -44,6 +45,7 @@ public class RenderingServerConnectingProcPartTest
         // コンストラクタで登録されたイベントのVerifyを行う
         {
             renderingServerConnectingUIViewControllerMock.VerifyAdd(m => m.OnRequestConnecting += It.IsAny<Action>(), Times.Once);
+            testMessageSendUIViewControllerMock.VerifyAdd(m => m.OnSend += It.IsAny<Action>());
             namedPipeClientMock.VerifyAdd(m => m.OnConnected += It.IsAny<Action>(), Times.Once);
             namedPipeClientMock.VerifyAdd(m => m.OnFailed += It.IsAny<Action>(), Times.Once);
         }
@@ -147,5 +149,23 @@ public class RenderingServerConnectingProcPartTest
             collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Once);
             collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Once);
         }
+    }
+
+    [Test]
+    public void SendTestMessage()
+    {
+        var collection = CreateSUT();
+
+        // UIから接続のリクエストが呼ばれる
+        collection.renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
+        collection.namedPipeClientMock.Verify(m => m.Connect(It.IsAny<int>()));
+
+        // 接続成功
+        collection.namedPipeClientMock.Raise(m => m.OnConnected += null);
+
+        // テストメッセージを送信
+        collection.testMessageSendUIViewControllerMock.Raise(m => m.OnSend += null);
+
+        collection.namedPipeClientMock.Verify(m => m.Write("Test message."), Times.Once);
     }
 }
