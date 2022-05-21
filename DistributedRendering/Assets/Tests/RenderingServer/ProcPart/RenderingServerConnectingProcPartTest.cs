@@ -10,6 +10,7 @@ public class RenderingServerConnectingProcPartTest
         public Mock<IRenderingServerConnectingUIViewController> renderingServerConnectingUIViewControllerMock;
         public Mock<ITestMessageSendUIViewController> testMessageSendUIViewControllerMock;
         public Mock<INamedPipeClient> namedPipeClientMock;
+        public TestTimerCreator timerCreator;
 
         public void MockVerifyNoOtherCalls()
         {
@@ -24,6 +25,7 @@ public class RenderingServerConnectingProcPartTest
         var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
         var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
         var namedPipeClientMock = new Mock<INamedPipeClient>();
+        var timerCreator = new TestTimerCreator();
 
         // イベントのVerifyができるように設定する
         {
@@ -37,7 +39,7 @@ public class RenderingServerConnectingProcPartTest
                 renderingServerConnectingUIViewControllerMock.Object,
                 testMessageSendUIViewControllerMock.Object,
                 namedPipeClientMock.Object,
-                new TestTimerCreator());
+                timerCreator);
 
         // コンストラクタで登録されたイベントのVerifyを行う
         {
@@ -51,6 +53,7 @@ public class RenderingServerConnectingProcPartTest
         collection.renderingServerConnectingUIViewControllerMock = renderingServerConnectingUIViewControllerMock;
         collection.testMessageSendUIViewControllerMock = testMessageSendUIViewControllerMock;
         collection.namedPipeClientMock = namedPipeClientMock;
+        collection.timerCreator = timerCreator;
 
         return collection;
     }
@@ -83,45 +86,18 @@ public class RenderingServerConnectingProcPartTest
     [Test]
     public void StartConnectTest()
     {
-        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
-        var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
-        var namedPipeClientMock = new Mock<INamedPipeClient>();
-
-        bool isConnected = false;
-        bool isFailed = false;
-        namedPipeClientMock.Object.OnConnected += () => isConnected = true;
-        namedPipeClientMock.Object.OnFailed += () => isFailed = true;
-
-        var sut
-            = new RenderingServerConnectingProcPart(
-                renderingServerConnectingUIViewControllerMock.Object,
-                testMessageSendUIViewControllerMock.Object,
-                namedPipeClientMock.Object,
-                new TestTimerCreator());
-
-        // 接続前は何も呼ばれない
-        {
-            Assert.IsFalse(isConnected);
-            Assert.IsFalse(isFailed);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Never);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Never);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Never);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Never);
-        }
+        var collection = CreateSUT();
 
         // UIから接続のリクエストが呼ばれる
-        renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
+        collection.renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
 
         // 接続処理が呼び出されて、接続中の表示になる
         {
-            Assert.IsFalse(isConnected);
-            Assert.IsFalse(isFailed);
-            namedPipeClientMock.Verify(m => m.Connect(It.IsAny<int>()), Times.Once);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Never);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Never);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Never);
+            collection.namedPipeClientMock.Verify(m => m.Connect(It.IsAny<int>()), Times.Once);
+            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
         }
+
+        collection.MockVerifyNoOtherCalls();
     }
 
     [Test]
@@ -151,49 +127,25 @@ public class RenderingServerConnectingProcPartTest
     [Test]
     public void ConnectTimeOutTest()
     {
-        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
-        var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
-        var namedPipeClientMock = new Mock<INamedPipeClient>();
-
-        bool isConnected = false;
-        bool isFailed = false;
-        namedPipeClientMock.Object.OnConnected += () => isConnected = true;
-        namedPipeClientMock.Object.OnFailed += () => isFailed = true;
-
-        var timerCreator = new TestTimerCreator();
-
-        var sut
-            = new RenderingServerConnectingProcPart(
-                renderingServerConnectingUIViewControllerMock.Object,
-                testMessageSendUIViewControllerMock.Object,
-                namedPipeClientMock.Object,
-                timerCreator);
+        var collection = CreateSUT();
 
         // UIから接続のリクエストが呼ばれる
-        renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
+        collection.renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
 
         // 接続失敗
-        namedPipeClientMock.Raise(m => m.OnFailed += null);
+        collection.namedPipeClientMock.Raise(m => m.OnFailed += null);
 
         // 接続に失敗したら、UIが接続失敗の表示になる
-        {
-            Assert.IsFalse(isConnected);
-            Assert.IsTrue(isFailed);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Never);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Once);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Never);
-        }
+        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
 
         // 失敗表示の表示時間を終了させる
-        timerCreator.EndTimer(0);
+        collection.timerCreator.EndTimer(0);
 
         // 接続失敗の表示時間が終了したら、Resetが呼ばれてUIが初期状態に戻る
         {
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Never);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Once);
-            renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Once);
+            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
+            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Once);
+            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Once);
         }
     }
 }
