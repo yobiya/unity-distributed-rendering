@@ -13,40 +13,35 @@ public class NamedPipeServer : INamedPipeServer
 
     public async Task WaitConnection()
     {
-        NamedPipeServerStream pipeServer = null;
-        await Task.Run(() =>
-            {
-                pipeServer
-                    = new NamedPipeServerStream(
-                        "test",
-                        PipeDirection.In,
-                        NamedPipeServerStream.MaxAllowedServerInstances,
-                        PipeTransmissionMode.Message,
-                        PipeOptions.Asynchronous);
-                pipeServer.WaitForConnection();
-            });
+        using var pipeServer
+            = new NamedPipeServerStream(
+                "test",
+                PipeDirection.In,
+                NamedPipeServerStream.MaxAllowedServerInstances,
+                PipeTransmissionMode.Message,
+                PipeOptions.Asynchronous);
+        await pipeServer.WaitForConnectionAsync();
 
         OnConnected?.Invoke();
 
-        await UniTask.Create(async () =>
+        using var pipeReader = new StreamReader(pipeServer);
+        while (!_isFinished)
+        {
+            try
             {
-                using var pipeReader = new StreamReader(pipeServer);
-                while (!_isFinished)
+                var text = await pipeReader.ReadLineAsync();
+
+                if (text.Length > 0)
                 {
-                    var text = pipeReader.ReadLine();
-
-                    if (text.Length > 0)
-                    {
-                        Debug.Log(text);
-                    }
-
-                    await UniTask.NextFrame();
+                    Debug.Log(text);
                 }
-
-                await UniTask.CompletedTask;
-            });
-        
-        pipeServer.Dispose();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.ToString());
+                _isFinished = true;
+            }
+        }
     }
 
     public void Finish()
