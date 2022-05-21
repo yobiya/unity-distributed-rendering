@@ -1,6 +1,6 @@
 using System;
 
-public class TestSendMessageUIViewController : ITestSendMessageUIViewController
+public class TestMessageSendUIViewController : ITestMessageSendUIViewController
 {
     public event Action OnSend;
 

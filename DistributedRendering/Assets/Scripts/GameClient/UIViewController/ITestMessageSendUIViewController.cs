@@ -1,6 +1,6 @@
 using System;
 
-public interface ITestSendMessageUIViewController
+public interface ITestMessageSendUIViewController
 {
     event Action OnSend;
 
