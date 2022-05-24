@@ -1,3 +1,6 @@
+namespace Common
+{
+
 public class ProcPartBinder
 {
     public static void Bind(
@@ -12,4 +15,6 @@ public class ProcPartBinder
             gameClientWaitConnectionProcPart.StartWaitConnection();
         };
     }
+}
+
 }

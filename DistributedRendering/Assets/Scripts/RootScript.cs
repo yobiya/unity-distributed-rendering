@@ -1,4 +1,5 @@
 using UnityEngine;
+using Common;
 
 public class RootScript : MonoBehaviour
 {
