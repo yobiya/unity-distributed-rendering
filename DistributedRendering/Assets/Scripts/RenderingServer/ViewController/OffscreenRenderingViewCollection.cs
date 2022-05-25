@@ -4,7 +4,7 @@ using UnityEngine;
 namespace RenderingServer
 {
 
-public class OffscreenRenderingViewCollection : OffscreenRenderingViewController.IViewCollection
+public class OffscreenRenderingViewCollection : MonoBehaviour, OffscreenRenderingViewController.IViewCollection
 {
     [SerializeField]
     private CameraViewAdapter _camera;

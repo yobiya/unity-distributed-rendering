@@ -16,6 +16,9 @@ public class RootScript : MonoBehaviour
     [SerializeField]
     private GameClientWaitConnectionUICollection _gameClientWaitConnectionUICollection;
 
+    [SerializeField]
+    private OffscreenRenderingViewCollection _offscreenRenderingViewCollection;
+
     private GameModeProcPart _gameModeProcPart;
     private RenderingServerConnectingProcPart _renderingServerConnectingProcPart;
     private GameClientWaitConnectionProcPart _gameClientWaitConnectionProcPart;
@@ -25,6 +28,7 @@ public class RootScript : MonoBehaviour
     private RenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
     private GameClientWaitConnectionUIViewControler _gameClientWaitConnectionUIViewControler;
     private TestMessageSendUIViewController _testMessageSendUIViewController;
+    private OffscreenRenderingViewController _offscreenRenderingViewController;
 
     void Start()
     {
@@ -52,6 +56,11 @@ public class RootScript : MonoBehaviour
                 = new GameClientWaitConnectionProcPart(
                     _gameClientWaitConnectionUIViewControler,
                     namedPipeServer);
+        }
+
+        {
+            _offscreenRenderingViewController = new OffscreenRenderingViewController(_offscreenRenderingViewCollection);
+            _offscreenRenderingProcPart = new OffscreenRenderingProcPart(_offscreenRenderingViewController);
         }
 
         ProcPartBinder
