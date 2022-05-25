@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Common
 {
 
-public class BaseUIViewAdapter : MonoBehaviour, IBaseView
+public class BaseViewAdapter : MonoBehaviour, IBaseView
 {
     public bool IsActive
     {

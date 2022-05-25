@@ -1,7 +1,7 @@
 namespace Common
 {
 
-public class TextUIViewAdapter : BaseUIViewAdapter, ITextUIView
+public class TextUIViewAdapter : BaseViewAdapter, ITextUIView
 {
 }
 

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace Common
 {
 
-public class ButtonUIViewAdapter : BaseUIViewAdapter, IButtonUIView
+public class ButtonUIViewAdapter : BaseViewAdapter, IButtonUIView
 {
     [SerializeField]
     private Button _button;
