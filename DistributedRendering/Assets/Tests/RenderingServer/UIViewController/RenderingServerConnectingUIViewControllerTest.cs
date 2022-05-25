@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using Common;
 
 public class RenderingServerConnectingUIViewControllerTest
 {

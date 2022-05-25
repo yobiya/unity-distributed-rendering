@@ -1,3 +1,5 @@
+using Common;
+
 public class GameClientWaitConnectionUIViewControler : IGameClientWaitConnectionUIViewControler
 {
     public interface IUICollection

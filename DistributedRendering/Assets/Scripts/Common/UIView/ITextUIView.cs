@@ -1,3 +1,8 @@
-public interface ITextUIView : IBaseUIView
+namespace Common
 {
+
+public interface ITextUIView : IBaseView
+{
+}
+
 }

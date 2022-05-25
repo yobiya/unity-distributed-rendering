@@ -1,6 +1,11 @@
 using System;
 
-public interface IButtonUIView : IBaseUIView
+namespace Common
+{
+
+public interface IButtonUIView : IBaseView
 {
     event Action OnClicked;
+}
+
 }
