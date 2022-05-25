@@ -1,5 +1,8 @@
 using System;
 
+namespace Common
+{
+
 public class GameModeProcPart : IGameModeProcPart
 {
     public event Action OnSelectedGameClientMode;
@@ -19,4 +22,6 @@ public class GameModeProcPart : IGameModeProcPart
             OnSelectedRenderingServerMode?.Invoke();
         };
     }
+}
+
 }

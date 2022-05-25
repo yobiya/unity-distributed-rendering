@@ -1,5 +1,8 @@
 using System;
 
+namespace Common
+{
+
 public class GameModeUIViewController : IGameModeUIViewController
 {
     public interface IUICollection
@@ -36,4 +39,6 @@ public class GameModeUIViewController : IGameModeUIViewController
             OnSelectedRenderingServerMode?.Invoke();
         };
     }
+}
+
 }

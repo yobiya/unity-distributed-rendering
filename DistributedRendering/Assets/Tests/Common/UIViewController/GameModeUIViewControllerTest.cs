@@ -1,5 +1,8 @@
 using NUnit.Framework;
 
+namespace Common
+{
+
 public class GameModeUIViewControllerTest
 {
     private class UICollection : GameModeUIViewController.IUICollection
@@ -58,4 +61,6 @@ public class GameModeUIViewControllerTest
         Assert.IsTrue(isSelectedRenderingServerMode);
         Assert.IsFalse(uiCollection.IsActive);
     }
+}
+
 }

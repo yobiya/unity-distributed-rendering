@@ -1,5 +1,8 @@
 using UnityEngine;
 
+namespace Common
+{
+
 public class GameModeUICollection : MonoBehaviour, GameModeUIViewController.IUICollection
 {
     [SerializeField]
@@ -16,4 +19,6 @@ public class GameModeUICollection : MonoBehaviour, GameModeUIViewController.IUIC
 
     public IButtonUIView GameClientModeButton => _gameClientModeButton;
     public IButtonUIView RenderingServerModeButton => _renderingServerModeButton;
+}
+
 }

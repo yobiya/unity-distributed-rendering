@@ -1,6 +1,9 @@
 using Moq;
 using NUnit.Framework;
 
+namespace Common
+{
+
 public class GameModeProcPartTest
 {
     [Test]
@@ -52,4 +55,6 @@ public class GameModeProcPartTest
         Assert.IsFalse(isSelectedGameClientMode);
         Assert.IsTrue(isSelectedRenderingServerMode);
     }
+}
+
 }
