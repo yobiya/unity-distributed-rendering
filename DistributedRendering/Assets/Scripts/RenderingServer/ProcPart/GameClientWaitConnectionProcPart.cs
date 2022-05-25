@@ -1,9 +1,11 @@
-using Cysharp.Threading.Tasks;
+using System;
 
 public class GameClientWaitConnectionProcPart : IGameClientWaitConnectionProcPart
 {
     private readonly IGameClientWaitConnectionUIViewControler _gameClientWaitConnectionUIViewControler;
     private readonly INamedPipeServer _namedPipeServer;
+
+    public event Action OnConnected;
 
     public GameClientWaitConnectionProcPart(
         IGameClientWaitConnectionUIViewControler gameClientWaitConnectionUIViewControler,

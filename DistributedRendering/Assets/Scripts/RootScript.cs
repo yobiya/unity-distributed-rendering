@@ -1,5 +1,6 @@
 using UnityEngine;
 using Common;
+using RenderingServer;
 
 public class RootScript : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class RootScript : MonoBehaviour
     private GameModeProcPart _gameModeProcPart;
     private RenderingServerConnectingProcPart _renderingServerConnectingProcPart;
     private GameClientWaitConnectionProcPart _gameClientWaitConnectionProcPart;
+    private OffscreenRenderingProcPart _offscreenRenderingProcPart;
 
     private GameModeUIViewController _gameModeUIViewController;
     private RenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
@@ -52,7 +54,12 @@ public class RootScript : MonoBehaviour
                     namedPipeServer);
         }
 
-        ProcPartBinder.Bind(_gameModeProcPart, _renderingServerConnectingProcPart, _gameClientWaitConnectionProcPart);
+        ProcPartBinder
+            .Bind(
+                _gameModeProcPart,
+                _renderingServerConnectingProcPart,
+                _gameClientWaitConnectionProcPart,
+                _offscreenRenderingProcPart);
 
         // 初期状態で使用されないものを無効にする
         _renderingServerConnectingProcPart.Deactivate();
