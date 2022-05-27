@@ -5,7 +5,7 @@ using Moq;
 namespace Common
 {
 
-class MockServiceLocator : ServiceLocator
+public class MockServiceLocator : ServiceLocator
 {
     private Dictionary<Type, object> _mockContainer = new Dictionary<Type, object>();
 

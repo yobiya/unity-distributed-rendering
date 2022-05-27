@@ -7,13 +7,7 @@ namespace RenderingServer
 
 public class OffscreenRenderingProcPartTest
 {
-    private struct TestCollection
-    {
-        public OffscreenRenderingProcPart sut;
-        public MockServiceLocator serviceLocator;
-    }
-
-    private TestCollection CreateSUT()
+    private TestCollection<OffscreenRenderingProcPart> CreateSUT()
     {
         var serviceLocator = new MockServiceLocator();
         serviceLocator.RegisterMock<IOffscreenRenderingViewController>();
@@ -27,11 +21,7 @@ public class OffscreenRenderingProcPartTest
         // IOffscreenRenderingViewController.Activateメソッドも呼ばれる
         serviceLocator.GetMock<IOffscreenRenderingViewController>().Verify(m => m.Activate(), Times.Once);
 
-        var collection = new TestCollection();
-        collection.sut = sut;
-        collection.serviceLocator = serviceLocator;
-
-        return collection;
+        return new TestCollection<OffscreenRenderingProcPart>(sut, serviceLocator);
     }
 
     [Test]
