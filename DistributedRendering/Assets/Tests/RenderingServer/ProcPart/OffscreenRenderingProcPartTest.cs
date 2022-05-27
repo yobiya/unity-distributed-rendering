@@ -1,28 +1,53 @@
+using System;
+using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 
 namespace RenderingServer
 {
 
+class MockServiceLocator : Common.ServiceLocator
+{
+    private Dictionary<Type, object> _mockContainer = new Dictionary<Type, object>();
+
+    public void RegisterMock<T>() where T : class
+    {
+        var mock = new Mock<T>();
+        _mockContainer.Add(typeof(T), mock);
+        Set<T>(mock.Object);
+    }
+
+    public Mock<T> GetMock<T>() where T : class
+    {
+        return (Mock<T>)_mockContainer[typeof(T)];
+    }
+}
+
 public class OffscreenRenderingProcPartTest
 {
     private struct TestCollection
     {
         public OffscreenRenderingProcPart sut;
-        public Mock<IOffscreenRenderingViewController> offscreenRenderingViewControllerMock;
+        public MockServiceLocator serviceLocator;
     }
 
     private TestCollection CreateSUT()
     {
-        var offscreenRenderingViewControllerMock = new Mock<IOffscreenRenderingViewController>();
-        var sut = new OffscreenRenderingProcPart(offscreenRenderingViewControllerMock.Object);
+        var serviceLocator = new MockServiceLocator();
+        serviceLocator.RegisterMock<IOffscreenRenderingViewController>();
+
+        var sut = new OffscreenRenderingProcPart(serviceLocator);
 
         // 初期状態は無効になっているので、有効化する
         sut.Activate();
 
+        // CreateSUTメソッド内でsut.Activateメソッドが呼ばれているので
+        // IOffscreenRenderingViewController.Activateメソッドも呼ばれる
+        serviceLocator.GetMock<IOffscreenRenderingViewController>().Verify(m => m.Activate(), Times.Once);
+
         var collection = new TestCollection();
         collection.sut = sut;
-        collection.offscreenRenderingViewControllerMock = offscreenRenderingViewControllerMock;
+        collection.serviceLocator = serviceLocator;
 
         return collection;
     }
@@ -32,11 +57,7 @@ public class OffscreenRenderingProcPartTest
     {
         var collection = CreateSUT();
 
-        // CreateSUTメソッド内でsut.Activateメソッドが呼ばれているので
-        // IOffscreenRenderingViewController.Activateメソッドも呼ばれる
-        collection.offscreenRenderingViewControllerMock.Verify(m => m.Activate(), Times.Once);
-
-        collection.offscreenRenderingViewControllerMock.VerifyNoOtherCalls();
+        collection.serviceLocator.GetMock<IOffscreenRenderingViewController>().VerifyNoOtherCalls();
     }
 
     [Test]
@@ -47,10 +68,9 @@ public class OffscreenRenderingProcPartTest
         collection.sut.Deactivate();
 
         // sutが無効化された場合に、IOffscreenRenderingViewControllerも無効化される
-        collection.offscreenRenderingViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
+        collection.serviceLocator.GetMock<IOffscreenRenderingViewController>().Verify(m => m.Deactivate(), Times.Once);
 
-        collection.offscreenRenderingViewControllerMock.Verify(m => m.Activate(), Times.Once);
-        collection.offscreenRenderingViewControllerMock.VerifyNoOtherCalls();
+        collection.serviceLocator.GetMock<IOffscreenRenderingViewController>().VerifyNoOtherCalls();
     }
 }
 

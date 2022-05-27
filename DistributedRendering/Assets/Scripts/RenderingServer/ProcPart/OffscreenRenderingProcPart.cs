@@ -1,3 +1,5 @@
+using Common;
+
 namespace RenderingServer
 {
 
@@ -5,9 +7,9 @@ public class OffscreenRenderingProcPart : IOffscreenRenderingProcPart
 {
     private readonly IOffscreenRenderingViewController _offscreenRenderingViewController;
 
-    public OffscreenRenderingProcPart(IOffscreenRenderingViewController offscreenRenderingViewController)
+    public OffscreenRenderingProcPart(ServiceLocator sl)
     {
-        _offscreenRenderingViewController = offscreenRenderingViewController;
+        _offscreenRenderingViewController = sl.Get<IOffscreenRenderingViewController>();
     }
 
     public void Activate()

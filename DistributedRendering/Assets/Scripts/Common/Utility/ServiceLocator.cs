@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 
+namespace Common
+{
+
 public class ServiceLocator
 {
     private Dictionary<Type, object> _instanceContainer = new Dictionary<Type, object>();
@@ -14,4 +17,6 @@ public class ServiceLocator
     {
         return (T)_instanceContainer[typeof(T)];
     }
+}
+
 }

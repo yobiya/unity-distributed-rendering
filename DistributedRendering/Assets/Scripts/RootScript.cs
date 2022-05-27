@@ -32,6 +32,11 @@ public class RootScript : MonoBehaviour
 
     void Start()
     {
+        var serviceLocator = new ServiceLocator();
+        {
+            serviceLocator.Set<IOffscreenRenderingViewController>(new OffscreenRenderingViewController(_offscreenRenderingViewCollection));
+        }
+
         {
             _gameModeUIViewController = new GameModeUIViewController(_gameModeUICollection);
             _gameModeProcPart = new GameModeProcPart(_gameModeUIViewController);
@@ -59,8 +64,7 @@ public class RootScript : MonoBehaviour
         }
 
         {
-            _offscreenRenderingViewController = new OffscreenRenderingViewController(_offscreenRenderingViewCollection);
-            _offscreenRenderingProcPart = new OffscreenRenderingProcPart(_offscreenRenderingViewController);
+            _offscreenRenderingProcPart = new OffscreenRenderingProcPart(serviceLocator);
         }
 
         ProcPartBinder
