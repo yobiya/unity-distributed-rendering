@@ -1,18 +1,25 @@
+using Common;
+
 namespace RenderingServer
 {
 
 public class DebugRenderingProcPart : IDebugRenderingProcPart
 {
-    public DebugRenderingProcPart()
+    private readonly IDebugRenderingUIControler _debugRenderingUIControler;
+
+    public DebugRenderingProcPart(ServiceLocator sl)
     {
+        _debugRenderingUIControler = sl.Get<IDebugRenderingUIControler>();
     }
 
     public void Activate()
     {
+        _debugRenderingUIControler.Activate();
     }
 
     public void Deactivate()
     {
+        _debugRenderingUIControler.Deactivate();
     }
 }
 

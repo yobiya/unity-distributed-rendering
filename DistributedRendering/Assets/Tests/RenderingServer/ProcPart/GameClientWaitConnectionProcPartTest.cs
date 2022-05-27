@@ -3,6 +3,9 @@ using Common;
 using Moq;
 using NUnit.Framework;
 
+namespace RenderingServer
+{
+
 public class GameClientWaitConnectionProcPartTest
 {
     private (GameClientWaitConnectionProcPart, MockServiceLocator) CreateSUT()
@@ -69,4 +72,6 @@ public class GameClientWaitConnectionProcPartTest
         serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.ShowConnected(), Times.Once);
         serviceLocator.VerifyNoOtherCallsAll();
     }
+}
+
 }

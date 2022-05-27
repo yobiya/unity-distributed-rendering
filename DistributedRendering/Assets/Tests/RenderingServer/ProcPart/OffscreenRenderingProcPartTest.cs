@@ -29,7 +29,7 @@ public class OffscreenRenderingProcPartTest
     {
         var (sut, serviceLocator) = CreateSUT();
 
-        serviceLocator.GetMock<IOffscreenRenderingViewController>().VerifyNoOtherCalls();
+        serviceLocator.VerifyNoOtherCallsAll();
     }
 
     [Test]
@@ -42,7 +42,7 @@ public class OffscreenRenderingProcPartTest
         // sutが無効化された場合に、IOffscreenRenderingViewControllerも無効化される
         serviceLocator.GetMock<IOffscreenRenderingViewController>().Verify(m => m.Deactivate(), Times.Once);
 
-        serviceLocator.GetMock<IOffscreenRenderingViewController>().VerifyNoOtherCalls();
+        serviceLocator.VerifyNoOtherCallsAll();
     }
 }
 
