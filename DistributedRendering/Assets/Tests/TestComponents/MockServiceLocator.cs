@@ -20,6 +20,16 @@ public class MockServiceLocator : ServiceLocator
     {
         return (Mock<T>)_mockContainer[typeof(T)];
     }
+
+    public void VerifyNoOtherCallsAll()
+    {
+        foreach (var mock in _mockContainer.Values)
+        {
+            var type = mock.GetType();
+            var method = type.GetMethod("VerifyNoOtherCalls");
+            method.Invoke(mock, new object[0]);
+        }
+    }
 }
 
 }
