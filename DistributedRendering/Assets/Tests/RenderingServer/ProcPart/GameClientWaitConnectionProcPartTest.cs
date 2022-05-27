@@ -1,3 +1,4 @@
+using System;
 using Common;
 using Moq;
 using NUnit.Framework;
@@ -7,16 +8,17 @@ public class GameClientWaitConnectionProcPartTest
     private (GameClientWaitConnectionProcPart, MockServiceLocator) CreateSUT()
     {
         var serviceLocator = new MockServiceLocator();
-
         serviceLocator.RegisterMock<IGameClientWaitConnectionUIViewControler>();
         serviceLocator.RegisterMock<INamedPipeServer>();
 
-        var gameClientWaitConnectionUIViewControlerMock = new Mock<IGameClientWaitConnectionUIViewControler>();
-        var namedPipeServerMock = new Mock<INamedPipeServer>();
-        var sut
-            = new GameClientWaitConnectionProcPart(
-                serviceLocator.Get<IGameClientWaitConnectionUIViewControler>(),
-                serviceLocator.Get<INamedPipeServer>());
+        serviceLocator.GetMock<INamedPipeServer>().SetupAdd(m => m.OnConnected += It.IsAny<Action>());
+
+        var sut = new GameClientWaitConnectionProcPart(serviceLocator);
+
+        sut.Activate();
+
+        serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.Activate(), Times.Once);
+        serviceLocator.GetMock<INamedPipeServer>().VerifyAdd(m => m.OnConnected += It.IsAny<Action>(), Times.Once);
 
         return (sut, serviceLocator);
     }
@@ -26,11 +28,7 @@ public class GameClientWaitConnectionProcPartTest
     {
         var (sut, serviceLocator) = CreateSUT();
 
-        // 初期状態は有効になっているので、一度無効にする
-        sut.Deactivate();
-        sut.Activate();
-
-        serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.Activate(), Times.Once);
+        serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().VerifyNoOtherCalls();
     }
 
     [Test]
@@ -41,6 +39,7 @@ public class GameClientWaitConnectionProcPartTest
         sut.Deactivate();
 
         serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.Deactivate(), Times.Once);
+        serviceLocator.VerifyNoOtherCallsAll();
     }
 
     [Test]
@@ -52,6 +51,7 @@ public class GameClientWaitConnectionProcPartTest
 
         serviceLocator.GetMock<INamedPipeServer>().Verify(m => m.WaitConnection(), Times.Once);
         serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.ShowWaitConnection(), Times.Once);
+        serviceLocator.VerifyNoOtherCallsAll();
     }
 
     [Test]
@@ -61,7 +61,12 @@ public class GameClientWaitConnectionProcPartTest
 
         sut.StartWaitConnection();
 
+        serviceLocator.GetMock<INamedPipeServer>().Verify(m => m.WaitConnection(), Times.Once);
+        serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.ShowWaitConnection(), Times.Once);
+
         serviceLocator.GetMock<INamedPipeServer>().Raise(m => m.OnConnected += null);
+
         serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.ShowConnected(), Times.Once);
+        serviceLocator.VerifyNoOtherCallsAll();
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using Common;
 
 public class GameClientWaitConnectionProcPart : IGameClientWaitConnectionProcPart
 {
@@ -7,12 +8,10 @@ public class GameClientWaitConnectionProcPart : IGameClientWaitConnectionProcPar
 
     public event Action OnConnected;
 
-    public GameClientWaitConnectionProcPart(
-        IGameClientWaitConnectionUIViewControler gameClientWaitConnectionUIViewControler,
-        INamedPipeServer namedPipeServer)
+    public GameClientWaitConnectionProcPart(ServiceLocator sl)
     {
-        _gameClientWaitConnectionUIViewControler = gameClientWaitConnectionUIViewControler;
-        _namedPipeServer = namedPipeServer;
+        _gameClientWaitConnectionUIViewControler = sl.Get<IGameClientWaitConnectionUIViewControler>();
+        _namedPipeServer = sl.Get<INamedPipeServer>();
 
         _namedPipeServer.OnConnected += _gameClientWaitConnectionUIViewControler.ShowConnected;
     }

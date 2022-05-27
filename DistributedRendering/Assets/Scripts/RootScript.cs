@@ -26,7 +26,6 @@ public class RootScript : MonoBehaviour
 
     private GameModeUIViewController _gameModeUIViewController;
     private RenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
-    private GameClientWaitConnectionUIViewControler _gameClientWaitConnectionUIViewControler;
     private TestMessageSendUIViewController _testMessageSendUIViewController;
     private OffscreenRenderingViewController _offscreenRenderingViewController;
 
@@ -35,6 +34,8 @@ public class RootScript : MonoBehaviour
         var serviceLocator = new ServiceLocator();
         {
             serviceLocator.Set<IOffscreenRenderingViewController>(new OffscreenRenderingViewController(_offscreenRenderingViewCollection));
+            serviceLocator.Set<IGameClientWaitConnectionUIViewControler>(new GameClientWaitConnectionUIViewControler(_gameClientWaitConnectionUICollection));
+            serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
         }
 
         {
@@ -54,18 +55,8 @@ public class RootScript : MonoBehaviour
                     new TimerCreator());
         }
 
-        {
-            var namedPipeServer = new NamedPipeServer();
-            _gameClientWaitConnectionUIViewControler = new GameClientWaitConnectionUIViewControler(_gameClientWaitConnectionUICollection);
-            _gameClientWaitConnectionProcPart
-                = new GameClientWaitConnectionProcPart(
-                    _gameClientWaitConnectionUIViewControler,
-                    namedPipeServer);
-        }
-
-        {
-            _offscreenRenderingProcPart = new OffscreenRenderingProcPart(serviceLocator);
-        }
+        _gameClientWaitConnectionProcPart = new GameClientWaitConnectionProcPart(serviceLocator);
+        _offscreenRenderingProcPart = new OffscreenRenderingProcPart(serviceLocator);
 
         ProcPartBinder
             .Bind(
@@ -76,7 +67,6 @@ public class RootScript : MonoBehaviour
 
         // 初期状態で使用されないものを無効にする
         _renderingServerConnectingProcPart.Deactivate();
-        _gameClientWaitConnectionProcPart.Deactivate();
     }
 
     void Update()
