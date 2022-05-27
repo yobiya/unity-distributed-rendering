@@ -1,27 +1,9 @@
-using System;
-using System.Collections.Generic;
+using Common;
 using Moq;
 using NUnit.Framework;
 
 namespace RenderingServer
 {
-
-class MockServiceLocator : Common.ServiceLocator
-{
-    private Dictionary<Type, object> _mockContainer = new Dictionary<Type, object>();
-
-    public void RegisterMock<T>() where T : class
-    {
-        var mock = new Mock<T>();
-        _mockContainer.Add(typeof(T), mock);
-        Set<T>(mock.Object);
-    }
-
-    public Mock<T> GetMock<T>() where T : class
-    {
-        return (Mock<T>)_mockContainer[typeof(T)];
-    }
-}
 
 public class OffscreenRenderingProcPartTest
 {
