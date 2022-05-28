@@ -1,3 +1,4 @@
+using System;
 using Moq;
 using NUnit.Framework;
 
@@ -6,52 +7,69 @@ namespace Common
 
 public class GameModeProcPartTest
 {
-    [Test]
-    public void DefaultView()
+    (GameModeProcPart, MockServiceLocator) CreateSUT()
     {
-        var gameModeUIViewControllerMock = new Mock<IGameModeUIViewController>();
-        var procPart = new GameModeProcPart(gameModeUIViewControllerMock.Object);
+        var mockLocator = new MockServiceLocator();
+        mockLocator.RegisterMock<IGameModeUIViewController>();
 
-        // 初期状態では、UIは表示されている
-        gameModeUIViewControllerMock.VerifySet(m => m.IsActive = true);
+        var uiViewControllerMock = mockLocator.GetMock<IGameModeUIViewController>();
+        uiViewControllerMock.SetupAdd(m => m.OnSelectedGameClientMode += It.IsAny<Action>());
+        uiViewControllerMock.SetupAdd(m => m.OnSelectedRenderingServerMode+= It.IsAny<Action>());
+
+        var sut = new GameModeProcPart(mockLocator);
+        sut.Activate();
+
+        uiViewControllerMock.VerifySet(m => m.IsActive = true);
+        uiViewControllerMock.VerifyAdd(m => m.OnSelectedGameClientMode += It.IsAny<Action>(), Times.Once);
+        uiViewControllerMock.VerifyAdd(m => m.OnSelectedRenderingServerMode += It.IsAny<Action>(), Times.Once);
+
+        return (sut, mockLocator);
+    }
+
+    [Test]
+    public void Activate()
+    {
+        var (sut, sl) = CreateSUT();
+
+        sl.VerifyNoOtherCallsAll();
     }
 
     [Test]
     public void SelectGameClientMode()
     {
-        var gameModeUIViewControllerMock = new Mock<IGameModeUIViewController>();
-        var procPart = new GameModeProcPart(gameModeUIViewControllerMock.Object);
+        var (sut, sl) = CreateSUT();
 
         bool isSelectedGameClientMode = false;
         bool isSelectedRenderingServerMode = false;
-        procPart.OnSelectedGameClientMode += () => isSelectedGameClientMode = true;
-        procPart.OnSelectedRenderingServerMode += () => isSelectedRenderingServerMode = true;
+        sut.OnSelectedGameClientMode += () => isSelectedGameClientMode = true;
+        sut.OnSelectedRenderingServerMode += () => isSelectedRenderingServerMode = true;
 
         // ゲームクライアントモードがUIから選択された
-        gameModeUIViewControllerMock.Raise(m => m.OnSelectedGameClientMode += null);
+        sl.GetMock<IGameModeUIViewController>().Raise(m => m.OnSelectedGameClientMode += null);
 
         // モードが選択されたら、UIは非表示になる
-        gameModeUIViewControllerMock.VerifySet(m => m.IsActive = false);
+        sl.GetMock<IGameModeUIViewController>().VerifySet(m => m.IsActive = false);
         Assert.IsTrue(isSelectedGameClientMode);
         Assert.IsFalse(isSelectedRenderingServerMode);
+
+        sl.VerifyNoOtherCallsAll();
     }
 
     [Test]
     public void SelectRenderingServerMode()
     {
-        var gameModeUIViewControllerMock = new Mock<IGameModeUIViewController>();
-        var procPart = new GameModeProcPart(gameModeUIViewControllerMock.Object);
+        var (sut, sl) = CreateSUT();
 
         bool isSelectedGameClientMode = false;
         bool isSelectedRenderingServerMode = false;
-        procPart.OnSelectedGameClientMode += () => isSelectedGameClientMode = true;
-        procPart.OnSelectedRenderingServerMode += () => isSelectedRenderingServerMode = true;
+        sut.OnSelectedGameClientMode += () => isSelectedGameClientMode = true;
+        sut.OnSelectedRenderingServerMode += () => isSelectedRenderingServerMode = true;
 
         // レンダリングサーバーモードがUIから選択された
-        gameModeUIViewControllerMock.Raise(m => m.OnSelectedRenderingServerMode += null);
+        sl.GetMock<IGameModeUIViewController>().Raise(m => m.OnSelectedRenderingServerMode += null);
 
         // モードが選択されたら、UIは非表示になる
-        gameModeUIViewControllerMock.VerifySet(m => m.IsActive = false);
+        sl.GetMock<IGameModeUIViewController>().VerifySet(m => m.IsActive = false);
         Assert.IsFalse(isSelectedGameClientMode);
         Assert.IsTrue(isSelectedRenderingServerMode);
     }
