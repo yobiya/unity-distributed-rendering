@@ -10,11 +10,6 @@ public class DebugRenderingUI : MonoBehaviour, IDebugRenderingUI
     [SerializeField]
     private RawImage _rawImage;
 
-    void Awake()
-    {
-        gameObject.SetActive(false);
-    }
-
     public void Activate(IRenderTextureView textureView)
     {
         gameObject.SetActive(true);
