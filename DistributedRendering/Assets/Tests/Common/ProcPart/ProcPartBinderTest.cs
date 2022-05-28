@@ -24,8 +24,9 @@ public class ProcPartBinderTest
         }
     }
 
-    private MockCollection CreateMockCollectionAndBind()
+    private (MockCollection, MockServiceLocator) CreateMockCollectionAndBind()
     {
+        var mockLocator = new MockServiceLocator();
         var collection = new MockCollection();
 
         var gameModeProcPartMock = new Mock<IGameModeProcPart>();
@@ -56,13 +57,13 @@ public class ProcPartBinderTest
         collection.gameClientWaitConnectingProcPartMock = gameClientWaitConnectingProcPartMock;
         collection.offscreenRenderingProcPartMock = offscreenRenderingProcPartMock;
 
-        return collection;
+        return (collection, mockLocator);
     }
 
     [Test]
     public void BindRenderingServerConnectingActive()
     {
-        var collection = CreateMockCollectionAndBind();
+        var (collection, sl) = CreateMockCollectionAndBind();
 
         // ゲームクライアントモードが選択された
         collection.gameModeProcPartMock.Raise(m => m.OnSelectedGameClientMode += null);
@@ -70,12 +71,13 @@ public class ProcPartBinderTest
         // レンダリングサーバーへの接続機能が有効になる
         collection.renderingServerConnectingProcPartMock.Verify(m => m.Activate(), Times.Once);
         collection.VerifyNoOtherCallsAllMocks();
+        sl.VerifyNoOtherCallsAll();
     }
 
     [Test]
     public void BindGameClientWaitConnectionActive()
     {
-        var collection = CreateMockCollectionAndBind();
+        var (collection, sl) = CreateMockCollectionAndBind();
 
         // ゲームクライアントモードが選択された
         collection.gameModeProcPartMock.Raise(m => m.OnSelectedRenderingServerMode += null);
@@ -84,17 +86,19 @@ public class ProcPartBinderTest
         collection.gameClientWaitConnectingProcPartMock.Verify(m => m.Activate(), Times.Once);
         collection.gameClientWaitConnectingProcPartMock.Verify(m => m.StartWaitConnection(), Times.Once);   // 有効になった直後に接続待ち処理を始める
         collection.VerifyNoOtherCallsAllMocks();
+        sl.VerifyNoOtherCallsAll();
     }
 
     [Test]
     public void BindRenderingServerOffscreenRenderingActive()
     {
-        var collection = CreateMockCollectionAndBind();
+        var (collection, sl) = CreateMockCollectionAndBind();
 
         // クライアントがレンダリングサーバーに接続すると、オフスクリーンレンダリングが有効になる
         collection.gameClientWaitConnectingProcPartMock.Raise(m => m.OnConnected += null);
         collection.offscreenRenderingProcPartMock.Verify(m => m.Activate(), Times.Once);
         collection.VerifyNoOtherCallsAllMocks();
+        sl.VerifyNoOtherCallsAll();
     }
 }
 
