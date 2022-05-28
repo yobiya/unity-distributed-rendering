@@ -2,7 +2,7 @@ using UnityEngine;
 using Common;
 using RenderingServer;
 
-public class RootScript : MonoBehaviour
+public class MainScene : MonoBehaviour
 {
     [SerializeField]
     private GameModeUICollection _gameModeUICollection;
@@ -26,7 +26,6 @@ public class RootScript : MonoBehaviour
     private RenderingServerConnectingProcPart _renderingServerConnectingProcPart;
     private GameClientWaitConnectionProcPart _gameClientWaitConnectionProcPart;
 
-    private GameModeUIViewController _gameModeUIViewController;
     private RenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
     private TestMessageSendUIViewController _testMessageSendUIViewController;
 
@@ -42,13 +41,14 @@ public class RootScript : MonoBehaviour
             serviceLocator.Set<IDebugRenderingUIControler>(new DebugRenderingUIControler(serviceLocator));
             serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
 
+            serviceLocator.Set<IGameModeUIViewController>(new GameModeUIViewController(_gameModeUICollection));
+
             serviceLocator.Set<IOffscreenRenderingProcPart>(new OffscreenRenderingProcPart(serviceLocator));
             serviceLocator.Set<IDebugRenderingProcPart>(new DebugRenderingProcPart(serviceLocator));
         }
 
         {
-            _gameModeUIViewController = new GameModeUIViewController(_gameModeUICollection);
-            _gameModeProcPart = new GameModeProcPart(_gameModeUIViewController);
+            _gameModeProcPart = new GameModeProcPart(serviceLocator);
         }
 
         {
