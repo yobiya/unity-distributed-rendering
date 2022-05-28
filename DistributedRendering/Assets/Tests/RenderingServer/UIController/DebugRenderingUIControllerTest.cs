@@ -11,12 +11,15 @@ public class DebugRenderingUIControllerTest
     {
         var serviceLocator = new MockServiceLocator();
         serviceLocator.RegisterMock<IDebugRenderingUI>();
+        serviceLocator.RegisterMock<IRenderTextureView>();
 
         var sut = new DebugRenderingUIControler(serviceLocator);
 
         sut.Activate();
 
-        serviceLocator.GetMock<IDebugRenderingUI>().Verify(m => m.Activate(), Times.Once);
+        // 表示するテクスチャをUIのActivate時に渡す
+        var renderTextureView = serviceLocator.Get<IRenderTextureView>();
+        serviceLocator.GetMock<IDebugRenderingUI>().Verify(m => m.Activate(renderTextureView), Times.Once);
 
         return (sut, serviceLocator);
     }

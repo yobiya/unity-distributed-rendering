@@ -1,15 +1,17 @@
+using Common;
+
 namespace RenderingServer
 {
 
 public interface IDebugRenderingUI
 {
-    void Activate();
+    void Activate(IRenderTextureView textureView);
     void Deactivate();
 }
 
 public class DebugRenderingUI : IDebugRenderingUI
 {
-    public void Activate()
+    public void Activate(IRenderTextureView textureView)
     {
     }
 
