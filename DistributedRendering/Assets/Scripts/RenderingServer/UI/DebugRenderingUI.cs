@@ -11,6 +11,10 @@ public interface IDebugRenderingUI
 
 public class DebugRenderingUI : IDebugRenderingUI
 {
+    public interface IUICollection
+    {
+    }
+
     public void Activate(IRenderTextureView textureView)
     {
     }
