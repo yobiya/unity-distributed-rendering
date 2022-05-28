@@ -6,10 +6,10 @@ namespace Common
 public class ProcPartBinder
 {
     public static void Bind(
+        ServiceLocator sl,
         IGameModeProcPart gameModeProcPart,
         IRenderingServerConnectingProcPart renderingServerConnectingProcPart,
-        IGameClientWaitConnectionProcPart gameClientWaitConnectionProcPart,
-        IOffscreenRenderingProcPart offscreenRenderingProcPart)
+        IGameClientWaitConnectionProcPart gameClientWaitConnectionProcPart)
     {
         gameModeProcPart.OnSelectedGameClientMode += renderingServerConnectingProcPart.Activate;
         gameModeProcPart.OnSelectedRenderingServerMode += () =>
@@ -18,7 +18,11 @@ public class ProcPartBinder
             gameClientWaitConnectionProcPart.StartWaitConnection();
         };
 
-        gameClientWaitConnectionProcPart.OnConnected += offscreenRenderingProcPart.Activate;
+        gameClientWaitConnectionProcPart.OnConnected += () =>
+        {
+            sl.Get<IOffscreenRenderingProcPart>().Activate();
+            sl.Get<IDebugRenderingProcPart>().Activate();
+        };
     }
 }
 

@@ -13,26 +13,26 @@ public class ProcPartBinderTest
         public Mock<IGameModeProcPart> gameModeProcPartMock;
         public Mock<IRenderingServerConnectingProcPart> renderingServerConnectingProcPartMock;
         public Mock<IGameClientWaitConnectionProcPart> gameClientWaitConnectingProcPartMock;
-        public Mock<IOffscreenRenderingProcPart> offscreenRenderingProcPartMock;
 
         public void VerifyNoOtherCallsAllMocks()
         {
             gameModeProcPartMock.VerifyNoOtherCalls();
             renderingServerConnectingProcPartMock.VerifyNoOtherCalls();
             gameClientWaitConnectingProcPartMock.VerifyNoOtherCalls();
-            offscreenRenderingProcPartMock.VerifyNoOtherCalls();
         }
     }
 
     private (MockCollection, MockServiceLocator) CreateMockCollectionAndBind()
     {
         var mockLocator = new MockServiceLocator();
+        mockLocator.RegisterMock<IOffscreenRenderingProcPart>();
+        mockLocator.RegisterMock<IDebugRenderingProcPart>();
+
         var collection = new MockCollection();
 
         var gameModeProcPartMock = new Mock<IGameModeProcPart>();
         var renderingServerConnectingProcPartMock = new Mock<IRenderingServerConnectingProcPart>();
         var gameClientWaitConnectingProcPartMock = new Mock<IGameClientWaitConnectionProcPart>();
-        var offscreenRenderingProcPartMock = new Mock<IOffscreenRenderingProcPart>();
 
         {
             gameModeProcPartMock.SetupAdd(m => m.OnSelectedGameClientMode += It.IsAny<Action>());
@@ -41,10 +41,10 @@ public class ProcPartBinderTest
         }
 
         ProcPartBinder.Bind(
+            mockLocator,
             gameModeProcPartMock.Object,
             renderingServerConnectingProcPartMock.Object,
-            gameClientWaitConnectingProcPartMock.Object,
-            offscreenRenderingProcPartMock.Object);
+            gameClientWaitConnectingProcPartMock.Object);
 
         {
             gameModeProcPartMock.VerifyAdd(m => m.OnSelectedGameClientMode += It.IsAny<Action>(), Times.Once);
@@ -55,7 +55,6 @@ public class ProcPartBinderTest
         collection.gameModeProcPartMock = gameModeProcPartMock;
         collection.renderingServerConnectingProcPartMock = renderingServerConnectingProcPartMock;
         collection.gameClientWaitConnectingProcPartMock = gameClientWaitConnectingProcPartMock;
-        collection.offscreenRenderingProcPartMock = offscreenRenderingProcPartMock;
 
         return (collection, mockLocator);
     }
@@ -90,13 +89,15 @@ public class ProcPartBinderTest
     }
 
     [Test]
-    public void BindRenderingServerOffscreenRenderingActive()
+    public void BindRenderingServerOffscreenAndDebugRenderingActive()
     {
         var (collection, sl) = CreateMockCollectionAndBind();
 
-        // クライアントがレンダリングサーバーに接続すると、オフスクリーンレンダリングが有効になる
+        // クライアントがレンダリングサーバーに接続すると
+        // オフスクリーンレンダリングとデバッグレンダリングが有効になる
         collection.gameClientWaitConnectingProcPartMock.Raise(m => m.OnConnected += null);
-        collection.offscreenRenderingProcPartMock.Verify(m => m.Activate(), Times.Once);
+        sl.GetMock<IOffscreenRenderingProcPart>().Verify(m => m.Activate(), Times.Once);
+        sl.GetMock<IDebugRenderingProcPart>().Verify(m => m.Activate(), Times.Once);
         collection.VerifyNoOtherCallsAllMocks();
         sl.VerifyNoOtherCallsAll();
     }

@@ -27,7 +27,6 @@ public class RootScript : MonoBehaviour
     private GameModeUIViewController _gameModeUIViewController;
     private RenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
     private TestMessageSendUIViewController _testMessageSendUIViewController;
-    private OffscreenRenderingViewController _offscreenRenderingViewController;
 
     void Start()
     {
@@ -36,6 +35,9 @@ public class RootScript : MonoBehaviour
             serviceLocator.Set<IOffscreenRenderingViewController>(new OffscreenRenderingViewController(_offscreenRenderingViewCollection));
             serviceLocator.Set<IGameClientWaitConnectionUIViewControler>(new GameClientWaitConnectionUIViewControler(_gameClientWaitConnectionUICollection));
             serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
+
+            serviceLocator.Set<IOffscreenRenderingProcPart>(new OffscreenRenderingProcPart(serviceLocator));
+            serviceLocator.Set<IDebugRenderingProcPart>(new DebugRenderingProcPart(serviceLocator));
         }
 
         {
@@ -60,10 +62,10 @@ public class RootScript : MonoBehaviour
 
         ProcPartBinder
             .Bind(
+                serviceLocator,
                 _gameModeProcPart,
                 _renderingServerConnectingProcPart,
-                _gameClientWaitConnectionProcPart,
-                _offscreenRenderingProcPart);
+                _gameClientWaitConnectionProcPart);
 
         // 初期状態で使用されないものを無効にする
         _renderingServerConnectingProcPart.Deactivate();
