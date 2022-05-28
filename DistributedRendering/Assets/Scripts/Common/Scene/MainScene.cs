@@ -41,7 +41,7 @@ public class MainScene : MonoBehaviour
             serviceLocator.Set<IDebugRenderingUIControler>(new DebugRenderingUIControler(serviceLocator));
             serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
 
-            serviceLocator.Set<IGameModeUIViewController>(new GameModeUIViewController(_gameModeUICollection));
+            serviceLocator.Set<IGameModeUIController>(new GameModeUIController(_gameModeUICollection));
 
             serviceLocator.Set<IOffscreenRenderingProcPart>(new OffscreenRenderingProcPart(serviceLocator));
             serviceLocator.Set<IDebugRenderingProcPart>(new DebugRenderingProcPart(serviceLocator));

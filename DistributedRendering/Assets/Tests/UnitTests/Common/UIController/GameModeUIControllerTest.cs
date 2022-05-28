@@ -3,9 +3,9 @@ using NUnit.Framework;
 namespace Common
 {
 
-public class GameModeUIViewControllerTest
+public class GameModeUIControllerTest
 {
-    private class UICollection : GameModeUIViewController.IUICollection
+    private class UICollection : GameModeUIController.IUICollection
     {
         public TestButtonUIView gameClientModeButton = new TestButtonUIView();
         public TestButtonUIView renderingServerModeButton = new TestButtonUIView();
@@ -20,7 +20,7 @@ public class GameModeUIViewControllerTest
     public void StartView()
     {
         var uiCollection = new UICollection();
-        var uiViewController = new GameModeUIViewController(uiCollection);
+        var uiViewController = new GameModeUIController(uiCollection);
 
         // 初期状態ではUIは有効になっている
         Assert.IsTrue(uiCollection.IsActive);
@@ -32,7 +32,7 @@ public class GameModeUIViewControllerTest
         bool isSelectedGameClientMode = false;
 
         var uiCollection = new UICollection();
-        var uiViewController = new GameModeUIViewController(uiCollection);
+        var uiViewController = new GameModeUIController(uiCollection);
         uiViewController.OnSelectedGameClientMode += () => isSelectedGameClientMode = true;
 
         Assert.IsFalse(isSelectedGameClientMode);
@@ -50,7 +50,7 @@ public class GameModeUIViewControllerTest
         bool isSelectedRenderingServerMode = false;
 
         var uiCollection = new UICollection();
-        var uiViewController = new GameModeUIViewController(uiCollection);
+        var uiViewController = new GameModeUIController(uiCollection);
         uiViewController.OnSelectedRenderingServerMode += () => isSelectedRenderingServerMode = true;
 
         Assert.IsFalse(isSelectedRenderingServerMode);

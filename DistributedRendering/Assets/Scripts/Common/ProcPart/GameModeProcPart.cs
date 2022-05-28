@@ -10,7 +10,7 @@ public class GameModeProcPart : IGameModeProcPart
 
     public GameModeProcPart(ServiceLocator sl)
     {
-        var gameModeUIViewController = sl.Get<IGameModeUIViewController>();
+        var gameModeUIViewController = sl.Get<IGameModeUIController>();
         gameModeUIViewController.IsActive = true;
         gameModeUIViewController.OnSelectedGameClientMode += () =>
         {

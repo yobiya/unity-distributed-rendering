@@ -3,7 +3,7 @@ using System;
 namespace Common
 {
 
-public interface IGameModeUIViewController
+public interface IGameModeUIController
 {
     bool IsActive { get; set; }
 

@@ -3,7 +3,7 @@ using System;
 namespace Common
 {
 
-public class GameModeUIViewController : IGameModeUIViewController
+public class GameModeUIController : IGameModeUIController
 {
     public interface IUICollection
     {
@@ -23,7 +23,7 @@ public class GameModeUIViewController : IGameModeUIViewController
     public event Action OnSelectedGameClientMode;
     public event Action OnSelectedRenderingServerMode;
 
-    public GameModeUIViewController(IUICollection uiCollection)
+    public GameModeUIController(IUICollection uiCollection)
     {
         _uiCollection = uiCollection;
         _uiCollection.IsActive = true;

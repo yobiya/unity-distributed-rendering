@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Common
 {
 
-public class GameModeUICollection : MonoBehaviour, GameModeUIViewController.IUICollection
+public class GameModeUICollection : MonoBehaviour, GameModeUIController.IUICollection
 {
     [SerializeField]
     ButtonUIViewAdapter _gameClientModeButton;
