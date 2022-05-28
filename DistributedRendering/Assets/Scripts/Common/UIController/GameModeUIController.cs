@@ -15,11 +15,6 @@ public class GameModeUIController : IGameModeUIController
 
     private readonly IUICollection _uiCollection;
 
-    public bool IsActive {
-        get { return _uiCollection.IsActive; }
-        set { _uiCollection.IsActive = value; }
-    }
-
     public event Action OnSelectedGameClientMode;
     public event Action OnSelectedRenderingServerMode;
 
@@ -38,6 +33,16 @@ public class GameModeUIController : IGameModeUIController
             _uiCollection.IsActive = false;
             OnSelectedRenderingServerMode?.Invoke();
         };
+    }
+
+    public void Activate()
+    {
+        _uiCollection.IsActive = true;
+    }
+
+    public void Deactivate()
+    {
+        _uiCollection.IsActive = false;
     }
 }
 
