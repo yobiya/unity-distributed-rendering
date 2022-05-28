@@ -12,7 +12,7 @@ public class DebugRenderingProcPart : IDebugRenderingProcPart
         _debugRenderingUIControler = sl.Get<IDebugRenderingUIControler>();
     }
 
-    public void Activate()
+    public void Activate(IRenderTextureView textureView)
     {
         _debugRenderingUIControler.Activate();
     }

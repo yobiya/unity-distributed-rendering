@@ -1,9 +1,11 @@
+using Common;
+
 namespace RenderingServer
 {
 
 public interface IDebugRenderingProcPart
 {
-    void Activate();
+    void Activate(IRenderTextureView textureView);
     void Deactivate();
 }
 

@@ -38,6 +38,7 @@ public class ProcPartBinderTest
             gameModeProcPartMock.SetupAdd(m => m.OnSelectedGameClientMode += It.IsAny<Action>());
             gameModeProcPartMock.SetupAdd(m => m.OnSelectedRenderingServerMode += It.IsAny<Action>());
             gameClientWaitConnectingProcPartMock.SetupAdd(m => m.OnConnected += It.IsAny<Action>());
+            mockLocator.GetMock<IOffscreenRenderingProcPart>().SetupAdd(m => m.OnActivated += It.IsAny<Action<IRenderTextureView>>());
         }
 
         ProcPartBinder.Bind(
@@ -50,6 +51,7 @@ public class ProcPartBinderTest
             gameModeProcPartMock.VerifyAdd(m => m.OnSelectedGameClientMode += It.IsAny<Action>(), Times.Once);
             gameModeProcPartMock.VerifyAdd(m => m.OnSelectedRenderingServerMode += It.IsAny<Action>(), Times.Once);
             gameClientWaitConnectingProcPartMock.VerifyAdd(m => m.OnConnected += It.IsAny<Action>(), Times.Once);
+            mockLocator.GetMock<IOffscreenRenderingProcPart>().VerifyAdd(m => m.OnActivated += It.IsAny<Action<IRenderTextureView>>(), Times.Once);
         }
 
         collection.gameModeProcPartMock = gameModeProcPartMock;
@@ -89,15 +91,26 @@ public class ProcPartBinderTest
     }
 
     [Test]
-    public void BindRenderingServerOffscreenAndDebugRenderingActive()
+    public void BindRenderingServerOffscreenRenderingActive()
     {
         var (collection, sl) = CreateMockCollectionAndBind();
 
         // クライアントがレンダリングサーバーに接続すると
-        // オフスクリーンレンダリングとデバッグレンダリングが有効になる
+        // オフスクリーンレンダリングが有効になる
         collection.gameClientWaitConnectingProcPartMock.Raise(m => m.OnConnected += null);
         sl.GetMock<IOffscreenRenderingProcPart>().Verify(m => m.Activate(), Times.Once);
-        sl.GetMock<IDebugRenderingProcPart>().Verify(m => m.Activate(), Times.Once);
+        collection.VerifyNoOtherCallsAllMocks();
+        sl.VerifyNoOtherCallsAll();
+    }
+
+    [Test]
+    public void BindRenderingServerDebugRenderingActive()
+    {
+        var (collection, sl) = CreateMockCollectionAndBind();
+
+        // オフスクリーンレンダリングが有効になったら、デバッグレンダリングが有効になる
+        sl.GetMock<IOffscreenRenderingProcPart>().Raise(m => m.OnActivated += null, new object[] { null });
+        sl.GetMock<IDebugRenderingProcPart>().Verify(m => m.Activate(null), Times.Once);
         collection.VerifyNoOtherCallsAllMocks();
         sl.VerifyNoOtherCallsAll();
     }
