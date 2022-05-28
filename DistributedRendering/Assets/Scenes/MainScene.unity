@@ -519,7 +519,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74b2d3cea418d884fa6c213a74be73b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gameModeUICollection: {fileID: 1352650805}
+  _gameModeUI: {fileID: 1352650805}
   _renderingServerConnectingUICollection: {fileID: 458540058}
   _testMessageSendUICollection: {fileID: 674529272}
   _gameClientWaitConnectionUICollection: {fileID: 280995437}
@@ -2184,7 +2184,7 @@ GameObject:
   - component: {fileID: 1352650804}
   - component: {fileID: 1352650805}
   m_Layer: 5
-  m_Name: GameModeUICollection
+  m_Name: GameModeUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2221,7 +2221,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1352650803}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3acecb34375f65419f849fb66e1b35a, type: 3}
+  m_Script: {fileID: 11500000, guid: f1b9ab9904f24cf488df818e9559593d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _gameClientModeButton: {fileID: 182532380}

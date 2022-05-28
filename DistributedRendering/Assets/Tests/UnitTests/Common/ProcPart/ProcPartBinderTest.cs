@@ -70,6 +70,7 @@ public class ProcPartBinderTest
         collection.gameModeProcPartMock.Raise(m => m.OnSelectedGameClientMode += null);
 
         // レンダリングサーバーへの接続機能が有効になる
+        collection.gameModeProcPartMock.Verify(m => m.Deactivate(), Times.Once);
         collection.renderingServerConnectingProcPartMock.Verify(m => m.Activate(), Times.Once);
         collection.VerifyNoOtherCallsAllMocks();
         sl.VerifyNoOtherCallsAll();
@@ -84,6 +85,7 @@ public class ProcPartBinderTest
         collection.gameModeProcPartMock.Raise(m => m.OnSelectedRenderingServerMode += null);
 
         // レンダリングサーバーへの接続機能が有効になる
+        collection.gameModeProcPartMock.Verify(m => m.Deactivate(), Times.Once);
         collection.gameClientWaitConnectingProcPartMock.Verify(m => m.Activate(), Times.Once);
         collection.gameClientWaitConnectingProcPartMock.Verify(m => m.StartWaitConnection(), Times.Once);   // 有効になった直後に接続待ち処理を始める
         collection.VerifyNoOtherCallsAllMocks();

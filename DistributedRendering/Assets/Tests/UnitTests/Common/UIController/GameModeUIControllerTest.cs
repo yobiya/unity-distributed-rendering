@@ -1,3 +1,5 @@
+using System;
+using Moq;
 using NUnit.Framework;
 
 namespace Common
@@ -5,61 +7,61 @@ namespace Common
 
 public class GameModeUIControllerTest
 {
-    private class UICollection : GameModeUIController.IUICollection
+    private (GameModeUIController, MockServiceLocator) CreateSUT()
     {
-        public TestButtonUIView gameClientModeButton = new TestButtonUIView();
-        public TestButtonUIView renderingServerModeButton = new TestButtonUIView();
+        var mockLocator = new MockServiceLocator();
+        mockLocator.RegisterMock<IGameModeUI>();
 
-        public bool IsActive { get; set; }
+        var gameModeUIMock = mockLocator.GetMock<IGameModeUI>();
+        gameModeUIMock.SetupAdd(m => m.OnSelectedGameClient += It.IsAny<Action>());
+        gameModeUIMock.SetupAdd(m => m.OnSelectedRenderingServer += It.IsAny<Action>());
 
-        public IButtonUIView GameClientModeButton => gameClientModeButton;
-        public IButtonUIView RenderingServerModeButton => renderingServerModeButton;
+        var sut = new GameModeUIController(mockLocator);
+        sut.Activate();
+
+        gameModeUIMock.Verify(m => m.Activate(), Times.Once);
+        gameModeUIMock.VerifyAdd(m => m.OnSelectedGameClient += It.IsAny<Action>(), Times.Once);
+        gameModeUIMock.VerifyAdd(m => m.OnSelectedRenderingServer += It.IsAny<Action>(), Times.Once);
+
+        return (sut, mockLocator);
     }
 
     [Test]
-    public void StartView()
+    public void Activate()
     {
-        var uiCollection = new UICollection();
-        var uiViewController = new GameModeUIController(uiCollection);
+        var (sut, sl) = CreateSUT();
 
-        // 初期状態ではUIは有効になっている
-        Assert.IsTrue(uiCollection.IsActive);
+        sl.VerifyNoOtherCallsAll();
     }
 
     [Test]
     public void SelectGameClientMode()
     {
+        var (sut, sl) = CreateSUT();
+
         bool isSelectedGameClientMode = false;
+        sut.OnSelectedGameClientMode += () => isSelectedGameClientMode = true;
 
-        var uiCollection = new UICollection();
-        var uiViewController = new GameModeUIController(uiCollection);
-        uiViewController.OnSelectedGameClientMode += () => isSelectedGameClientMode = true;
+        // ボタンが押されたら、OnSelectedGameClientイベントが呼ばれる
+        sl.GetMock<IGameModeUI>().Raise(m => m.OnSelectedGameClient += null);
 
-        Assert.IsFalse(isSelectedGameClientMode);
-
-        uiCollection.gameClientModeButton.Click();
-
-        // ボタンが押されたらUIは無効になる
         Assert.IsTrue(isSelectedGameClientMode);
-        Assert.IsFalse(uiCollection.IsActive);
+        sl.VerifyNoOtherCallsAll();
     }
 
     [Test]
     public void SelectRenderingServerMode()
     {
+        var (sut, sl) = CreateSUT();
+
         bool isSelectedRenderingServerMode = false;
+        sut.OnSelectedRenderingServerMode += () => isSelectedRenderingServerMode = true;
 
-        var uiCollection = new UICollection();
-        var uiViewController = new GameModeUIController(uiCollection);
-        uiViewController.OnSelectedRenderingServerMode += () => isSelectedRenderingServerMode = true;
+        // ボタンが押されたら、OnSelectedRenderingServerModeイベントが呼ばれる
+        sl.GetMock<IGameModeUI>().Raise(m => m.OnSelectedRenderingServer += null);
 
-        Assert.IsFalse(isSelectedRenderingServerMode);
-
-        uiCollection.renderingServerModeButton.Click();
-
-        // ボタンが押されたらUIは無効になる
         Assert.IsTrue(isSelectedRenderingServerMode);
-        Assert.IsFalse(uiCollection.IsActive);
+        sl.VerifyNoOtherCallsAll();
     }
 }
 

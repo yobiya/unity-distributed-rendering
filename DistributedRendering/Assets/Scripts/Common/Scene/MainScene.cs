@@ -5,7 +5,7 @@ using RenderingServer;
 public class MainScene : MonoBehaviour
 {
     [SerializeField]
-    private GameModeUICollection _gameModeUICollection;
+    private GameModeUI _gameModeUI;
 
     [SerializeField]
     private RenderingServerConnectingUICollection _renderingServerConnectingUICollection;
@@ -33,6 +33,7 @@ public class MainScene : MonoBehaviour
     {
         var serviceLocator = new ServiceLocator();
         {
+            serviceLocator.Set<IGameModeUI>(_gameModeUI);
             serviceLocator.Set<IOffscreenRenderingView>(_offscreenRenderingView);
             serviceLocator.Set<IDebugRenderingUI>(_debugRenderingUI);
 
@@ -41,7 +42,7 @@ public class MainScene : MonoBehaviour
             serviceLocator.Set<IDebugRenderingUIControler>(new DebugRenderingUIControler(serviceLocator));
             serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
 
-            serviceLocator.Set<IGameModeUIController>(new GameModeUIController(_gameModeUICollection));
+            serviceLocator.Set<IGameModeUIController>(new GameModeUIController(serviceLocator));
 
             serviceLocator.Set<IOffscreenRenderingProcPart>(new OffscreenRenderingProcPart(serviceLocator));
             serviceLocator.Set<IDebugRenderingProcPart>(new DebugRenderingProcPart(serviceLocator));

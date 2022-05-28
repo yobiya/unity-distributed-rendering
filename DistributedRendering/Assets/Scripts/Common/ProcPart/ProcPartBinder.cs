@@ -13,9 +13,14 @@ public class ProcPartBinder
     {
         var offscreenRenderingProcPart = sl.Get<IOffscreenRenderingProcPart>();
 
-        gameModeProcPart.OnSelectedGameClientMode += renderingServerConnectingProcPart.Activate;
+        gameModeProcPart.OnSelectedGameClientMode += () =>
+        {
+            gameModeProcPart.Deactivate();
+            renderingServerConnectingProcPart.Activate();
+        };
         gameModeProcPart.OnSelectedRenderingServerMode += () =>
         {
+            gameModeProcPart.Deactivate();
             gameClientWaitConnectionProcPart.Activate();
             gameClientWaitConnectionProcPart.StartWaitConnection();
         };
