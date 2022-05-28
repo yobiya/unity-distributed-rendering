@@ -1,26 +1,32 @@
 using Common;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace RenderingServer
 {
 
-public interface IDebugRenderingUI
+public class DebugRenderingUI : MonoBehaviour, IDebugRenderingUI
 {
-    void Activate(IRenderTextureView textureView);
-    void Deactivate();
-}
+    [SerializeField]
+    private Image _image;
 
-public class DebugRenderingUI : IDebugRenderingUI
-{
-    public interface IUICollection
+    void Start()
     {
+        gameObject.SetActive(false);
     }
 
     public void Activate(IRenderTextureView textureView)
     {
+        gameObject.SetActive(true);
+
+        var material = new Material(_image.defaultMaterial);
+
+        material.mainTexture = textureView.Texture;
     }
 
     public void Deactivate()
     {
+        gameObject.SetActive(false);
     }
 }
 

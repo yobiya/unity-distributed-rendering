@@ -1,4 +1,3 @@
-using Common;
 using RenderingServer;
 using UnityEngine;
 
@@ -8,7 +7,7 @@ public class OffscreenRenderingTestScene : MonoBehaviour
     private OffscreenRenderingViewCollection _offscreenRenderingViewCollection;
 
     [SerializeField]
-    private DebugRenderingUICollection _debugRenderingUICollection;
+    private DebugRenderingUI _debugRenderingUI;
 
     void Start()
     {
