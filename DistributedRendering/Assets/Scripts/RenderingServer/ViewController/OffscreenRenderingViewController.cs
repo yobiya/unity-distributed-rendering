@@ -5,36 +5,26 @@ namespace RenderingServer
 
 public class OffscreenRenderingViewController : IOffscreenRenderingViewController
 {
-    public interface IViewCollection
+    private readonly ServiceLocator _sl;
+    private IOffscreenRenderingView _offscreenRenderingView;
+
+    public IRenderTextureView RenderTexture => _offscreenRenderingView.RenderTexture;
+
+    public OffscreenRenderingViewController(ServiceLocator sl)
     {
-        ICameraView Camera { get; }
-    }
-
-    private readonly IViewCollection _viewCollection;
-
-    private RenderTextureWrapperView _textureView;
-
-    public IRenderTextureView Texture { get; private set; }
-
-    public OffscreenRenderingViewController(IViewCollection viewCollection)
-    {
-        _viewCollection = viewCollection;
+        _sl = sl;
     }
 
     public void Activate()
     {
-        _textureView = new RenderTextureWrapperView();
-        _textureView.Activate();
-
-        Texture = _textureView;
+        _offscreenRenderingView = _sl.Get<IOffscreenRenderingView>();
+        _offscreenRenderingView.Activate();
     }
 
     public void Deactivate()
     {
-        Texture = null;
-
-        _textureView.Deactivate();
-        _textureView = null;
+        _offscreenRenderingView.Deactivate();
+        _offscreenRenderingView = null;
     }
 }
 

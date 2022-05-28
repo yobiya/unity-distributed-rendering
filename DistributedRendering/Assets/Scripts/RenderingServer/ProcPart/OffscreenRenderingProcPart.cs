@@ -19,7 +19,7 @@ public class OffscreenRenderingProcPart : IOffscreenRenderingProcPart
     {
         _offscreenRenderingViewController.Activate();
 
-        OnActivated?.Invoke(_offscreenRenderingViewController.Texture);
+        OnActivated?.Invoke(_offscreenRenderingViewController.RenderTexture);
     }
 
     public void Deactivate()

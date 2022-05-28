@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Common
@@ -11,7 +10,7 @@ public class CameraViewAdapter : BaseViewAdapter, ICameraView
 
     public void SetRenderingTargetTexture(IRenderTextureView renderTexture)
     {
-        _camera.targetTexture = renderTexture.Texture;
+        _camera.targetTexture = renderTexture.RenderTexture;
     }
 }
 

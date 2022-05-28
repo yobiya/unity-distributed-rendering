@@ -17,12 +17,11 @@ public class RootScript : MonoBehaviour
     private GameClientWaitConnectionUICollection _gameClientWaitConnectionUICollection;
 
     [SerializeField]
-    private OffscreenRenderingViewCollection _offscreenRenderingViewCollection;
+    private OffscreenRenderingView _offscreenRenderingView;
 
     private GameModeProcPart _gameModeProcPart;
     private RenderingServerConnectingProcPart _renderingServerConnectingProcPart;
     private GameClientWaitConnectionProcPart _gameClientWaitConnectionProcPart;
-    private OffscreenRenderingProcPart _offscreenRenderingProcPart;
 
     private GameModeUIViewController _gameModeUIViewController;
     private RenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
@@ -32,7 +31,9 @@ public class RootScript : MonoBehaviour
     {
         var serviceLocator = new ServiceLocator();
         {
-            serviceLocator.Set<IOffscreenRenderingViewController>(new OffscreenRenderingViewController(_offscreenRenderingViewCollection));
+            serviceLocator.Set<IOffscreenRenderingView>(_offscreenRenderingView);
+
+            serviceLocator.Set<IOffscreenRenderingViewController>(new OffscreenRenderingViewController(serviceLocator));
             serviceLocator.Set<IGameClientWaitConnectionUIViewControler>(new GameClientWaitConnectionUIViewControler(_gameClientWaitConnectionUICollection));
             serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
 
@@ -58,7 +59,6 @@ public class RootScript : MonoBehaviour
         }
 
         _gameClientWaitConnectionProcPart = new GameClientWaitConnectionProcPart(serviceLocator);
-        _offscreenRenderingProcPart = new OffscreenRenderingProcPart(serviceLocator);
 
         ProcPartBinder
             .Bind(

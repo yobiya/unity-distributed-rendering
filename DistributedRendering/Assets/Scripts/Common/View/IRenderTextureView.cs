@@ -5,7 +5,10 @@ namespace Common
 
 public interface IRenderTextureView
 {
-    RenderTexture Texture { get; }
+    RenderTexture RenderTexture { get; }
+
+    void Activate();
+    void Deactivate();
 }
 
 }

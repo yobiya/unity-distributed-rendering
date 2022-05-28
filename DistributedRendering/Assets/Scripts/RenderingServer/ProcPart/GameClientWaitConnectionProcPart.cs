@@ -13,7 +13,11 @@ public class GameClientWaitConnectionProcPart : IGameClientWaitConnectionProcPar
         _gameClientWaitConnectionUIViewControler = sl.Get<IGameClientWaitConnectionUIViewControler>();
         _namedPipeServer = sl.Get<INamedPipeServer>();
 
-        _namedPipeServer.OnConnected += _gameClientWaitConnectionUIViewControler.ShowConnected;
+        _namedPipeServer.OnConnected += () =>
+        {
+            OnConnected?.Invoke();
+            _gameClientWaitConnectionUIViewControler.ShowConnected();
+        };
     }
 
     public void Activate()

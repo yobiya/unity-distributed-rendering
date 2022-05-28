@@ -3,7 +3,7 @@ using Common;
 namespace RenderingServer
 {
 
-public interface IOffscreenRenderingViewController
+public interface IOffscreenRenderingView
 {
     IRenderTextureView RenderTexture { get; }
 

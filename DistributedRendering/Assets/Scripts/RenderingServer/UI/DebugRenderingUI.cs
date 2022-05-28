@@ -21,7 +21,9 @@ public class DebugRenderingUI : MonoBehaviour, IDebugRenderingUI
 
         var material = new Material(_image.defaultMaterial);
 
-        material.mainTexture = textureView.Texture;
+        material.mainTexture = textureView.RenderTexture;
+
+        _image.material.mainTexture = textureView.RenderTexture;
     }
 
     public void Deactivate()
