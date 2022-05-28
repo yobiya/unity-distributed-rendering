@@ -14,7 +14,7 @@ public class DebugRenderingProcPart : IDebugRenderingProcPart
 
     public void Activate(IRenderTextureView textureView)
     {
-        _debugRenderingUIControler.Activate();
+        _debugRenderingUIControler.Activate(textureView);
     }
 
     public void Deactivate()

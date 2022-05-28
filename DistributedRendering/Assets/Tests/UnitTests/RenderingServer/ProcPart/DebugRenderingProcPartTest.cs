@@ -14,9 +14,9 @@ public class DebugRenderingProcPartTest
 
         var sut = new DebugRenderingProcPart(serviceLocator);
 
-        sut.Activate(null);
+        sut.Activate(It.IsAny<IRenderTextureView>());
 
-        serviceLocator.GetMock<IDebugRenderingUIControler>().Verify(m => m.Activate(), Times.Once);
+        serviceLocator.GetMock<IDebugRenderingUIControler>().Verify(m => m.Activate(It.IsAny<IRenderTextureView>()), Times.Once);
 
         return (sut, serviceLocator);
     }

@@ -10,7 +10,7 @@ public class DebugRenderingUI : MonoBehaviour, IDebugRenderingUI
     [SerializeField]
     private Image _image;
 
-    void Start()
+    void Awake()
     {
         gameObject.SetActive(false);
     }

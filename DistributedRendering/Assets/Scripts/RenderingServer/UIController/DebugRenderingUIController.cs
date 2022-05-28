@@ -5,7 +5,7 @@ namespace RenderingServer
 
 public interface IDebugRenderingUIControler
 {
-    void Activate();
+    void Activate(IRenderTextureView textureView);
     void Deactivate();
 }
 
@@ -20,9 +20,8 @@ public class DebugRenderingUIControler : IDebugRenderingUIControler
         _debugRenderingUI = sl.Get<IDebugRenderingUI>();
     }
 
-    public void Activate()
+    public void Activate(IRenderTextureView textureView)
     {
-        var textureView = _sl.Get<IRenderTextureView>();
         _debugRenderingUI.Activate(textureView);
     }
 
