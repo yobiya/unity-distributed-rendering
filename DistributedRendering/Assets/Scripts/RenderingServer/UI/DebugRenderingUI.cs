@@ -8,7 +8,7 @@ namespace RenderingServer
 public class DebugRenderingUI : MonoBehaviour, IDebugRenderingUI
 {
     [SerializeField]
-    private Image _image;
+    private RawImage _rawImage;
 
     void Awake()
     {
@@ -19,11 +19,7 @@ public class DebugRenderingUI : MonoBehaviour, IDebugRenderingUI
     {
         gameObject.SetActive(true);
 
-        var material = new Material(_image.defaultMaterial);
-
-        material.mainTexture = textureView.RenderTexture;
-
-        _image.material.mainTexture = textureView.RenderTexture;
+        _rawImage.texture = textureView.RenderTexture;
     }
 
     public void Deactivate()
