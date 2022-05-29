@@ -2,6 +2,9 @@ using Common;
 using RenderingServer;
 using UnityEngine;
 
+namespace RenderingServer
+{
+
 public class ResponseRenderingTestScene : MonoBehaviour
 {
     [SerializeField]
@@ -10,15 +13,20 @@ public class ResponseRenderingTestScene : MonoBehaviour
     [SerializeField]
     private DebugRenderingUI _debugRenderingUI;
 
+    [SerializeField]
+    private DebugCommandMessageUI _debugCommandMessageUI;
+
     void Start()
     {
         var serviceLocator = new ServiceLocator();
 
         serviceLocator.Set<IOffscreenRenderingView>(_offscreenRenderingView);
         serviceLocator.Set<IDebugRenderingUI>(_debugRenderingUI);
+        serviceLocator.Set<IDebugCommandMessageUI>(_debugCommandMessageUI);
 
         serviceLocator.Set<IOffscreenRenderingViewController>(new OffscreenRenderingViewController(serviceLocator));
         serviceLocator.Set<IDebugRenderingUIControler>(new DebugRenderingUIControler(serviceLocator));
+        serviceLocator.Set<IDebugCommandMessageUIController>(new DebugCommandMessageUIController(serviceLocator));
 
         var offscreenRenderingProcPart = new OffscreenRenderingProcPart(serviceLocator);
         var debugRenderingProcPart = new DebugRenderingProcPart(serviceLocator);
@@ -28,4 +36,6 @@ public class ResponseRenderingTestScene : MonoBehaviour
 
         offscreenRenderingProcPart.Activate();
     }
+}
+
 }
