@@ -30,9 +30,14 @@ public class ResponseRenderingTestScene : MonoBehaviour
 
         var offscreenRenderingProcPart = new OffscreenRenderingProcPart(serviceLocator);
         var debugRenderingProcPart = new DebugRenderingProcPart(serviceLocator);
+        var testCommandMessageProcPart = new TestCommandMessageProcPart(serviceLocator);
 
-        // 表示するテクスチャが準備できたらデバッグレンダリングを有効にする
-        offscreenRenderingProcPart.OnActivated += debugRenderingProcPart.Activate;
+        // 表示するテクスチャが準備できたら各機能を有効にする
+        offscreenRenderingProcPart.OnActivated += (texture) =>
+        {
+            debugRenderingProcPart.Activate(texture);
+            testCommandMessageProcPart.Activate();
+        };
 
         offscreenRenderingProcPart.Activate();
     }
