@@ -35,17 +35,21 @@ public class ResponseDataNamedPipe : IResponseDataNamedPipe
             return;
         }
 
-        var texture2D
+        var texture2d
             = new Texture2D(
                     renderTexture.width,
                     renderTexture.height,
                     TextureFormat.ARGB32,
                     false);
 
-        Graphics.CopyTexture(renderTexture, texture2D);
-
-        byte[] byteArray = texture2D.GetRawTextureData();
+        RenderTexture.active = renderTexture;
+        texture2d.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+        RenderTexture.active = null;
+                                   
+        byte[] byteArray = texture2d.GetRawTextureData();
         _namedPipeServer.Write(byteArray, 0, byteArray.Length);
+
+        Texture2D.Destroy(texture2d);
     }
 
     public async Task WaitConnection()
