@@ -14,11 +14,17 @@ public class TestCommandMessageUI : MonoBehaviour, ITestCommandMessageUI
 
     public void Activate()
     {
+        gameObject.SetActive(true);
+        _renderButton.onClick.AddListener(RenderButtonClicked);
     }
 
     public void Deactivate()
     {
+        _renderButton.onClick.RemoveListener(RenderButtonClicked);
+        gameObject.SetActive(false);
     }
+
+    private void RenderButtonClicked() => OnClickedRender?.Invoke();
 }
 
 }
