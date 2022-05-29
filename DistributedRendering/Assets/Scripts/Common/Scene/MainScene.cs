@@ -23,6 +23,9 @@ public class MainScene : MonoBehaviour
     [SerializeField]
     private DebugRenderingUI _debugRenderingUI;
 
+    [SerializeField]
+    private RenderingUI _renderingUI;
+
     private GameModeProcPart _gameModeProcPart;
     private RenderingServerConnectingProcPart _renderingServerConnectingProcPart;
     private GameClientWaitConnectionProcPart _gameClientWaitConnectionProcPart;
@@ -37,6 +40,7 @@ public class MainScene : MonoBehaviour
             serviceLocator.Set<IGameModeUI>(_gameModeUI);
             serviceLocator.Set<IOffscreenRenderingView>(_offscreenRenderingView);
             serviceLocator.Set<IDebugRenderingUI>(_debugRenderingUI);
+            serviceLocator.Set<IRenderingUI>(_renderingUI);
 
             serviceLocator.Set<IOffscreenRenderingViewController>(new OffscreenRenderingViewController(serviceLocator));
             serviceLocator.Set<IGameClientWaitConnectionUIViewControler>(new GameClientWaitConnectionUIViewControler(_gameClientWaitConnectionUICollection));
@@ -44,6 +48,7 @@ public class MainScene : MonoBehaviour
             serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
 
             serviceLocator.Set<IGameModeUIController>(new GameModeUIController(serviceLocator));
+            serviceLocator.Set<IRenderingUIController>(new RenderingUIController(serviceLocator));
 
             serviceLocator.Set<IOffscreenRenderingProcPart>(new OffscreenRenderingProcPart(serviceLocator));
             serviceLocator.Set<IDebugRenderingProcPart>(new DebugRenderingProcPart(serviceLocator));
