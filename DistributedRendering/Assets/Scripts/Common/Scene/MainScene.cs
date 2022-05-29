@@ -25,6 +25,7 @@ public class MainScene : MonoBehaviour
     private GameModeProcPart _gameModeProcPart;
     private RenderingServerConnectingProcPart _renderingServerConnectingProcPart;
     private GameClientWaitConnectionProcPart _gameClientWaitConnectionProcPart;
+    private ResponseRenderingProcPart _responseRenderingProcPart;
 
     private RenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
     private TestMessageSendUIViewController _testMessageSendUIViewController;
@@ -41,12 +42,15 @@ public class MainScene : MonoBehaviour
             serviceLocator.Set<IGameClientWaitConnectionUIViewControler>(new GameClientWaitConnectionUIViewControler(_gameClientWaitConnectionUICollection));
             serviceLocator.Set<IDebugRenderingUIControler>(new DebugRenderingUIControler(serviceLocator));
             serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
+            serviceLocator.Set<IResponseDataNamedPipe>(new ResponseDataNamedPipe());
 
             serviceLocator.Set<IGameModeUIController>(new GameModeUIController(serviceLocator));
 
             serviceLocator.Set<IOffscreenRenderingProcPart>(new OffscreenRenderingProcPart(serviceLocator));
             serviceLocator.Set<IDebugRenderingProcPart>(new DebugRenderingProcPart(serviceLocator));
-            serviceLocator.Set<IResponseRenderingProcPart>(new ResponseRenderingProcPart(serviceLocator));
+
+            _responseRenderingProcPart = new ResponseRenderingProcPart(serviceLocator);
+            serviceLocator.Set<IResponseRenderingProcPart>(_responseRenderingProcPart);
         }
 
         {
@@ -80,6 +84,6 @@ public class MainScene : MonoBehaviour
 
     void Update()
     {
-        
+        _responseRenderingProcPart.Update();
     }
 }

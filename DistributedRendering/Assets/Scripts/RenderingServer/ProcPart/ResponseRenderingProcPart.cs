@@ -9,6 +9,7 @@ public class ResponseRenderingProcPart : IResponseRenderingProcPart
     private readonly ServiceLocator _sl;
     private IOffscreenRenderingViewController _offscreenRenderingViewController;
     private IResponseDataNamedPipe _responseDataNamedPipe;
+    private bool _isActivated = false;
 
     public ResponseRenderingProcPart(ServiceLocator sl)
     {
@@ -22,9 +23,11 @@ public class ResponseRenderingProcPart : IResponseRenderingProcPart
             {
                 _offscreenRenderingViewController = _sl.Get<IOffscreenRenderingViewController>();
                 _responseDataNamedPipe = _sl.Get<IResponseDataNamedPipe>();
+                _isActivated = true;
             },
             () =>
             {
+                _isActivated = false;
                 _responseDataNamedPipe = null;
                 _offscreenRenderingViewController = null;
             });
@@ -37,6 +40,12 @@ public class ResponseRenderingProcPart : IResponseRenderingProcPart
 
     public void Update()
     {
+        if (!_isActivated)
+        {
+            return;
+        }
+
+        _responseDataNamedPipe.SendRenderingImage(_offscreenRenderingViewController.RenderTexture.RenderTexture);
     }
 }
 

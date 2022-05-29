@@ -1,5 +1,6 @@
 using System;
 using Common;
+using RenderingServer;
 
 public class GameClientWaitConnectionProcPart : IGameClientWaitConnectionProcPart
 {
@@ -12,6 +13,7 @@ public class GameClientWaitConnectionProcPart : IGameClientWaitConnectionProcPar
     {
         _gameClientWaitConnectionUIViewControler = sl.Get<IGameClientWaitConnectionUIViewControler>();
         _namedPipeServer = sl.Get<INamedPipeServer>();
+        sl.Get<IResponseDataNamedPipe>().Activate();
 
         _namedPipeServer.OnConnected += () =>
         {
