@@ -53,7 +53,7 @@ public class MainScene : MonoBehaviour
         }
 
         {
-            var namedPipeClient = new NamedPipeClient(".", "test");
+            var namedPipeClient = new NamedPipeClient(".", Definisions.CommandMessageNamedPipeName);
             _renderingServerConnectingUIViewController = new RenderingServerConnectingUIViewController(_renderingServerConnectingUICollection);
             _testMessageSendUIViewController = new TestMessageSendUIViewController(_testMessageSendUICollection);
             _renderingServerConnectingProcPart

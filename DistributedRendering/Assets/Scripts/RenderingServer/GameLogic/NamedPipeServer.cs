@@ -1,8 +1,8 @@
+using Common;
 using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class NamedPipeServer : INamedPipeServer
@@ -15,9 +15,9 @@ public class NamedPipeServer : INamedPipeServer
     {
         using var pipeServer
             = new NamedPipeServerStream(
-                "test",
+                Definisions.CommandMessageNamedPipeName,
                 PipeDirection.In,
-                NamedPipeServerStream.MaxAllowedServerInstances,
+                1,
                 PipeTransmissionMode.Message,
                 PipeOptions.Asynchronous);
         await pipeServer.WaitForConnectionAsync();
