@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace RenderingServer
 {
 
-public class DebugCommandMessageUI : MonoBehaviour, IDebugCommandMessageUI
+public class TestCommandMessageUI : MonoBehaviour, ITestCommandMessageUI
 {
     [SerializeField]
     private Button _renderButton;

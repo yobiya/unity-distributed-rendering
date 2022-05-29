@@ -14,7 +14,7 @@ public class ResponseRenderingTestScene : MonoBehaviour
     private DebugRenderingUI _debugRenderingUI;
 
     [SerializeField]
-    private DebugCommandMessageUI _debugCommandMessageUI;
+    private TestCommandMessageUI _testCommandMessageUI;
 
     void Start()
     {
@@ -22,11 +22,11 @@ public class ResponseRenderingTestScene : MonoBehaviour
 
         serviceLocator.Set<IOffscreenRenderingView>(_offscreenRenderingView);
         serviceLocator.Set<IDebugRenderingUI>(_debugRenderingUI);
-        serviceLocator.Set<IDebugCommandMessageUI>(_debugCommandMessageUI);
+        serviceLocator.Set<ITestCommandMessageUI>(_testCommandMessageUI);
 
         serviceLocator.Set<IOffscreenRenderingViewController>(new OffscreenRenderingViewController(serviceLocator));
         serviceLocator.Set<IDebugRenderingUIControler>(new DebugRenderingUIControler(serviceLocator));
-        serviceLocator.Set<IDebugCommandMessageUIController>(new DebugCommandMessageUIController(serviceLocator));
+        serviceLocator.Set<ITestCommandMessageUIController>(new TestCommandMessageUIController(serviceLocator));
 
         var offscreenRenderingProcPart = new OffscreenRenderingProcPart(serviceLocator);
         var debugRenderingProcPart = new DebugRenderingProcPart(serviceLocator);

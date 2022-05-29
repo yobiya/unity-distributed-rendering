@@ -1,7 +1,7 @@
 namespace RenderingServer
 {
 
-public interface IDebugCommandMessageUIController
+public interface ITestCommandMessageUIController
 {
     void Activate();
     void Deactivate();

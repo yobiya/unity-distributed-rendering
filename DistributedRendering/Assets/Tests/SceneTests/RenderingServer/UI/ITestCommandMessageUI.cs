@@ -3,7 +3,7 @@ using System;
 namespace RenderingServer
 {
 
-public interface IDebugCommandMessageUI
+public interface ITestCommandMessageUI
 {
     event Action OnClickedRender;
 

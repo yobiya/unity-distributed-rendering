@@ -3,9 +3,9 @@ using Common;
 namespace RenderingServer
 {
 
-public class DebugCommandMessageUIController : IDebugCommandMessageUIController
+public class TestCommandMessageUIController : ITestCommandMessageUIController
 {
-    public DebugCommandMessageUIController(ServiceLocator sl)
+    public TestCommandMessageUIController(ServiceLocator sl)
     {
     }
 
