@@ -23,6 +23,12 @@ public class RenderingUIController : IRenderingUIController
         var ui = _sl.Get<IRenderingUI>();
         ui.Deactivate();
     }
+
+    public void RenderImageBuffer(byte[] buffer)
+    {
+        var ui = _sl.Get<IRenderingUI>();
+        ui.SetImageBuffer(buffer);
+    }
 }
 
 }

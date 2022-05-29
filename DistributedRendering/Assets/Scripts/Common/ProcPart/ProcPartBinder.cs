@@ -1,3 +1,4 @@
+using GameClient;
 using RenderingServer;
 
 namespace Common
@@ -18,6 +19,7 @@ public class ProcPartBinder
         {
             gameModeProcPart.Deactivate();
             renderingServerConnectingProcPart.Activate();
+            renderingProcPart.Activate();
         };
         gameModeProcPart.OnSelectedRenderingServerMode += () =>
         {
