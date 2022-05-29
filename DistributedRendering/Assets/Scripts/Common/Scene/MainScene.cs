@@ -46,6 +46,7 @@ public class MainScene : MonoBehaviour
 
             serviceLocator.Set<IOffscreenRenderingProcPart>(new OffscreenRenderingProcPart(serviceLocator));
             serviceLocator.Set<IDebugRenderingProcPart>(new DebugRenderingProcPart(serviceLocator));
+            serviceLocator.Set<IResponseRenderingProcPart>(new ResponseRenderingProcPart(serviceLocator));
         }
 
         {

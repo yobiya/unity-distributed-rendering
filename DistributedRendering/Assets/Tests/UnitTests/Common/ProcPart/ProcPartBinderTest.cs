@@ -27,6 +27,7 @@ public class ProcPartBinderTest
         var mockLocator = new MockServiceLocator();
         mockLocator.RegisterMock<IOffscreenRenderingProcPart>();
         mockLocator.RegisterMock<IDebugRenderingProcPart>();
+        mockLocator.RegisterMock<IResponseRenderingProcPart>();
 
         var collection = new MockCollection();
 
@@ -101,6 +102,7 @@ public class ProcPartBinderTest
         // オフスクリーンレンダリングが有効になる
         collection.gameClientWaitConnectingProcPartMock.Raise(m => m.OnConnected += null);
         sl.GetMock<IOffscreenRenderingProcPart>().Verify(m => m.Activate(), Times.Once);
+        sl.GetMock<IResponseRenderingProcPart>().Verify(m => m.Activate(), Times.Once);
         collection.VerifyNoOtherCallsAllMocks();
         sl.VerifyNoOtherCallsAll();
     }
