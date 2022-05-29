@@ -1,6 +1,7 @@
 using UnityEngine;
 using Common;
 using RenderingServer;
+using GameClient;
 
 public class MainScene : MonoBehaviour
 {
