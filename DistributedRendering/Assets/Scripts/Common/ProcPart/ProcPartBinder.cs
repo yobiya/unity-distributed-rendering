@@ -14,6 +14,7 @@ public class ProcPartBinder
     {
         var offscreenRenderingProcPart = sl.Get<IOffscreenRenderingProcPart>();
         var renderingProcPart = sl.Get<IRenderingProcPart>();
+        var responseRenderingProcPart = sl.Get<IResponseRenderingProcPart>();
 
         gameModeProcPart.OnSelectedGameClientMode += () =>
         {
@@ -28,7 +29,11 @@ public class ProcPartBinder
             gameClientWaitConnectionProcPart.StartWaitConnection();
         };
 
-        gameClientWaitConnectionProcPart.OnConnected += offscreenRenderingProcPart.Activate;
+        gameClientWaitConnectionProcPart.OnConnected += () =>
+        {
+            offscreenRenderingProcPart.Activate();
+            responseRenderingProcPart.Activate();
+        };
         offscreenRenderingProcPart.OnActivated += sl.Get<IDebugRenderingProcPart>().Activate;
 
         renderingServerConnectingProcPart.OnRecieved += renderingProcPart.RenderImageBuffer;

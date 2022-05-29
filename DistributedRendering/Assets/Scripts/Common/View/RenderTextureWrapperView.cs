@@ -11,7 +11,7 @@ public class RenderTextureWrapperView : IRenderTextureView
 
     public void Activate()
     {
-        _renderTexture = new RenderTexture(256, 256, 16);
+        _renderTexture = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32);
     }
 
     public void Deactivate()
