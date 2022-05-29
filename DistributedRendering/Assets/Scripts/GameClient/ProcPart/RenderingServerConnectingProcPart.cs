@@ -1,3 +1,5 @@
+using System;
+using Common;
 using Cysharp.Threading.Tasks;
 
 public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcPart
@@ -9,6 +11,8 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
     private readonly ITestMessageSendUIViewController _testMessageSendUIViewController;
     private readonly INamedPipeClient _namedPipeClient;
     private readonly ITimerCreator _timerCreator;
+
+    public event Action<byte[]> OnRecieved;
 
     public RenderingServerConnectingProcPart(
         IRenderingServerConnectingUIViewController renderingServerConnectingUIViewController,
@@ -33,6 +37,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
             _testMessageSendUIViewController.Activate();
         };
         _namedPipeClient.OnFailed += () => CreateFaildTask().Forget();
+        _namedPipeClient.OnRecieved += (bytes) => OnRecieved?.Invoke(bytes);
 
         _timerCreator = timerCreator;
     }
