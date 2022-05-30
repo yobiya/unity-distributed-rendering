@@ -21,6 +21,7 @@ public class ProcPartBinder
             gameModeProcPart.Deactivate();
             renderingServerConnectingProcPart.Activate();
             renderingProcPart.Activate();
+            renderingServerConnectingProcPart.OnRecieved += renderingProcPart.RenderImageBuffer;
         };
         gameModeProcPart.OnSelectedRenderingServerMode += () =>
         {
@@ -35,8 +36,6 @@ public class ProcPartBinder
             responseRenderingProcPart.Activate();
         };
         offscreenRenderingProcPart.OnActivated += sl.Get<IDebugRenderingProcPart>().Activate;
-
-        renderingServerConnectingProcPart.OnRecieved += renderingProcPart.RenderImageBuffer;
     }
 }
 

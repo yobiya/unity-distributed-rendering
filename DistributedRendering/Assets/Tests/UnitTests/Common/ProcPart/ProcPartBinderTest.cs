@@ -29,6 +29,7 @@ public class ProcPartBinderTest
         mockLocator.RegisterMock<IOffscreenRenderingProcPart>();
         mockLocator.RegisterMock<IDebugRenderingProcPart>();
         mockLocator.RegisterMock<IResponseRenderingProcPart>();
+        mockLocator.RegisterMock<IRenderingProcPart>();
 
         var collection = new MockCollection();
 
@@ -68,12 +69,17 @@ public class ProcPartBinderTest
     {
         var (collection, sl) = CreateMockCollectionAndBind();
 
+        collection.renderingServerConnectingProcPartMock.SetupAdd(m => m.OnRecieved += It.IsAny<Action<byte[]>>());
+        collection.renderingServerConnectingProcPartMock.SetupAdd(m => m.OnRecieved += It.IsAny<Action<byte[]>>());
+
         // ゲームクライアントモードが選択された
-        collection.gameModeProcPartMock.Raise(m => m.OnSelectedGameClientMode += null);
+        collection.gameModeProcPartMock.Raise(m => m.OnSelectedGameClientMode += It.IsAny<Action>());
 
         // レンダリングサーバーへの接続機能が有効になる
+        sl.GetMock<IRenderingProcPart>().Verify(m => m.Activate(), Times.Once);
         collection.gameModeProcPartMock.Verify(m => m.Deactivate(), Times.Once);
         collection.renderingServerConnectingProcPartMock.Verify(m => m.Activate(), Times.Once);
+        collection.renderingServerConnectingProcPartMock.VerifyAdd(m => m.OnRecieved += It.IsAny<Action<byte[]>>(), Times.Once);
         collection.VerifyNoOtherCallsAllMocks();
         sl.VerifyNoOtherCallsAll();
     }
