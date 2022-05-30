@@ -35,6 +35,11 @@ public class NamedPipeServer : INamedPipeServer
                 if (text.Length > 0)
                 {
                     Debug.Log(text);
+
+                    if (text[0] == '@')
+                    {
+                        OnRecieved?.Invoke(text);
+                    }
                 }
             }
             catch (Exception e)
