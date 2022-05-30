@@ -2,6 +2,9 @@ using System;
 using Moq;
 using NUnit.Framework;
 
+namespace GameClient
+{
+
 public class RenderingServerConnectingProcPartTest
 {
     struct TestCollection
@@ -168,4 +171,6 @@ public class RenderingServerConnectingProcPartTest
 
         collection.namedPipeClientMock.Verify(m => m.Write("Test message."), Times.Once);
     }
+}
+
 }

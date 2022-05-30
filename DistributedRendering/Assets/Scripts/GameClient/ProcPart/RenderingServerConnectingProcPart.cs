@@ -2,6 +2,9 @@ using System;
 using Common;
 using Cysharp.Threading.Tasks;
 
+namespace GameClient
+{
+
 public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcPart
 {
     private const int ConnectTimeOutTime = 3000;
@@ -60,4 +63,6 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
 
         _renderingServerConnectingUIViewController.Reset();
     }
+}
+
 }
