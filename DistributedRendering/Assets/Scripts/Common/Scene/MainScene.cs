@@ -76,7 +76,8 @@ public class MainScene : MonoBehaviour
                     new TimerCreator());
         }
 
-        _gameClientWaitConnectionProcPart = new GameClientWaitConnectionProcPart(serviceLocator);
+        var syncCameraViewController = new SyncCameraViewController();
+        _gameClientWaitConnectionProcPart = new GameClientWaitConnectionProcPart(serviceLocator, syncCameraViewController);
 
         ProcPartBinder
             .Bind(

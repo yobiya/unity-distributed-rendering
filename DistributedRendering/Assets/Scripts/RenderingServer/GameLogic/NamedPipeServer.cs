@@ -10,6 +10,7 @@ public class NamedPipeServer : INamedPipeServer
     private bool _isFinished = false;
 
     public event Action OnConnected;
+    public event Action<string> OnRecieved;
 
     public async Task WaitConnection()
     {

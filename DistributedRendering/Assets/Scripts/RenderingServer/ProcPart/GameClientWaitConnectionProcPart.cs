@@ -9,7 +9,7 @@ public class GameClientWaitConnectionProcPart : IGameClientWaitConnectionProcPar
 
     public event Action OnConnected;
 
-    public GameClientWaitConnectionProcPart(ServiceLocator sl)
+    public GameClientWaitConnectionProcPart(ServiceLocator sl, ISyncCameraViewController syncCameraViewController)
     {
         _gameClientWaitConnectionUIViewControler = sl.Get<IGameClientWaitConnectionUIViewControler>();
         _namedPipeServer = sl.Get<INamedPipeServer>();
@@ -19,7 +19,10 @@ public class GameClientWaitConnectionProcPart : IGameClientWaitConnectionProcPar
         {
             OnConnected?.Invoke();
             _gameClientWaitConnectionUIViewControler.ShowConnected();
+            syncCameraViewController.Activate();
         };
+
+        _namedPipeServer.OnRecieved += (text) => syncCameraViewController.Sync(text);
     }
 
     public void Activate()
