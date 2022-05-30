@@ -1,6 +1,7 @@
 using System;
 using Moq;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace GameClient
 {
@@ -12,6 +13,7 @@ public class RenderingServerConnectingProcPartTest
         public RenderingServerConnectingProcPart sut;
         public Mock<IRenderingServerConnectingUIViewController> renderingServerConnectingUIViewControllerMock;
         public Mock<ITestMessageSendUIViewController> testMessageSendUIViewControllerMock;
+        public Mock<ICameraViewController> cameraViewControllerMock;
         public Mock<INamedPipeClient> namedPipeClientMock;
         public TestTimerCreator timerCreator;
 
@@ -27,6 +29,7 @@ public class RenderingServerConnectingProcPartTest
     {
         var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
         var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
+        var cameraViewControllerMock = new Mock<ICameraViewController>();
         var namedPipeClientMock = new Mock<INamedPipeClient>();
         var timerCreator = new TestTimerCreator();
 
@@ -43,6 +46,7 @@ public class RenderingServerConnectingProcPartTest
             = new RenderingServerConnectingProcPart(
                 renderingServerConnectingUIViewControllerMock.Object,
                 testMessageSendUIViewControllerMock.Object,
+                cameraViewControllerMock.Object,
                 namedPipeClientMock.Object,
                 timerCreator);
 
@@ -59,6 +63,7 @@ public class RenderingServerConnectingProcPartTest
         collection.sut = sut;
         collection.renderingServerConnectingUIViewControllerMock = renderingServerConnectingUIViewControllerMock;
         collection.testMessageSendUIViewControllerMock = testMessageSendUIViewControllerMock;
+        collection.cameraViewControllerMock = cameraViewControllerMock;
         collection.namedPipeClientMock = namedPipeClientMock;
         collection.timerCreator = timerCreator;
 
@@ -118,6 +123,7 @@ public class RenderingServerConnectingProcPartTest
         // UIから接続のリクエストが呼ばれる
         collection.renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
         collection.namedPipeClientMock.Verify(m => m.Connect(It.IsAny<int>()));
+        collection.cameraViewControllerMock.SetupAdd(m => m.OnUpdateTransform += It.IsAny<Action<Transform>>());
 
         // 接続成功
         collection.namedPipeClientMock.Raise(m => m.OnConnected += null);
@@ -126,6 +132,7 @@ public class RenderingServerConnectingProcPartTest
             // UIが接続済みの表示になる
             collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
             collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Once);
+            collection.cameraViewControllerMock.VerifyAdd(m => m.OnUpdateTransform += It.IsAny<Action<Transform>>(), Times.Once);
 
             // テストメッセージ送信用のボタンが表示になる
             collection.testMessageSendUIViewControllerMock.Verify(m => m.Activate(), Times.Once);

@@ -10,6 +10,7 @@ public class CameraViewController : ICameraViewController
 
     public CameraViewController(ICameraView camera)
     {
+        camera.OnUpdateTransform += (transform) => OnUpdateTransform?.Invoke(transform);
     }
 }
 

@@ -26,6 +26,9 @@ public class MainScene : MonoBehaviour
     [SerializeField]
     private RenderingUI _renderingUI;
 
+    [SerializeField]
+    private CameraView _cameraView;
+
     private GameModeProcPart _gameModeProcPart;
     private RenderingServerConnectingProcPart _renderingServerConnectingProcPart;
     private GameClientWaitConnectionProcPart _gameClientWaitConnectionProcPart;
@@ -33,6 +36,7 @@ public class MainScene : MonoBehaviour
 
     private RenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
     private TestMessageSendUIViewController _testMessageSendUIViewController;
+    private CameraViewController _cameraViewController;
 
     void Start()
     {
@@ -68,10 +72,12 @@ public class MainScene : MonoBehaviour
             var namedPipeClient = new NamedPipeClient(".", Definisions.CommandMessageNamedPipeName);
             _renderingServerConnectingUIViewController = new RenderingServerConnectingUIViewController(_renderingServerConnectingUICollection);
             _testMessageSendUIViewController = new TestMessageSendUIViewController(_testMessageSendUICollection);
+            _cameraViewController = new CameraViewController(_cameraView);
             _renderingServerConnectingProcPart
                 = new RenderingServerConnectingProcPart(
                     _renderingServerConnectingUIViewController,
                     _testMessageSendUIViewController,
+                    _cameraViewController,
                     namedPipeClient,
                     new TimerCreator());
         }

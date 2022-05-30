@@ -20,6 +20,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
     public RenderingServerConnectingProcPart(
         IRenderingServerConnectingUIViewController renderingServerConnectingUIViewController,
         ITestMessageSendUIViewController testMessageSendUIViewController,
+        ICameraViewController cameraViewController,
         INamedPipeClient namedPipeClient,
         ITimerCreator timerCreator)
     {
@@ -38,6 +39,19 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
         {
             _renderingServerConnectingUIViewController.ShowConnected();
             _testMessageSendUIViewController.Activate();
+
+            cameraViewController.OnUpdateTransform += (transform) =>
+            {
+                string text
+                    = $"@camera:"
+                    + $"{transform.position.x},"
+                    + $"{transform.position.y},"
+                    + $"{transform.position.z},"
+                    + $"{transform.forward.x},"
+                    + $"{transform.forward.y},"
+                    + $"{transform.forward.z}";
+                _namedPipeClient.Write(text);
+            };
         };
         _namedPipeClient.OnFailed += () => CreateFaildTask().Forget();
         _namedPipeClient.OnRecieved += (bytes) => OnRecieved?.Invoke(bytes);

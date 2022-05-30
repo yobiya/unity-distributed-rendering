@@ -526,6 +526,7 @@ MonoBehaviour:
   _offscreenRenderingView: {fileID: 887134526}
   _debugRenderingUI: {fileID: 1757220952}
   _renderingUI: {fileID: 2046176765}
+  _cameraView: {fileID: 963194231}
 --- !u!1 &180404267
 GameObject:
   m_ObjectHideFlags: 0
@@ -2177,7 +2178,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveDistanceOfSecond: 2
-  _targetTransform: {fileID: 963194228}
+  _targetTransform: {fileID: 1457468833}
 --- !u!1 &1352650803
 GameObject:
   m_ObjectHideFlags: 0
