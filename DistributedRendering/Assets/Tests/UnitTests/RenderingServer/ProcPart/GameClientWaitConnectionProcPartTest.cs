@@ -13,6 +13,7 @@ public class GameClientWaitConnectionProcPartTest
         var serviceLocator = new MockServiceLocator();
         serviceLocator.RegisterMock<IGameClientWaitConnectionUIViewControler>();
         serviceLocator.RegisterMock<INamedPipeServer>();
+        serviceLocator.RegisterMock<IResponseDataNamedPipe>();
 
         serviceLocator.GetMock<INamedPipeServer>().SetupAdd(m => m.OnConnected += It.IsAny<Action>());
 
@@ -21,6 +22,7 @@ public class GameClientWaitConnectionProcPartTest
         sut.Activate();
 
         serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.Activate(), Times.Once);
+        serviceLocator.GetMock<IResponseDataNamedPipe>().Verify(m => m.Activate(), Times.Once);
         serviceLocator.GetMock<INamedPipeServer>().VerifyAdd(m => m.OnConnected += It.IsAny<Action>(), Times.Once);
 
         return (sut, serviceLocator);

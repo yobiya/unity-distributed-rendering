@@ -36,6 +36,7 @@ public class RenderingServerConnectingProcPartTest
             testMessageSendUIViewControllerMock.SetupAdd(m => m.OnSend += It.IsAny<Action>());
             namedPipeClientMock.SetupAdd(m => m.OnConnected += It.IsAny<Action>()).Verifiable();
             namedPipeClientMock.SetupAdd(m => m.OnFailed += It.IsAny<Action>()).Verifiable();
+            namedPipeClientMock.SetupAdd(m => m.OnRecieved += It.IsAny<Action<byte[]>>());
         }
 
         var sut
@@ -51,6 +52,7 @@ public class RenderingServerConnectingProcPartTest
             testMessageSendUIViewControllerMock.VerifyAdd(m => m.OnSend += It.IsAny<Action>());
             namedPipeClientMock.VerifyAdd(m => m.OnConnected += It.IsAny<Action>(), Times.Once);
             namedPipeClientMock.VerifyAdd(m => m.OnFailed += It.IsAny<Action>(), Times.Once);
+            namedPipeClientMock.VerifyAdd(m => m.OnRecieved += It.IsAny<Action<byte[]>>(), Times.Once);
         }
 
         var collection = new TestCollection();
@@ -67,13 +69,16 @@ public class RenderingServerConnectingProcPartTest
     public void Activate()
     {
         var collection = CreateSUT();
+        collection.namedPipeClientMock.SetupAdd(m => m.OnRecieved += It.IsAny<Action<byte[]>>());
 
         // 初期状態は有効になっているので、一度無効してからActivateを呼び出す
         collection.sut.Deactivate();
         collection.sut.Activate();
 
-        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Deactivate());
-        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Activate());
+        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
+        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
+        collection.namedPipeClientMock.VerifyAdd(m => m.OnRecieved += It.IsAny<Action<byte[]>>(), Times.Once);
+
         collection.MockVerifyNoOtherCalls();
     }
 
@@ -84,7 +89,7 @@ public class RenderingServerConnectingProcPartTest
 
         collection.sut.Deactivate();
 
-        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Deactivate());
+        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
         collection.MockVerifyNoOtherCalls();
     }
 
