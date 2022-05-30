@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+namespace GameClient
+{
+
+public class CameraViewController : MonoBehaviour
 {
     [SerializeField]
     float _moveDistanceOfSecond = 1.0f;
@@ -41,4 +44,6 @@ public class CameraController : MonoBehaviour
 
         transform.LookAt(_targetTransform);
     }
+}
+
 }
