@@ -42,6 +42,11 @@ public class CameraView : MonoBehaviour, ICameraView
             moveDistance += Vector3.Cross(Vector3.up, forwordDirection).normalized;
         }
 
+        if (moveDistance == Vector3.zero)
+        {
+            return;
+        }
+
         var position = transform.position;
         transform.position = position + moveDistance.normalized * _moveDistanceOfSecond * Time.deltaTime;
 
