@@ -524,6 +524,7 @@ MonoBehaviour:
   _testMessageSendUICollection: {fileID: 674529272}
   _gameClientWaitConnectionUICollection: {fileID: 280995437}
   _offscreenRenderingView: {fileID: 887134526}
+  _syncCameraView: {fileID: 429061123}
   _debugRenderingUI: {fileID: 1757220952}
   _renderingUI: {fileID: 2046176765}
 --- !u!1 &180404267
@@ -998,6 +999,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 333353515}
   m_CullTransparentMesh: 1
+--- !u!1 &429061120 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1012717812573193152, guid: 096ea536397f0bb49bd494a716154ef6, type: 3}
+  m_PrefabInstance: {fileID: 887134525}
+  m_PrefabAsset: {fileID: 0}
+--- !u!20 &429061121 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 1012717812573193153, guid: 096ea536397f0bb49bd494a716154ef6, type: 3}
+  m_PrefabInstance: {fileID: 887134525}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &429061123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 429061120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4312796964a98f1409da9a609b91e524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 429061121}
 --- !u!1 &458540056
 GameObject:
   m_ObjectHideFlags: 0

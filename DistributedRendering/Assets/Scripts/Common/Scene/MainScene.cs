@@ -21,6 +21,9 @@ public class MainScene : MonoBehaviour
     private OffscreenRenderingView _offscreenRenderingView;
 
     [SerializeField]
+    private SyncCameraView _syncCameraView;
+
+    [SerializeField]
     private DebugRenderingUI _debugRenderingUI;
 
     [SerializeField]
@@ -76,7 +79,7 @@ public class MainScene : MonoBehaviour
                     new TimerCreator());
         }
 
-        var syncCameraViewController = new SyncCameraViewController();
+        var syncCameraViewController = new SyncCameraViewController(_syncCameraView);
         _gameClientWaitConnectionProcPart = new GameClientWaitConnectionProcPart(serviceLocator, syncCameraViewController);
 
         ProcPartBinder
