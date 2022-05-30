@@ -1,12 +1,18 @@
+using System;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+namespace GameClient
+{
+
+public class CameraView : MonoBehaviour, ICameraView
 {
     [SerializeField]
     float _moveDistanceOfSecond = 1.0f;
 
     [SerializeField]
     private Transform _targetTransform;
+
+    public event Action<Transform> OnUpdateTransform;
 
     void Update()
     {
@@ -36,9 +42,18 @@ public class CameraController : MonoBehaviour
             moveDistance += Vector3.Cross(Vector3.up, forwordDirection).normalized;
         }
 
+        if (moveDistance == Vector3.zero)
+        {
+            return;
+        }
+
         var position = transform.position;
         transform.position = position + moveDistance.normalized * _moveDistanceOfSecond * Time.deltaTime;
 
         transform.LookAt(_targetTransform);
+
+        OnUpdateTransform?.Invoke(transform);
     }
+}
+
 }
