@@ -22,12 +22,15 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
         _uiCollection = uiCollection;
 
         _uiCollection.ConnectingRequestButton.OnClicked += () => OnRequestConnecting?.Invoke();
-        Reset();
     }
 
     public void Activate()
     {
-        Reset();
+        _uiCollection.IsActive = true;
+        _uiCollection.ConnectingRequestButton.IsActive = true;
+        _uiCollection.ConnectingText.IsActive = false;
+        _uiCollection.ConnectedText.IsActive = false;
+        _uiCollection.FailedText.IsActive = false;
     }
 
     public void Deactivate()
@@ -57,14 +60,5 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
         _uiCollection.ConnectingText.IsActive = false;
         _uiCollection.ConnectedText.IsActive = false;
         _uiCollection.FailedText.IsActive = true;
-    }
-
-    public void Reset()
-    {
-        _uiCollection.IsActive = true;
-        _uiCollection.ConnectingRequestButton.IsActive = true;
-        _uiCollection.ConnectingText.IsActive = false;
-        _uiCollection.ConnectedText.IsActive = false;
-        _uiCollection.FailedText.IsActive = false;
     }
 }

@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Moq;
-using NUnit.Framework;
-using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace GameClient
 {
@@ -17,6 +19,15 @@ public class RenderingServerConnectingProcPartTest
         public Mock<INamedPipeClient> namedPipeClientMock;
         public TestTimerCreator timerCreator;
 
+        public void MockVerifyConnected()
+        {
+            renderingServerConnectingUIViewControllerMock.VerifyAdd(m => m.OnRequestConnecting += It.IsAny<Action>(), Times.Once);
+            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
+            namedPipeClientMock.Verify(m => m.Connect(It.IsAny<int>()), Times.Once);
+            renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Once);
+            testMessageSendUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
+        }
+
         public void MockVerifyNoOtherCalls()
         {
             renderingServerConnectingUIViewControllerMock.VerifyNoOtherCalls();
@@ -25,7 +36,7 @@ public class RenderingServerConnectingProcPartTest
         }
     }
 
-    private TestCollection CreateSUT()
+    private (TestCollection, UniTask) CreateSUT()
     {
         var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
         var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
@@ -37,8 +48,8 @@ public class RenderingServerConnectingProcPartTest
         {
             renderingServerConnectingUIViewControllerMock.SetupAdd(m => m.OnRequestConnecting += It.IsAny<Action>());
             testMessageSendUIViewControllerMock.SetupAdd(m => m.OnSend += It.IsAny<Action>());
-            namedPipeClientMock.SetupAdd(m => m.OnConnected += It.IsAny<Action>()).Verifiable();
-            namedPipeClientMock.SetupAdd(m => m.OnFailed += It.IsAny<Action>()).Verifiable();
+            namedPipeClientMock.SetupAdd(m => m.OnConnected += It.IsAny<Action>());
+            namedPipeClientMock.SetupAdd(m => m.OnFailed += It.IsAny<Action>());
             namedPipeClientMock.SetupAdd(m => m.OnRecieved += It.IsAny<Action<byte[]>>());
         }
 
@@ -50,9 +61,11 @@ public class RenderingServerConnectingProcPartTest
                 namedPipeClientMock.Object,
                 timerCreator);
 
+        var task = sut.Activate();
+
         // コンストラクタで登録されたイベントのVerifyを行う
         {
-            renderingServerConnectingUIViewControllerMock.VerifyAdd(m => m.OnRequestConnecting += It.IsAny<Action>(), Times.Once);
+            renderingServerConnectingUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
             testMessageSendUIViewControllerMock.VerifyAdd(m => m.OnSend += It.IsAny<Action>());
             namedPipeClientMock.VerifyAdd(m => m.OnConnected += It.IsAny<Action>(), Times.Once);
             namedPipeClientMock.VerifyAdd(m => m.OnFailed += It.IsAny<Action>(), Times.Once);
@@ -67,105 +80,77 @@ public class RenderingServerConnectingProcPartTest
         collection.namedPipeClientMock = namedPipeClientMock;
         collection.timerCreator = timerCreator;
 
-        return collection;
+        return (collection, task);
     }
 
-    [Test]
-    public void Activate()
+    private async UniTask CreateConnectedTask(TestCollection collection)
     {
-        var collection = CreateSUT();
-        collection.namedPipeClientMock.SetupAdd(m => m.OnRecieved += It.IsAny<Action<byte[]>>());
-
-        // 初期状態は有効になっているので、一度無効してからActivateを呼び出す
-        collection.sut.Deactivate();
-        collection.sut.Activate();
-
-        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
-        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
-        collection.namedPipeClientMock.VerifyAdd(m => m.OnRecieved += It.IsAny<Action<byte[]>>(), Times.Once);
-
-        collection.MockVerifyNoOtherCalls();
-    }
-
-    [Test]
-    public void Deactivate()
-    {
-        var collection = CreateSUT();
-
-        collection.sut.Deactivate();
-
-        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
-        collection.MockVerifyNoOtherCalls();
-    }
-
-    [Test]
-    public void StartConnectTest()
-    {
-        var collection = CreateSUT();
-
-        // UIから接続のリクエストが呼ばれる
+        await UniTask.NextFrame();
         collection.renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
 
-        // 接続処理が呼び出されて、接続中の表示になる
-        {
-            collection.namedPipeClientMock.Verify(m => m.Connect(It.IsAny<int>()), Times.Once);
-            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
-        }
-
-        collection.MockVerifyNoOtherCalls();
+        await UniTask.NextFrame();
+        collection.namedPipeClientMock.Raise(m => m.OnConnected += It.IsAny<Action>());
     }
 
-    [Test]
-    public void ConnectSuccessTest()
+    private async UniTask CreateTimeOutTask(TestCollection collection)
     {
-        var collection = CreateSUT();
-
-        // UIから接続のリクエストが呼ばれる
+        await UniTask.NextFrame();
         collection.renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
-        collection.namedPipeClientMock.Verify(m => m.Connect(It.IsAny<int>()));
-        collection.cameraViewControllerMock.SetupAdd(m => m.OnUpdateTransform += It.IsAny<Action<Transform>>());
 
-        // 接続成功
-        collection.namedPipeClientMock.Raise(m => m.OnConnected += null);
-
-        {
-            // UIが接続済みの表示になる
-            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
-            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Once);
-            collection.cameraViewControllerMock.VerifyAdd(m => m.OnUpdateTransform += It.IsAny<Action<Transform>>(), Times.Once);
-
-            // テストメッセージ送信用のボタンが表示になる
-            collection.testMessageSendUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
-        }
-
-        collection.MockVerifyNoOtherCalls();
-    }
-
-    [Test]
-    public void ConnectTimeOutTest()
-    {
-        var collection = CreateSUT();
-
-        // UIから接続のリクエストが呼ばれる
-        collection.renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
+        await UniTask.NextFrame();
 
         // 接続失敗
-        collection.namedPipeClientMock.Raise(m => m.OnFailed += null);
+        collection.namedPipeClientMock.Raise(m => m.OnFailed += It.IsAny<Action>());
 
-        // 接続に失敗したら、UIが接続失敗の表示になる
-        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
+        await UniTask.NextFrame();
 
         // 失敗表示の表示時間を終了させる
         collection.timerCreator.EndTimer(0);
-
-        // 接続失敗の表示時間が終了したら、Resetが呼ばれてUIが初期状態に戻る
-        {
-            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
-            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Once);
-            collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Reset(), Times.Once);
-        }
     }
 
+    [UnityTest]
+    public IEnumerator ActivateAndConncted() => UniTask.ToCoroutine(async () =>
+    {
+        var (collection, task) = CreateSUT();
+
+        await UniTask.WhenAll(
+            task,
+            CreateConnectedTask(collection));
+
+        collection.MockVerifyConnected();
+        collection.MockVerifyNoOtherCalls();
+    });
+/*
+    [Test]
+    public IEnumerator Deactivate() => UniTask.ToCoroutine(async () =>
+    {
+        var (collection, task) = CreateSUT();
+
+        await task;
+
+        collection.sut.Deactivate();
+
+        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
+        collection.MockVerifyNoOtherCalls();
+    });
+*/
+    [UnityTest]
+    public IEnumerator ActivateAndConnectTimeOutTest() => UniTask.ToCoroutine(async () =>
+    {
+        var (collection, task) = CreateSUT();
+
+        await UniTask.WhenAll(
+            task,
+            CreateTimeOutTask(collection));
+
+        collection.renderingServerConnectingUIViewControllerMock.VerifyAdd(m => m.OnRequestConnecting += It.IsAny<Action>(), Times.Once);
+        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
+        collection.namedPipeClientMock.Verify(m => m.Connect(It.IsAny<int>()), Times.Once);
+        collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Once);
+
+        collection.MockVerifyNoOtherCalls();
+    });
+/*
     [Test]
     public void SendTestMessage()
     {
@@ -182,7 +167,7 @@ public class RenderingServerConnectingProcPartTest
         collection.testMessageSendUIViewControllerMock.Raise(m => m.OnSend += null);
 
         collection.namedPipeClientMock.Verify(m => m.Write("Test message."), Times.Once);
-    }
+    }*/
 }
 
 }

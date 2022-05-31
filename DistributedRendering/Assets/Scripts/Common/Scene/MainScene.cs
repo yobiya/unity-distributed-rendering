@@ -94,9 +94,6 @@ public class MainScene : MonoBehaviour
                 _gameModeProcPart,
                 _renderingServerConnectingProcPart,
                 _gameClientWaitConnectionProcPart);
-
-        // 初期状態で使用されないものを無効にする
-        _renderingServerConnectingProcPart.Deactivate();
     }
 
     void Update()

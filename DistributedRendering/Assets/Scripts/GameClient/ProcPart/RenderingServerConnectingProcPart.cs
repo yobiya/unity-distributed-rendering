@@ -1,5 +1,4 @@
 using System;
-using Common;
 using Cysharp.Threading.Tasks;
 
 namespace GameClient
@@ -25,11 +24,6 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
         ITimerCreator timerCreator)
     {
         _renderingServerConnectingUIViewController = renderingServerConnectingUIViewController;
-        _renderingServerConnectingUIViewController.OnRequestConnecting += () =>
-        {
-            _namedPipeClient.Connect(ConnectTimeOutTime);
-            _renderingServerConnectingUIViewController.ShowConnecting();
-        };
 
         _testMessageSendUIViewController = testMessageSendUIViewController;
         _testMessageSendUIViewController.OnSend += () => _namedPipeClient.Write("Test message.");
@@ -59,9 +53,10 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
         _timerCreator = timerCreator;
     }
 
-    public void Activate()
+    public async UniTask Activate()
     {
         _renderingServerConnectingUIViewController.Activate();
+        await StartTask();
     }
 
     public void Deactivate()
@@ -74,8 +69,20 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
         _renderingServerConnectingUIViewController.ShowFailed();
 
         await _timerCreator.Create(FaildTextDisplayTime);
+    }
 
-        _renderingServerConnectingUIViewController.Reset();
+    private async UniTask StartTask()
+    {
+        bool isRequestedConnectiong = false;
+        _renderingServerConnectingUIViewController.OnRequestConnecting += () =>
+        {
+            isRequestedConnectiong = true;
+        };
+
+        await UniTask.WaitUntil(() => isRequestedConnectiong);
+
+        _namedPipeClient.Connect(ConnectTimeOutTime);
+        _renderingServerConnectingUIViewController.ShowConnecting();
     }
 }
 
