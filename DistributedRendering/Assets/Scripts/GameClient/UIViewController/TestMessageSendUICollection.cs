@@ -1,6 +1,9 @@
 using Common;
 using UnityEngine;
 
+namespace GameClient
+{
+
 public class TestMessageSendUICollection : MonoBehaviour, TestMessageSendUIViewController.IUICollection
 {
     [SerializeField]
@@ -13,4 +16,6 @@ public class TestMessageSendUICollection : MonoBehaviour, TestMessageSendUIViewC
     }
 
     public IButtonUIView SendButton => _sendButton;
+}
+
 }

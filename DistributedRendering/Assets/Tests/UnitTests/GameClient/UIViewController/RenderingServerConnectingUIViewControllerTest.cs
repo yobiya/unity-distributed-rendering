@@ -1,6 +1,9 @@
 using NUnit.Framework;
 using Common;
 
+namespace GameClient
+{
+
 public class RenderingServerConnectingUIViewControllerTest
 {
     private class UICollection : RenderingServerConnectingUIViewController.IUICollection
@@ -104,4 +107,6 @@ public class RenderingServerConnectingUIViewControllerTest
         Assert.IsFalse(collection.connectedText.IsActive);
         Assert.IsTrue(collection.failedText.IsActive);
     }
+}
+
 }

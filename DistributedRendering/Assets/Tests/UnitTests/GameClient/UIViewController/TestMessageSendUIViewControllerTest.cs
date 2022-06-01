@@ -1,6 +1,9 @@
 using NUnit.Framework;
 using Common;
 
+namespace GameClient
+{
+
 public class TestMessageSendUIViewControllerTest
 {
     private class UICollection : TestMessageSendUIViewController.IUICollection
@@ -48,4 +51,6 @@ public class TestMessageSendUIViewControllerTest
 
         Assert.IsTrue(isSendMessage);
     }
+}
+
 }

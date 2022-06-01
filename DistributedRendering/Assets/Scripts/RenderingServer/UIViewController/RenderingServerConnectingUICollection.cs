@@ -1,6 +1,9 @@
 using UnityEngine;
 using Common;
 
+namespace GameClient
+{
+
 public class RenderingServerConnectingUICollection : MonoBehaviour, RenderingServerConnectingUIViewController.IUICollection
 {
     [SerializeField]
@@ -25,4 +28,6 @@ public class RenderingServerConnectingUICollection : MonoBehaviour, RenderingSer
     public ITextUIView ConnectingText => _connectingText;
     public ITextUIView ConnectedText => _connectedText;
     public ITextUIView FailedText => _failedText;
+}
+
 }

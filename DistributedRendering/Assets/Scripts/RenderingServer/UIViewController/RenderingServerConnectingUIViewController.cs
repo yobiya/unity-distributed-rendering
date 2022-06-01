@@ -1,6 +1,9 @@
 using System;
 using Common;
 
+namespace GameClient
+{
+
 public class RenderingServerConnectingUIViewController : IRenderingServerConnectingUIViewController
 {
     public interface IUICollection
@@ -61,4 +64,6 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
         _uiCollection.ConnectedText.IsActive = false;
         _uiCollection.FailedText.IsActive = true;
     }
+}
+
 }

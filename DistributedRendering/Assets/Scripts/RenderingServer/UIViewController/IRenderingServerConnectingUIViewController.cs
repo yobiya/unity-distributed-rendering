@@ -1,5 +1,8 @@
 using System;
 
+namespace GameClient
+{
+
 public interface IRenderingServerConnectingUIViewController
 {
     event Action OnRequestConnecting;
@@ -9,4 +12,6 @@ public interface IRenderingServerConnectingUIViewController
     void ShowConnecting();
     void ShowConnected();
     void ShowFailed();
+}
+
 }

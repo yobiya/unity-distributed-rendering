@@ -1,6 +1,9 @@
 using System;
 using Common;
 
+namespace GameClient
+{
+
 public class TestMessageSendUIViewController : ITestMessageSendUIViewController
 {
     public interface IUICollection
@@ -30,4 +33,6 @@ public class TestMessageSendUIViewController : ITestMessageSendUIViewController
     {
         _uiCollection.IsActive = false;
     }
+}
+
 }
