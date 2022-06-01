@@ -5,7 +5,7 @@ using GameClient;
 using VContainer;
 using VContainer.Unity;
 
-public class MainScene : MonoBehaviour
+public class RenderingServerScene : MonoBehaviour
 {
     [SerializeField]
     private GameModeUI _gameModeUI;
