@@ -3,7 +3,7 @@ using System;
 namespace GameClient
 {
 
-public interface IRenderingServerConnectingUIViewController
+public interface IRenderingServerConnectingUIController
 {
     event Action OnRequestConnecting;
 

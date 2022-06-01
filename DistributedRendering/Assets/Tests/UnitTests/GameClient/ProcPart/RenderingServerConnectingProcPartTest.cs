@@ -12,7 +12,7 @@ public class RenderingServerConnectingProcPartTest
     struct TestCollection
     {
         public RenderingServerConnectingProcPart sut;
-        public Mock<IRenderingServerConnectingUIViewController> renderingServerConnectingUIViewControllerMock;
+        public Mock<IRenderingServerConnectingUIController> renderingServerConnectingUIViewControllerMock;
         public Mock<ITestMessageSendUIViewController> testMessageSendUIViewControllerMock;
         public Mock<ICameraViewController> cameraViewControllerMock;
         public Mock<INamedPipeClient> namedPipeClientMock;
@@ -37,7 +37,7 @@ public class RenderingServerConnectingProcPartTest
 
     private (TestCollection, UniTask) CreateSUT()
     {
-        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIViewController>();
+        var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIController>();
         var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
         var cameraViewControllerMock = new Mock<ICameraViewController>();
         var namedPipeClientMock = new Mock<INamedPipeClient>();

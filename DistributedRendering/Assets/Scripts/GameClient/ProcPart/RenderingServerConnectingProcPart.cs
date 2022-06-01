@@ -9,7 +9,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
     private const int ConnectTimeOutTime = 3000;
     private const float FaildTextDisplayTime = 3.0f;
 
-    private readonly IRenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
+    private readonly IRenderingServerConnectingUIController _renderingServerConnectingUIViewController;
     private readonly ITestMessageSendUIViewController _testMessageSendUIViewController;
     private readonly ICameraViewController _cameraViewController;
     private readonly INamedPipeClient _namedPipeClient;
@@ -18,7 +18,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
     public event Action<byte[]> OnRecieved;
 
     public RenderingServerConnectingProcPart(
-        IRenderingServerConnectingUIViewController renderingServerConnectingUIViewController,
+        IRenderingServerConnectingUIController renderingServerConnectingUIViewController,
         ITestMessageSendUIViewController testMessageSendUIViewController,
         ICameraViewController cameraViewController,
         INamedPipeClient namedPipeClient,

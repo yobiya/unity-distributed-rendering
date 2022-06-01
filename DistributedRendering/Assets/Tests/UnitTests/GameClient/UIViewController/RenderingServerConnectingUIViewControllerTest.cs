@@ -6,7 +6,7 @@ namespace GameClient
 
 public class RenderingServerConnectingUIViewControllerTest
 {
-    private class UICollection : RenderingServerConnectingUIViewController.IUICollection
+    private class UICollection : RenderingServerConnectingUIController.IUICollection
     {
         public TestButtonUIView connectingRequestButton = new TestButtonUIView();
         public TestTextUIView connectingText = new TestTextUIView();
@@ -25,7 +25,7 @@ public class RenderingServerConnectingUIViewControllerTest
     public void Activate()
     {
         var collection = new UICollection();
-        var sut = new RenderingServerConnectingUIViewController(collection);
+        var sut = new RenderingServerConnectingUIController(collection);
 
         // 初期状態は有効になっているので、一度無効してからActivateを呼び出す
         sut.Deactivate();
@@ -42,7 +42,7 @@ public class RenderingServerConnectingUIViewControllerTest
     public void Deactivate()
     {
         var collection = new UICollection();
-        var sut = new RenderingServerConnectingUIViewController(collection);
+        var sut = new RenderingServerConnectingUIController(collection);
 
         sut.Deactivate();
 
@@ -54,7 +54,7 @@ public class RenderingServerConnectingUIViewControllerTest
     public void ConnectUIViewController()
     {
         var collection = new UICollection();
-        var sut = new RenderingServerConnectingUIViewController(collection);
+        var sut = new RenderingServerConnectingUIController(collection);
 
         bool isRequestConnecting = false;
         sut.OnRequestConnecting += () => isRequestConnecting = true;
@@ -70,7 +70,7 @@ public class RenderingServerConnectingUIViewControllerTest
     public void ShowConnecting()
     {
         var collection = new UICollection();
-        var sut = new RenderingServerConnectingUIViewController(collection);
+        var sut = new RenderingServerConnectingUIController(collection);
 
         sut.ShowConnecting();
 
@@ -84,7 +84,7 @@ public class RenderingServerConnectingUIViewControllerTest
     public void ShowConnected()
     {
         var collection = new UICollection();
-        var sut = new RenderingServerConnectingUIViewController(collection);
+        var sut = new RenderingServerConnectingUIController(collection);
 
         sut.ShowConnected();
 
@@ -98,7 +98,7 @@ public class RenderingServerConnectingUIViewControllerTest
     public void ShowFailed()
     {
         var collection = new UICollection();
-        var sut = new RenderingServerConnectingUIViewController(collection);
+        var sut = new RenderingServerConnectingUIController(collection);
 
         sut.ShowFailed();
 

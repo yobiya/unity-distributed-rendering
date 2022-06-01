@@ -4,7 +4,7 @@ using Common;
 namespace GameClient
 {
 
-public class RenderingServerConnectingUIViewController : IRenderingServerConnectingUIViewController
+public class RenderingServerConnectingUIController : IRenderingServerConnectingUIController
 {
     public interface IUICollection
     {
@@ -20,7 +20,7 @@ public class RenderingServerConnectingUIViewController : IRenderingServerConnect
 
     public event Action OnRequestConnecting;
 
-    public RenderingServerConnectingUIViewController(IUICollection uiCollection)
+    public RenderingServerConnectingUIController(IUICollection uiCollection)
     {
         _uiCollection = uiCollection;
 

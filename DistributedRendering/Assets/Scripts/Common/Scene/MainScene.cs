@@ -39,7 +39,7 @@ public class MainScene : MonoBehaviour
     private GameClientWaitConnectionProcPart _gameClientWaitConnectionProcPart;
     private ResponseRenderingProcPart _responseRenderingProcPart;
 
-    private RenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
+    private RenderingServerConnectingUIController _renderingServerConnectingUIViewController;
     private TestMessageSendUIViewController _testMessageSendUIViewController;
     private CameraViewController _cameraViewController;
 
@@ -84,7 +84,7 @@ public class MainScene : MonoBehaviour
 
         {
             var namedPipeClient = _objectResolver.Resolve<INamedPipeClient>();
-            _renderingServerConnectingUIViewController = new RenderingServerConnectingUIViewController(_renderingServerConnectingUICollection);
+            _renderingServerConnectingUIViewController = new RenderingServerConnectingUIController(_renderingServerConnectingUICollection);
             _testMessageSendUIViewController = new TestMessageSendUIViewController(_testMessageSendUICollection);
             _cameraViewController = new CameraViewController(_cameraView);
             _renderingServerConnectingProcPart
