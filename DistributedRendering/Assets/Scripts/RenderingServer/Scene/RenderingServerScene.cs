@@ -38,6 +38,8 @@ public class RenderingServerScene : MonoBehaviour
             containerBuilder.Register<IDebugRenderingUIControler, DebugRenderingUIControler>(Lifetime.Singleton);
             containerBuilder.Register<IGameClientWaitConnectionUIViewControler, GameClientWaitConnectionUIViewControler>(Lifetime.Singleton);
 
+            containerBuilder.Register<IResponseDataNamedPipe, ResponseDataNamedPipe>(Lifetime.Singleton);
+
             // ProcPartを登録
             containerBuilder.Register<IDebugRenderingProcPart, DebugRenderingProcPart>(Lifetime.Singleton);
         }
@@ -51,7 +53,6 @@ public class RenderingServerScene : MonoBehaviour
             serviceLocator.Set<IOffscreenRenderingViewController>(_objectResolver.Resolve<IOffscreenRenderingViewController>());
             serviceLocator.Set<IGameClientWaitConnectionUIViewControler>(_objectResolver.Resolve<IGameClientWaitConnectionUIViewControler>());
             serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
-            serviceLocator.Set<IResponseDataNamedPipe>(new ResponseDataNamedPipe());
 
             _responseRenderingProcPart = new ResponseRenderingProcPart(serviceLocator);
             serviceLocator.Set<IResponseRenderingProcPart>(_responseRenderingProcPart);
@@ -63,7 +64,7 @@ public class RenderingServerScene : MonoBehaviour
         _gameClientConnectionProcPart = new GameClientConnectionProcPart(
             serviceLocator.Get<IGameClientWaitConnectionUIViewControler>(),
             serviceLocator.Get<INamedPipeServer>(),
-            serviceLocator.Get<IResponseDataNamedPipe>());
+            _objectResolver.Resolve<IResponseDataNamedPipe>());
 
         // ゲームクライアントとの接続を確立する
         _gameClientConnectionProcPart.Activate();
