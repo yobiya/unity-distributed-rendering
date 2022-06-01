@@ -9,7 +9,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
     private const int ConnectTimeOutTime = 3000;
     private const float FaildTextDisplayTime = 3.0f;
 
-    private readonly IRenderingServerConnectingUIController _renderingServerConnectingUIViewController;
+    private readonly IRenderingServerConnectingUIController _renderingServerConnectingUIController;
     private readonly ITestMessageSendUIViewController _testMessageSendUIViewController;
     private readonly ICameraViewController _cameraViewController;
     private readonly INamedPipeClient _namedPipeClient;
@@ -18,13 +18,13 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
     public event Action<byte[]> OnRecieved;
 
     public RenderingServerConnectingProcPart(
-        IRenderingServerConnectingUIController renderingServerConnectingUIViewController,
+        IRenderingServerConnectingUIController renderingServerConnectingUIController,
         ITestMessageSendUIViewController testMessageSendUIViewController,
         ICameraViewController cameraViewController,
         INamedPipeClient namedPipeClient,
         ITimerCreator timerCreator)
     {
-        _renderingServerConnectingUIViewController = renderingServerConnectingUIViewController;
+        _renderingServerConnectingUIController = renderingServerConnectingUIController;
         _cameraViewController = cameraViewController;
 
         _testMessageSendUIViewController = testMessageSendUIViewController;
@@ -38,28 +38,28 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
 
     public async UniTask Activate()
     {
-        _renderingServerConnectingUIViewController.Activate();
+        _renderingServerConnectingUIController.Activate();
         await StartAsync();
     }
 
     public void Deactivate()
     {
-        _renderingServerConnectingUIViewController.Deactivate();
+        _renderingServerConnectingUIController.Deactivate();
     }
 
     private async UniTask StartAsync()
     {
         // ユーザーの開始入力を待つ
         bool isRequestedConnectiong = false;
-        _renderingServerConnectingUIViewController.OnRequestConnecting += () => isRequestedConnectiong = true;
+        _renderingServerConnectingUIController.OnRequestConnecting += () => isRequestedConnectiong = true;
         await UniTask.WaitUntil(() => isRequestedConnectiong);
 
         // 接続を開始する
-        _renderingServerConnectingUIViewController.ShowConnecting();
+        _renderingServerConnectingUIController.ShowConnecting();
         var connectResult = await _namedPipeClient.ConnectAsync(ConnectTimeOutTime);
         if (connectResult == INamedPipeClient.ConnectResult.Connected)
         {
-            _renderingServerConnectingUIViewController.ShowConnected();
+            _renderingServerConnectingUIController.ShowConnected();
             _testMessageSendUIViewController.Activate();
 
             _cameraViewController.OnUpdateTransform += (transform) =>
@@ -77,7 +77,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
         }
         else
         {
-            _renderingServerConnectingUIViewController.ShowFailed();
+            _renderingServerConnectingUIController.ShowFailed();
 
             await _timerCreator.Create(FaildTextDisplayTime);
         }

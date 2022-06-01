@@ -39,7 +39,6 @@ public class MainScene : MonoBehaviour
     private GameClientWaitConnectionProcPart _gameClientWaitConnectionProcPart;
     private ResponseRenderingProcPart _responseRenderingProcPart;
 
-    private RenderingServerConnectingUIController _renderingServerConnectingUIViewController;
     private TestMessageSendUIViewController _testMessageSendUIViewController;
     private CameraViewController _cameraViewController;
 
@@ -50,6 +49,7 @@ public class MainScene : MonoBehaviour
         var containerBuilder = new ContainerBuilder();
         {
             containerBuilder.Register<INamedPipeClient>(_ => new NamedPipeClient(".", Definisions.CommandMessageNamedPipeName), Lifetime.Singleton);
+            containerBuilder.Register<IRenderingServerConnectingUIController>(_ => new RenderingServerConnectingUIController(_renderingServerConnectingUICollection), Lifetime.Singleton);
         }
 
         _objectResolver = containerBuilder.Build();
@@ -84,12 +84,12 @@ public class MainScene : MonoBehaviour
 
         {
             var namedPipeClient = _objectResolver.Resolve<INamedPipeClient>();
-            _renderingServerConnectingUIViewController = new RenderingServerConnectingUIController(_renderingServerConnectingUICollection);
+            var renderingServerConnectingUIController = _objectResolver.Resolve<IRenderingServerConnectingUIController>();
             _testMessageSendUIViewController = new TestMessageSendUIViewController(_testMessageSendUICollection);
             _cameraViewController = new CameraViewController(_cameraView);
             _renderingServerConnectingProcPart
                 = new RenderingServerConnectingProcPart(
-                    _renderingServerConnectingUIViewController,
+                    renderingServerConnectingUIController,
                     _testMessageSendUIViewController,
                     _cameraViewController,
                     namedPipeClient,
