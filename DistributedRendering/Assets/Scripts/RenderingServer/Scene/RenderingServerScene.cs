@@ -18,7 +18,7 @@ public class RenderingServerScene : MonoBehaviour
     [SerializeField]
     private DebugRenderingUI _debugRenderingUI;
 
-    private GameClientWaitConnectionProcPart _gameClientWaitConnectionProcPart;
+    private GameClientConnectionProcPart _gameClientConnectionProcPart;
     private ResponseRenderingProcPart _responseRenderingProcPart;
     private OffscreenRenderingProcPart _offscreenRenderingProcPart;
     private IDebugRenderingProcPart _debugRenderingProcPart;
@@ -57,14 +57,14 @@ public class RenderingServerScene : MonoBehaviour
         _debugRenderingProcPart = _objectResolver.Resolve<IDebugRenderingProcPart>();
 
         var syncCameraViewController = new SyncCameraViewController(_syncCameraView);
-        _gameClientWaitConnectionProcPart = new GameClientWaitConnectionProcPart(serviceLocator, syncCameraViewController);
+        _gameClientConnectionProcPart = new GameClientConnectionProcPart(serviceLocator, syncCameraViewController);
 
-        _gameClientWaitConnectionProcPart.Activate();
-        _gameClientWaitConnectionProcPart.StartWaitConnection();
+        _gameClientConnectionProcPart.Activate();
+        _gameClientConnectionProcPart.StartWaitConnection();
 
         _offscreenRenderingProcPart = new OffscreenRenderingProcPart(serviceLocator);
         _offscreenRenderingProcPart.OnActivated += _debugRenderingProcPart.Activate;
-        _gameClientWaitConnectionProcPart.OnConnected += _offscreenRenderingProcPart.Activate;
+        _gameClientConnectionProcPart.OnConnected += _offscreenRenderingProcPart.Activate;
     }
 
     void Update()

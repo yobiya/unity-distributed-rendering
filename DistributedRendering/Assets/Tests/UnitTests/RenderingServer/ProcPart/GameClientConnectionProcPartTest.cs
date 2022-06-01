@@ -6,9 +6,9 @@ using NUnit.Framework;
 namespace RenderingServer
 {
 
-public class GameClientWaitConnectionProcPartTest
+public class GameClientConnectionProcPartTest
 {
-    private (GameClientWaitConnectionProcPart, MockServiceLocator) CreateSUT()
+    private (GameClientConnectionProcPart, MockServiceLocator) CreateSUT()
     {
         var serviceLocator = new MockServiceLocator();
         serviceLocator.RegisterMock<IGameClientWaitConnectionUIViewControler>();
@@ -19,7 +19,7 @@ public class GameClientWaitConnectionProcPartTest
         serviceLocator.GetMock<INamedPipeServer>().SetupAdd(m => m.OnConnected += It.IsAny<Action>());
         serviceLocator.GetMock<INamedPipeServer>().SetupAdd(m => m.OnRecieved += It.IsAny<Action<string>>());
 
-        var sut = new GameClientWaitConnectionProcPart(serviceLocator, serviceLocator.GetMock<ISyncCameraViewController>().Object);
+        var sut = new GameClientConnectionProcPart(serviceLocator, serviceLocator.GetMock<ISyncCameraViewController>().Object);
 
         sut.Activate();
 

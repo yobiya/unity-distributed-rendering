@@ -1,15 +1,17 @@
 using System;
 using Common;
-using RenderingServer;
 
-public class GameClientWaitConnectionProcPart : IGameClientWaitConnectionProcPart
+namespace RenderingServer
+{
+
+public class GameClientConnectionProcPart : IGameClientConnectionProcPart
 {
     private readonly IGameClientWaitConnectionUIViewControler _gameClientWaitConnectionUIViewControler;
     private readonly INamedPipeServer _namedPipeServer;
 
     public event Action OnConnected;
 
-    public GameClientWaitConnectionProcPart(ServiceLocator sl, ISyncCameraViewController syncCameraViewController)
+    public GameClientConnectionProcPart(ServiceLocator sl, ISyncCameraViewController syncCameraViewController)
     {
         _gameClientWaitConnectionUIViewControler = sl.Get<IGameClientWaitConnectionUIViewControler>();
         _namedPipeServer = sl.Get<INamedPipeServer>();
@@ -40,4 +42,6 @@ public class GameClientWaitConnectionProcPart : IGameClientWaitConnectionProcPar
         var _ = _namedPipeServer.WaitConnection();
         _gameClientWaitConnectionUIViewControler.ShowWaitConnection();
     }
+}
+
 }
