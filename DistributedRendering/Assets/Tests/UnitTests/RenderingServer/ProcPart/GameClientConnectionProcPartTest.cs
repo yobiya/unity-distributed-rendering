@@ -17,7 +17,11 @@ public class GameClientConnectionProcPartTest
 
         serviceLocator.GetMock<INamedPipeServer>().SetupAdd(m => m.OnConnected += It.IsAny<Action>());
 
-        var sut = new GameClientConnectionProcPart(serviceLocator);
+        var sut
+            = new GameClientConnectionProcPart(
+                serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Object,
+                serviceLocator.GetMock<INamedPipeServer>().Object,
+                serviceLocator.GetMock<IResponseDataNamedPipe>().Object);
 
         sut.Activate();
 

@@ -60,7 +60,10 @@ public class RenderingServerScene : MonoBehaviour
         _debugRenderingProcPart = _objectResolver.Resolve<IDebugRenderingProcPart>();
 
         var syncCameraViewController = new SyncCameraViewController(_syncCameraView);
-        _gameClientConnectionProcPart = new GameClientConnectionProcPart(serviceLocator);
+        _gameClientConnectionProcPart = new GameClientConnectionProcPart(
+            serviceLocator.Get<IGameClientWaitConnectionUIViewControler>(),
+            serviceLocator.Get<INamedPipeServer>(),
+            serviceLocator.Get<IResponseDataNamedPipe>());
 
         // ゲームクライアントとの接続を確立する
         _gameClientConnectionProcPart.Activate();

@@ -1,5 +1,4 @@
 using System;
-using Common;
 
 namespace RenderingServer
 {
@@ -11,14 +10,16 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
 {
     private readonly IGameClientWaitConnectionUIViewControler _gameClientWaitConnectionUIViewControler;
     private readonly INamedPipeServer _namedPipeServer;
+    private readonly IResponseDataNamedPipe _responseDataNamedPipe;
 
     public event Action OnConnected;
 
-    public GameClientConnectionProcPart(ServiceLocator sl)
+    public GameClientConnectionProcPart(IGameClientWaitConnectionUIViewControler gameClientWaitConnectionUIViewControler, INamedPipeServer namedPipeServer, IResponseDataNamedPipe responseDataNamedPipe)
     {
-        _gameClientWaitConnectionUIViewControler = sl.Get<IGameClientWaitConnectionUIViewControler>();
-        _namedPipeServer = sl.Get<INamedPipeServer>();
-        sl.Get<IResponseDataNamedPipe>().Activate();
+        _gameClientWaitConnectionUIViewControler = gameClientWaitConnectionUIViewControler;
+        _namedPipeServer = namedPipeServer;
+        _responseDataNamedPipe = responseDataNamedPipe;
+        _responseDataNamedPipe.Activate();
 
         _namedPipeServer.OnConnected += () =>
         {
