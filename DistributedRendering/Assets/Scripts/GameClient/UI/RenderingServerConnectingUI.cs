@@ -4,7 +4,7 @@ using Common;
 namespace GameClient
 {
 
-public class RenderingServerConnectingUICollection : MonoBehaviour, RenderingServerConnectingUIController.IUICollection
+public class RenderingServerConnectingUI : MonoBehaviour, IRenderingServerConnectingUI
 {
     [SerializeField]
     private ButtonUIViewAdapter _connectingRequestButton;

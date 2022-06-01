@@ -2,7 +2,6 @@ using UnityEngine;
 using Common;
 using RenderingServer;
 using GameClient;
-using VContainer.Unity;
 using VContainer;
 
 public class MainScene : MonoBehaviour
@@ -11,7 +10,7 @@ public class MainScene : MonoBehaviour
     private GameModeUI _gameModeUI;
 
     [SerializeField]
-    private RenderingServerConnectingUICollection _renderingServerConnectingUICollection;
+    private RenderingServerConnectingUI _renderingServerConnectingUICollection;
 
     [SerializeField]
     private TestMessageSendUICollection _testMessageSendUICollection;

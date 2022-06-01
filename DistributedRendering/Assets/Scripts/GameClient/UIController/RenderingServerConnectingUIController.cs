@@ -1,26 +1,15 @@
 using System;
-using Common;
 
 namespace GameClient
 {
 
 public class RenderingServerConnectingUIController : IRenderingServerConnectingUIController
 {
-    public interface IUICollection
-    {
-        bool IsActive { get; set; }
-
-        IButtonUIView ConnectingRequestButton { get; }
-        ITextUIView ConnectingText { get; }
-        ITextUIView ConnectedText { get; }
-        ITextUIView FailedText { get; }
-    }
-
-    private readonly IUICollection _uiCollection;
+    private readonly IRenderingServerConnectingUI _uiCollection;
 
     public event Action OnRequestConnecting;
 
-    public RenderingServerConnectingUIController(IUICollection uiCollection)
+    public RenderingServerConnectingUIController(IRenderingServerConnectingUI uiCollection)
     {
         _uiCollection = uiCollection;
 

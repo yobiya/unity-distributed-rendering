@@ -4,9 +4,9 @@ using Common;
 namespace GameClient
 {
 
-public class RenderingServerConnectingUIViewControllerTest
+public class RenderingServerConnectingUIControllerTest
 {
-    private class UICollection : RenderingServerConnectingUIController.IUICollection
+    private class UICollection : IRenderingServerConnectingUI
     {
         public TestButtonUIView connectingRequestButton = new TestButtonUIView();
         public TestTextUIView connectingText = new TestTextUIView();
