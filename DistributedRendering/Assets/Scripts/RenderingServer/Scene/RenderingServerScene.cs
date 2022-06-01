@@ -57,14 +57,25 @@ public class RenderingServerScene : MonoBehaviour
         _debugRenderingProcPart = _objectResolver.Resolve<IDebugRenderingProcPart>();
 
         var syncCameraViewController = new SyncCameraViewController(_syncCameraView);
-        _gameClientConnectionProcPart = new GameClientConnectionProcPart(serviceLocator, syncCameraViewController);
+        _gameClientConnectionProcPart = new GameClientConnectionProcPart(serviceLocator);
 
+        // ゲームクライアントとの接続を確立する
         _gameClientConnectionProcPart.Activate();
         _gameClientConnectionProcPart.StartWaitConnection();
 
         _offscreenRenderingProcPart = new OffscreenRenderingProcPart(serviceLocator);
         _offscreenRenderingProcPart.OnActivated += _debugRenderingProcPart.Activate;
-        _gameClientConnectionProcPart.OnConnected += _offscreenRenderingProcPart.Activate;
+        _gameClientConnectionProcPart.OnConnected += () =>
+        {
+            _offscreenRenderingProcPart.Activate();
+            syncCameraViewController.Activate();
+
+            serviceLocator.Get<INamedPipeServer>().OnRecieved += (text) => syncCameraViewController.Sync(text);
+        };
+    }
+
+    private void StartProcPart()
+    {
     }
 
     void Update()

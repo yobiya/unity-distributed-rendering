@@ -4,6 +4,9 @@ using Common;
 namespace RenderingServer
 {
 
+/*
+    ゲームクライアントとの接続を確立する機能
+ */
 public class GameClientConnectionProcPart : IGameClientConnectionProcPart
 {
     private readonly IGameClientWaitConnectionUIViewControler _gameClientWaitConnectionUIViewControler;
@@ -11,7 +14,7 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
 
     public event Action OnConnected;
 
-    public GameClientConnectionProcPart(ServiceLocator sl, ISyncCameraViewController syncCameraViewController)
+    public GameClientConnectionProcPart(ServiceLocator sl)
     {
         _gameClientWaitConnectionUIViewControler = sl.Get<IGameClientWaitConnectionUIViewControler>();
         _namedPipeServer = sl.Get<INamedPipeServer>();
@@ -21,10 +24,7 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
         {
             OnConnected?.Invoke();
             _gameClientWaitConnectionUIViewControler.ShowConnected();
-            syncCameraViewController.Activate();
         };
-
-        _namedPipeServer.OnRecieved += (text) => syncCameraViewController.Sync(text);
     }
 
     public void Activate()

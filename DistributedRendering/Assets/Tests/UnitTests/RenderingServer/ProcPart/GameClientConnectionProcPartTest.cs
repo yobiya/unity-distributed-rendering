@@ -14,19 +14,16 @@ public class GameClientConnectionProcPartTest
         serviceLocator.RegisterMock<IGameClientWaitConnectionUIViewControler>();
         serviceLocator.RegisterMock<INamedPipeServer>();
         serviceLocator.RegisterMock<IResponseDataNamedPipe>();
-        serviceLocator.RegisterMock<ISyncCameraViewController>();
 
         serviceLocator.GetMock<INamedPipeServer>().SetupAdd(m => m.OnConnected += It.IsAny<Action>());
-        serviceLocator.GetMock<INamedPipeServer>().SetupAdd(m => m.OnRecieved += It.IsAny<Action<string>>());
 
-        var sut = new GameClientConnectionProcPart(serviceLocator, serviceLocator.GetMock<ISyncCameraViewController>().Object);
+        var sut = new GameClientConnectionProcPart(serviceLocator);
 
         sut.Activate();
 
         serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.Activate(), Times.Once);
         serviceLocator.GetMock<IResponseDataNamedPipe>().Verify(m => m.Activate(), Times.Once);
         serviceLocator.GetMock<INamedPipeServer>().VerifyAdd(m => m.OnConnected += It.IsAny<Action>(), Times.Once);
-        serviceLocator.GetMock<INamedPipeServer>().VerifyAdd(m => m.OnRecieved += It.IsAny<Action<string>>(), Times.Once);
 
         return (sut, serviceLocator);
     }
@@ -75,7 +72,6 @@ public class GameClientConnectionProcPartTest
         serviceLocator.GetMock<INamedPipeServer>().Raise(m => m.OnConnected += null);
 
         serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.ShowConnected(), Times.Once);
-        serviceLocator.GetMock<ISyncCameraViewController>().Verify(m => m.Activate(), Times.Once);
         serviceLocator.VerifyNoOtherCallsAll();
     }
 }
