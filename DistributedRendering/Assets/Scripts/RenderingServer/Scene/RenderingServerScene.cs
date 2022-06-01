@@ -1,18 +1,11 @@
 using UnityEngine;
 using Common;
 using RenderingServer;
-using GameClient;
 using VContainer;
 using VContainer.Unity;
 
 public class RenderingServerScene : MonoBehaviour
 {
-    [SerializeField]
-    private RenderingServerConnectingUI _renderingServerConnectingUICollection;
-
-    [SerializeField]
-    private TestMessageSendUICollection _testMessageSendUICollection;
-
     [SerializeField]
     private GameClientWaitConnectionUICollection _gameClientWaitConnectionUICollection;
 
@@ -25,19 +18,9 @@ public class RenderingServerScene : MonoBehaviour
     [SerializeField]
     private DebugRenderingUI _debugRenderingUI;
 
-    [SerializeField]
-    private RenderingUI _renderingUI;
-
-    [SerializeField]
-    private CameraView _cameraView;
-
-    private RenderingServerConnectingProcPart _renderingServerConnectingProcPart;
     private GameClientWaitConnectionProcPart _gameClientWaitConnectionProcPart;
     private ResponseRenderingProcPart _responseRenderingProcPart;
     private OffscreenRenderingProcPart _offscreenRenderingProcPart;
-
-    private TestMessageSendUIViewController _testMessageSendUIViewController;
-    private CameraViewController _cameraViewController;
 
     private IObjectResolver _objectResolver;
 
@@ -46,11 +29,8 @@ public class RenderingServerScene : MonoBehaviour
         var containerBuilder = new ContainerBuilder();
         {
             // SerializeFieldを登録
-            containerBuilder.RegisterComponent<IRenderingServerConnectingUI>(_renderingServerConnectingUICollection);
             containerBuilder.RegisterComponent<IOffscreenRenderingView>(_offscreenRenderingView);
 
-            containerBuilder.Register<INamedPipeClient>(_ => new NamedPipeClient(".", Definisions.CommandMessageNamedPipeName), Lifetime.Singleton);
-            containerBuilder.Register<IRenderingServerConnectingUIController, RenderingServerConnectingUIController>(Lifetime.Singleton);
             containerBuilder.Register<IOffscreenRenderingViewController, OffscreenRenderingViewController>(Lifetime.Singleton);
         }
 
@@ -59,7 +39,6 @@ public class RenderingServerScene : MonoBehaviour
         var serviceLocator = new ServiceLocator();
         {
             serviceLocator.Set<IDebugRenderingUI>(_debugRenderingUI);
-            serviceLocator.Set<IRenderingUI>(_renderingUI);
 
             serviceLocator.Set<IOffscreenRenderingViewController>(_objectResolver.Resolve<IOffscreenRenderingViewController>());
             serviceLocator.Set<IGameClientWaitConnectionUIViewControler>(new GameClientWaitConnectionUIViewControler(_gameClientWaitConnectionUICollection));
@@ -67,27 +46,10 @@ public class RenderingServerScene : MonoBehaviour
             serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
             serviceLocator.Set<IResponseDataNamedPipe>(new ResponseDataNamedPipe());
 
-            serviceLocator.Set<IRenderingUIController>(new RenderingUIController(serviceLocator));
-
             serviceLocator.Set<IDebugRenderingProcPart>(new DebugRenderingProcPart(serviceLocator));
-            serviceLocator.Set<IRenderingProcPart>(new RenderingProcPart(serviceLocator));
 
             _responseRenderingProcPart = new ResponseRenderingProcPart(serviceLocator);
             serviceLocator.Set<IResponseRenderingProcPart>(_responseRenderingProcPart);
-        }
-
-        {
-            var namedPipeClient = _objectResolver.Resolve<INamedPipeClient>();
-            var renderingServerConnectingUIController = _objectResolver.Resolve<IRenderingServerConnectingUIController>();
-            _testMessageSendUIViewController = new TestMessageSendUIViewController(_testMessageSendUICollection);
-            _cameraViewController = new CameraViewController(_cameraView);
-            _renderingServerConnectingProcPart
-                = new RenderingServerConnectingProcPart(
-                    renderingServerConnectingUIController,
-                    _testMessageSendUIViewController,
-                    _cameraViewController,
-                    namedPipeClient,
-                    new TimerCreator());
         }
 
         var syncCameraViewController = new SyncCameraViewController(_syncCameraView);
