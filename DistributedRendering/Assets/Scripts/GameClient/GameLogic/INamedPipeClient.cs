@@ -1,11 +1,16 @@
 using System;
+using Cysharp.Threading.Tasks;
 
 public interface INamedPipeClient
 {
-    event Action OnConnected;
-    event Action OnFailed;
+    public enum ConnectResult
+    {
+        Connected,
+        TimeOut
+    }
+
     event Action<byte[]> OnRecieved;
 
-    void Connect(int timeOutTime);
+    UniTask<ConnectResult> ConnectAsync(int timeOutTime);
     void Write(string text);
 }

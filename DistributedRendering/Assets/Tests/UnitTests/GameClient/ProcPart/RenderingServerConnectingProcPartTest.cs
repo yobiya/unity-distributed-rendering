@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Threading;
 using Cysharp.Threading.Tasks;
 using Moq;
 using UnityEngine.TestTools;
@@ -21,9 +20,9 @@ public class RenderingServerConnectingProcPartTest
 
         public void MockVerifyConnected()
         {
+            namedPipeClientMock.Verify(m => m.ConnectAsync(It.IsAny<int>()), Times.Once);
             renderingServerConnectingUIViewControllerMock.VerifyAdd(m => m.OnRequestConnecting += It.IsAny<Action>(), Times.Once);
             renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
-            namedPipeClientMock.Verify(m => m.Connect(It.IsAny<int>()), Times.Once);
             renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnected(), Times.Once);
             testMessageSendUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
         }
@@ -48,8 +47,6 @@ public class RenderingServerConnectingProcPartTest
         {
             renderingServerConnectingUIViewControllerMock.SetupAdd(m => m.OnRequestConnecting += It.IsAny<Action>());
             testMessageSendUIViewControllerMock.SetupAdd(m => m.OnSend += It.IsAny<Action>());
-            namedPipeClientMock.SetupAdd(m => m.OnConnected += It.IsAny<Action>());
-            namedPipeClientMock.SetupAdd(m => m.OnFailed += It.IsAny<Action>());
             namedPipeClientMock.SetupAdd(m => m.OnRecieved += It.IsAny<Action<byte[]>>());
         }
 
@@ -67,8 +64,6 @@ public class RenderingServerConnectingProcPartTest
         {
             renderingServerConnectingUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
             testMessageSendUIViewControllerMock.VerifyAdd(m => m.OnSend += It.IsAny<Action>());
-            namedPipeClientMock.VerifyAdd(m => m.OnConnected += It.IsAny<Action>(), Times.Once);
-            namedPipeClientMock.VerifyAdd(m => m.OnFailed += It.IsAny<Action>(), Times.Once);
             namedPipeClientMock.VerifyAdd(m => m.OnRecieved += It.IsAny<Action<byte[]>>(), Times.Once);
         }
 
@@ -89,7 +84,10 @@ public class RenderingServerConnectingProcPartTest
         collection.renderingServerConnectingUIViewControllerMock.Raise(m => m.OnRequestConnecting += null);
 
         await UniTask.NextFrame();
-        collection.namedPipeClientMock.Raise(m => m.OnConnected += It.IsAny<Action>());
+        collection
+            .namedPipeClientMock
+                .Setup(m => m.ConnectAsync(It.IsAny<int>()))
+                .Returns(UniTask.FromResult<INamedPipeClient.ConnectResult>(INamedPipeClient.ConnectResult.Connected));
     }
 
     private async UniTask CreateTimeOutTask(TestCollection collection)
@@ -100,8 +98,6 @@ public class RenderingServerConnectingProcPartTest
         await UniTask.NextFrame();
 
         // 接続失敗
-        collection.namedPipeClientMock.Raise(m => m.OnFailed += It.IsAny<Action>());
-
         await UniTask.NextFrame();
 
         // 失敗表示の表示時間を終了させる
@@ -139,13 +135,18 @@ public class RenderingServerConnectingProcPartTest
     {
         var (collection, task) = CreateSUT();
 
+        collection
+            .namedPipeClientMock
+                .Setup(m => m.ConnectAsync(It.IsAny<int>()))
+                .Returns(UniTask.FromResult<INamedPipeClient.ConnectResult>(INamedPipeClient.ConnectResult.TimeOut));
+
         await UniTask.WhenAll(
             task,
             CreateTimeOutTask(collection));
 
         collection.renderingServerConnectingUIViewControllerMock.VerifyAdd(m => m.OnRequestConnecting += It.IsAny<Action>(), Times.Once);
         collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
-        collection.namedPipeClientMock.Verify(m => m.Connect(It.IsAny<int>()), Times.Once);
+        collection.namedPipeClientMock.Verify(m => m.ConnectAsync(It.IsAny<int>()), Times.Once);
         collection.renderingServerConnectingUIViewControllerMock.Verify(m => m.ShowFailed(), Times.Once);
 
         collection.MockVerifyNoOtherCalls();

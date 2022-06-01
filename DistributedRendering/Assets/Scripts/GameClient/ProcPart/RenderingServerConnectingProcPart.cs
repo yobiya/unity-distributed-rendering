@@ -11,6 +11,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
 
     private readonly IRenderingServerConnectingUIViewController _renderingServerConnectingUIViewController;
     private readonly ITestMessageSendUIViewController _testMessageSendUIViewController;
+    private readonly ICameraViewController _cameraViewController;
     private readonly INamedPipeClient _namedPipeClient;
     private readonly ITimerCreator _timerCreator;
 
@@ -24,17 +25,44 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
         ITimerCreator timerCreator)
     {
         _renderingServerConnectingUIViewController = renderingServerConnectingUIViewController;
+        _cameraViewController = cameraViewController;
 
         _testMessageSendUIViewController = testMessageSendUIViewController;
         _testMessageSendUIViewController.OnSend += () => _namedPipeClient.Write("Test message.");
 
         _namedPipeClient = namedPipeClient;
-        _namedPipeClient.OnConnected += () =>
+        _namedPipeClient.OnRecieved += (bytes) => OnRecieved?.Invoke(bytes);
+
+        _timerCreator = timerCreator;
+    }
+
+    public async UniTask Activate()
+    {
+        _renderingServerConnectingUIViewController.Activate();
+        await StartAsync();
+    }
+
+    public void Deactivate()
+    {
+        _renderingServerConnectingUIViewController.Deactivate();
+    }
+
+    private async UniTask StartAsync()
+    {
+        // ユーザーの開始入力を待つ
+        bool isRequestedConnectiong = false;
+        _renderingServerConnectingUIViewController.OnRequestConnecting += () => isRequestedConnectiong = true;
+        await UniTask.WaitUntil(() => isRequestedConnectiong);
+
+        // 接続を開始する
+        _renderingServerConnectingUIViewController.ShowConnecting();
+        var connectResult = await _namedPipeClient.ConnectAsync(ConnectTimeOutTime);
+        if (connectResult == INamedPipeClient.ConnectResult.Connected)
         {
             _renderingServerConnectingUIViewController.ShowConnected();
             _testMessageSendUIViewController.Activate();
 
-            cameraViewController.OnUpdateTransform += (transform) =>
+            _cameraViewController.OnUpdateTransform += (transform) =>
             {
                 string text
                     = $"@camera:"
@@ -46,43 +74,13 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
                     + $"{transform.forward.z}";
                 _namedPipeClient.Write(text);
             };
-        };
-        _namedPipeClient.OnFailed += () => CreateFaildTask().Forget();
-        _namedPipeClient.OnRecieved += (bytes) => OnRecieved?.Invoke(bytes);
-
-        _timerCreator = timerCreator;
-    }
-
-    public async UniTask Activate()
-    {
-        _renderingServerConnectingUIViewController.Activate();
-        await StartTask();
-    }
-
-    public void Deactivate()
-    {
-        _renderingServerConnectingUIViewController.Deactivate();
-    }
-
-    private async UniTask CreateFaildTask()
-    {
-        _renderingServerConnectingUIViewController.ShowFailed();
-
-        await _timerCreator.Create(FaildTextDisplayTime);
-    }
-
-    private async UniTask StartTask()
-    {
-        bool isRequestedConnectiong = false;
-        _renderingServerConnectingUIViewController.OnRequestConnecting += () =>
+        }
+        else
         {
-            isRequestedConnectiong = true;
-        };
+            _renderingServerConnectingUIViewController.ShowFailed();
 
-        await UniTask.WaitUntil(() => isRequestedConnectiong);
-
-        _namedPipeClient.Connect(ConnectTimeOutTime);
-        _renderingServerConnectingUIViewController.ShowConnecting();
+            await _timerCreator.Create(FaildTextDisplayTime);
+        }
     }
 }
 
