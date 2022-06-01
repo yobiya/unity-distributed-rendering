@@ -1,4 +1,5 @@
 using Common;
+using VContainer;
 
 namespace RenderingServer
 {
@@ -9,6 +10,7 @@ public class OffscreenRenderingViewController : IOffscreenRenderingViewControlle
 
     public IRenderTextureView RenderTexture => _offscreenRenderingView.RenderTexture;
 
+    [Inject]
     public OffscreenRenderingViewController(IOffscreenRenderingView offscreenRenderingView)
     {
         _offscreenRenderingView = offscreenRenderingView;

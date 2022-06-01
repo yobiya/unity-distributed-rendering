@@ -1,4 +1,5 @@
 using Common;
+using VContainer;
 
 public class GameClientWaitConnectionUIViewControler : IGameClientWaitConnectionUIViewControler
 {
@@ -11,6 +12,7 @@ public class GameClientWaitConnectionUIViewControler : IGameClientWaitConnection
 
     private readonly IUICollection _uiCollection;
 
+    [Inject]
     public GameClientWaitConnectionUIViewControler(IUICollection uICollection)
     {
         _uiCollection = uICollection;

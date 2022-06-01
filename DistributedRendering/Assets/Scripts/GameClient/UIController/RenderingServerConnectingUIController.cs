@@ -1,4 +1,5 @@
 using System;
+using VContainer;
 
 namespace GameClient
 {
@@ -9,6 +10,7 @@ public class RenderingServerConnectingUIController : IRenderingServerConnectingU
 
     public event Action OnRequestConnecting;
 
+    [Inject]
     public RenderingServerConnectingUIController(IRenderingServerConnectingUI uiCollection)
     {
         _uiCollection = uiCollection;

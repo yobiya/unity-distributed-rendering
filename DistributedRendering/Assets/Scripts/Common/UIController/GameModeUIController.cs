@@ -1,4 +1,5 @@
 using System;
+using VContainer;
 
 namespace Common
 {
@@ -10,6 +11,7 @@ public class GameModeUIController : IGameModeUIController
     public event Action OnSelectedGameClientMode;
     public event Action OnSelectedRenderingServerMode;
 
+    [Inject]
     public GameModeUIController(IGameModeUI gameModeUI)
     {
         _gameModeUI = gameModeUI;
