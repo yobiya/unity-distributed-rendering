@@ -8,18 +8,17 @@ public class GameModeProcPart : IGameModeProcPart
     public event Action OnSelectedGameClientMode;
     public event Action OnSelectedRenderingServerMode;
 
-    public GameModeProcPart(ServiceLocator sl)
+    public GameModeProcPart(IGameModeUIController gameModeUIController)
     {
-        var gameModeUIViewController = sl.Get<IGameModeUIController>();
-        gameModeUIViewController.Activate();
-        gameModeUIViewController.OnSelectedGameClientMode += () =>
+        gameModeUIController.Activate();
+        gameModeUIController.OnSelectedGameClientMode += () =>
         {
-            gameModeUIViewController.Deactivate();
+            gameModeUIController.Deactivate();
             OnSelectedGameClientMode?.Invoke();
         };
-        gameModeUIViewController.OnSelectedRenderingServerMode += () =>
+        gameModeUIController.OnSelectedRenderingServerMode += () =>
         {
-            gameModeUIViewController.Deactivate();
+            gameModeUIController.Deactivate();
             OnSelectedRenderingServerMode?.Invoke();
         };
     }

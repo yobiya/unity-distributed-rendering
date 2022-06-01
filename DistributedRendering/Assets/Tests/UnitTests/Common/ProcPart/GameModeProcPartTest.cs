@@ -16,7 +16,7 @@ public class GameModeProcPartTest
         uiViewControllerMock.SetupAdd(m => m.OnSelectedGameClientMode += It.IsAny<Action>());
         uiViewControllerMock.SetupAdd(m => m.OnSelectedRenderingServerMode+= It.IsAny<Action>());
 
-        var sut = new GameModeProcPart(mockLocator);
+        var sut = new GameModeProcPart(uiViewControllerMock.Object);
         sut.Activate();
 
         uiViewControllerMock.Verify(m => m.Activate());

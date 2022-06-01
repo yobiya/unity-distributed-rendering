@@ -16,7 +16,7 @@ public class GameModeUIControllerTest
         gameModeUIMock.SetupAdd(m => m.OnSelectedGameClient += It.IsAny<Action>());
         gameModeUIMock.SetupAdd(m => m.OnSelectedRenderingServer += It.IsAny<Action>());
 
-        var sut = new GameModeUIController(mockLocator);
+        var sut = new GameModeUIController(gameModeUIMock.Object);
         sut.Activate();
 
         gameModeUIMock.Verify(m => m.Activate(), Times.Once);

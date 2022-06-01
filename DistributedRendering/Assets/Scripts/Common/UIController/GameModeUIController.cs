@@ -5,14 +5,14 @@ namespace Common
 
 public class GameModeUIController : IGameModeUIController
 {
-    private IGameModeUI _gameModeUI;
+    private readonly IGameModeUI _gameModeUI;
 
     public event Action OnSelectedGameClientMode;
     public event Action OnSelectedRenderingServerMode;
 
-    public GameModeUIController(ServiceLocator sl)
+    public GameModeUIController(IGameModeUI gameModeUI)
     {
-        _gameModeUI = sl.Get<IGameModeUI>();
+        _gameModeUI = gameModeUI;
 
         _gameModeUI.OnSelectedGameClient += () => OnSelectedGameClientMode?.Invoke();
         _gameModeUI.OnSelectedRenderingServer += () => OnSelectedRenderingServerMode?.Invoke();

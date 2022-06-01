@@ -3,6 +3,7 @@ using Common;
 using RenderingServer;
 using GameClient;
 using VContainer;
+using VContainer.Unity;
 
 public class MainScene : MonoBehaviour
 {
@@ -33,7 +34,6 @@ public class MainScene : MonoBehaviour
     [SerializeField]
     private CameraView _cameraView;
 
-    private GameModeProcPart _gameModeProcPart;
     private RenderingServerConnectingProcPart _renderingServerConnectingProcPart;
     private GameClientWaitConnectionProcPart _gameClientWaitConnectionProcPart;
     private ResponseRenderingProcPart _responseRenderingProcPart;
@@ -47,8 +47,15 @@ public class MainScene : MonoBehaviour
     {
         var containerBuilder = new ContainerBuilder();
         {
+            // SerializeFieldを登録
+            containerBuilder.RegisterComponent<IRenderingServerConnectingUI>(_renderingServerConnectingUICollection);
+            containerBuilder.RegisterComponent<IGameModeUI>(_gameModeUI);
+
             containerBuilder.Register<INamedPipeClient>(_ => new NamedPipeClient(".", Definisions.CommandMessageNamedPipeName), Lifetime.Singleton);
-            containerBuilder.Register<IRenderingServerConnectingUIController>(_ => new RenderingServerConnectingUIController(_renderingServerConnectingUICollection), Lifetime.Singleton);
+            containerBuilder.Register<IRenderingServerConnectingUIController, RenderingServerConnectingUIController>(Lifetime.Singleton);
+            containerBuilder.Register<IGameModeUIController, GameModeUIController>(Lifetime.Singleton);
+
+            containerBuilder.Register<IGameModeProcPart, GameModeProcPart>(Lifetime.Singleton);
         }
 
         _objectResolver = containerBuilder.Build();
@@ -66,7 +73,6 @@ public class MainScene : MonoBehaviour
             serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
             serviceLocator.Set<IResponseDataNamedPipe>(new ResponseDataNamedPipe());
 
-            serviceLocator.Set<IGameModeUIController>(new GameModeUIController(serviceLocator));
             serviceLocator.Set<IRenderingUIController>(new RenderingUIController(serviceLocator));
 
             serviceLocator.Set<IOffscreenRenderingProcPart>(new OffscreenRenderingProcPart(serviceLocator));
@@ -77,9 +83,7 @@ public class MainScene : MonoBehaviour
             serviceLocator.Set<IResponseRenderingProcPart>(_responseRenderingProcPart);
         }
 
-        {
-            _gameModeProcPart = new GameModeProcPart(serviceLocator);
-        }
+        var gameModeProcPart = _objectResolver.Resolve<IGameModeProcPart>();
 
         {
             var namedPipeClient = _objectResolver.Resolve<INamedPipeClient>();
@@ -101,7 +105,7 @@ public class MainScene : MonoBehaviour
         ProcPartBinder
             .Bind(
                 serviceLocator,
-                _gameModeProcPart,
+                gameModeProcPart,
                 _renderingServerConnectingProcPart,
                 _gameClientWaitConnectionProcPart);
     }
