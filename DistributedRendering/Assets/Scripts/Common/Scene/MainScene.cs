@@ -50,10 +50,12 @@ public class MainScene : MonoBehaviour
             // SerializeFieldを登録
             containerBuilder.RegisterComponent<IRenderingServerConnectingUI>(_renderingServerConnectingUICollection);
             containerBuilder.RegisterComponent<IGameModeUI>(_gameModeUI);
+            containerBuilder.RegisterComponent<IOffscreenRenderingView>(_offscreenRenderingView);
 
             containerBuilder.Register<INamedPipeClient>(_ => new NamedPipeClient(".", Definisions.CommandMessageNamedPipeName), Lifetime.Singleton);
             containerBuilder.Register<IRenderingServerConnectingUIController, RenderingServerConnectingUIController>(Lifetime.Singleton);
             containerBuilder.Register<IGameModeUIController, GameModeUIController>(Lifetime.Singleton);
+            containerBuilder.Register<IOffscreenRenderingViewController, OffscreenRenderingViewController>(Lifetime.Singleton);
 
             containerBuilder.Register<IGameModeProcPart, GameModeProcPart>(Lifetime.Singleton);
         }
@@ -62,12 +64,10 @@ public class MainScene : MonoBehaviour
 
         var serviceLocator = new ServiceLocator();
         {
-            serviceLocator.Set<IGameModeUI>(_gameModeUI);
-            serviceLocator.Set<IOffscreenRenderingView>(_offscreenRenderingView);
             serviceLocator.Set<IDebugRenderingUI>(_debugRenderingUI);
             serviceLocator.Set<IRenderingUI>(_renderingUI);
 
-            serviceLocator.Set<IOffscreenRenderingViewController>(new OffscreenRenderingViewController(serviceLocator));
+            serviceLocator.Set<IOffscreenRenderingViewController>(_objectResolver.Resolve<IOffscreenRenderingViewController>());
             serviceLocator.Set<IGameClientWaitConnectionUIViewControler>(new GameClientWaitConnectionUIViewControler(_gameClientWaitConnectionUICollection));
             serviceLocator.Set<IDebugRenderingUIControler>(new DebugRenderingUIControler(serviceLocator));
             serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());

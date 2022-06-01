@@ -5,26 +5,23 @@ namespace RenderingServer
 
 public class OffscreenRenderingViewController : IOffscreenRenderingViewController
 {
-    private readonly ServiceLocator _sl;
-    private IOffscreenRenderingView _offscreenRenderingView;
+    private readonly IOffscreenRenderingView _offscreenRenderingView;
 
     public IRenderTextureView RenderTexture => _offscreenRenderingView.RenderTexture;
 
-    public OffscreenRenderingViewController(ServiceLocator sl)
+    public OffscreenRenderingViewController(IOffscreenRenderingView offscreenRenderingView)
     {
-        _sl = sl;
+        _offscreenRenderingView = offscreenRenderingView;
     }
 
     public void Activate()
     {
-        _offscreenRenderingView = _sl.Get<IOffscreenRenderingView>();
         _offscreenRenderingView.Activate();
     }
 
     public void Deactivate()
     {
         _offscreenRenderingView.Deactivate();
-        _offscreenRenderingView = null;
     }
 }
 
