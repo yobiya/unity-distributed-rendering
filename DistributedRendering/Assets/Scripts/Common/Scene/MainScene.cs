@@ -2,6 +2,8 @@ using UnityEngine;
 using Common;
 using RenderingServer;
 using GameClient;
+using VContainer.Unity;
+using VContainer;
 
 public class MainScene : MonoBehaviour
 {
@@ -41,8 +43,17 @@ public class MainScene : MonoBehaviour
     private TestMessageSendUIViewController _testMessageSendUIViewController;
     private CameraViewController _cameraViewController;
 
+    private IObjectResolver _objectResolver;
+
     void Start()
     {
+        var containerBuilder = new ContainerBuilder();
+        {
+            containerBuilder.Register<INamedPipeClient>(_ => new NamedPipeClient(".", Definisions.CommandMessageNamedPipeName), Lifetime.Singleton);
+        }
+
+        _objectResolver = containerBuilder.Build();
+
         var serviceLocator = new ServiceLocator();
         {
             serviceLocator.Set<IGameModeUI>(_gameModeUI);
@@ -72,7 +83,7 @@ public class MainScene : MonoBehaviour
         }
 
         {
-            var namedPipeClient = new NamedPipeClient(".", Definisions.CommandMessageNamedPipeName);
+            var namedPipeClient = _objectResolver.Resolve<INamedPipeClient>();
             _renderingServerConnectingUIViewController = new RenderingServerConnectingUIViewController(_renderingServerConnectingUICollection);
             _testMessageSendUIViewController = new TestMessageSendUIViewController(_testMessageSendUICollection);
             _cameraViewController = new CameraViewController(_cameraView);
@@ -99,5 +110,10 @@ public class MainScene : MonoBehaviour
     void Update()
     {
         _responseRenderingProcPart.Update();
+    }
+
+    void OnDestroy()
+    {
+        _objectResolver.Dispose();
     }
 }

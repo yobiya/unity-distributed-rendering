@@ -1,6 +1,9 @@
 using System;
 using Cysharp.Threading.Tasks;
 
+namespace GameClient
+{
+
 public interface INamedPipeClient
 {
     public enum ConnectResult
@@ -13,4 +16,6 @@ public interface INamedPipeClient
 
     UniTask<ConnectResult> ConnectAsync(int timeOutTime);
     void Write(string text);
+}
+
 }
