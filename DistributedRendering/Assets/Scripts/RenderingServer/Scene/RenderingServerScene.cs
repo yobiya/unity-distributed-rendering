@@ -18,7 +18,7 @@ public class RenderingServerScene : MonoBehaviour
     [SerializeField]
     private DebugRenderingUI _debugRenderingUI;
 
-    private GameClientConnectionProcPart _gameClientConnectionProcPart;
+    private IGameClientConnectionProcPart _gameClientConnectionProcPart;
     private ResponseRenderingProcPart _responseRenderingProcPart;
     private OffscreenRenderingProcPart _offscreenRenderingProcPart;
     private IDebugRenderingProcPart _debugRenderingProcPart;
@@ -32,10 +32,13 @@ public class RenderingServerScene : MonoBehaviour
             // SerializeFieldを登録
             containerBuilder.RegisterComponent<IOffscreenRenderingView>(_offscreenRenderingView);
             containerBuilder.RegisterComponent<IDebugRenderingUI>(_debugRenderingUI);
+            containerBuilder.RegisterComponent<GameClientWaitConnectionUIViewControler.IUICollection>(_gameClientWaitConnectionUICollection);
 
             containerBuilder.Register<IOffscreenRenderingViewController, OffscreenRenderingViewController>(Lifetime.Singleton);
             containerBuilder.Register<IDebugRenderingUIControler, DebugRenderingUIControler>(Lifetime.Singleton);
+            containerBuilder.Register<IGameClientWaitConnectionUIViewControler, GameClientWaitConnectionUIViewControler>(Lifetime.Singleton);
 
+            // ProcPartを登録
             containerBuilder.Register<IDebugRenderingProcPart, DebugRenderingProcPart>(Lifetime.Singleton);
         }
 
@@ -46,7 +49,7 @@ public class RenderingServerScene : MonoBehaviour
             serviceLocator.Set<IDebugRenderingUI>(_debugRenderingUI);
 
             serviceLocator.Set<IOffscreenRenderingViewController>(_objectResolver.Resolve<IOffscreenRenderingViewController>());
-            serviceLocator.Set<IGameClientWaitConnectionUIViewControler>(new GameClientWaitConnectionUIViewControler(_gameClientWaitConnectionUICollection));
+            serviceLocator.Set<IGameClientWaitConnectionUIViewControler>(_objectResolver.Resolve<IGameClientWaitConnectionUIViewControler>());
             serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
             serviceLocator.Set<IResponseDataNamedPipe>(new ResponseDataNamedPipe());
 
