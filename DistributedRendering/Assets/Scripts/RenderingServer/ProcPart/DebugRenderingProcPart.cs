@@ -7,9 +7,9 @@ public class DebugRenderingProcPart : IDebugRenderingProcPart
 {
     private readonly IDebugRenderingUIControler _debugRenderingUIControler;
 
-    public DebugRenderingProcPart(ServiceLocator sl)
+    public DebugRenderingProcPart(IDebugRenderingUIControler debugRenderingUIControler)
     {
-        _debugRenderingUIControler = sl.Get<IDebugRenderingUIControler>();
+        _debugRenderingUIControler = debugRenderingUIControler;
     }
 
     public void Activate(IRenderTextureView textureView)

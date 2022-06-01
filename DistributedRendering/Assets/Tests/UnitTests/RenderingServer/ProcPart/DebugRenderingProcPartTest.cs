@@ -11,12 +11,13 @@ public class DebugRenderingProcPartTest
     {
         var serviceLocator = new MockServiceLocator();
         serviceLocator.RegisterMock<IDebugRenderingUIControler>();
+        var uiControllerMock = serviceLocator.GetMock<IDebugRenderingUIControler>();
 
-        var sut = new DebugRenderingProcPart(serviceLocator);
+        var sut = new DebugRenderingProcPart(uiControllerMock.Object);
 
         sut.Activate(It.IsAny<IRenderTextureView>());
 
-        serviceLocator.GetMock<IDebugRenderingUIControler>().Verify(m => m.Activate(It.IsAny<IRenderTextureView>()), Times.Once);
+        uiControllerMock.Verify(m => m.Activate(It.IsAny<IRenderTextureView>()), Times.Once);
 
         return (sut, serviceLocator);
     }

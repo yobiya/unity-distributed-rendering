@@ -11,13 +11,11 @@ public interface IDebugRenderingUIControler
 
 public class DebugRenderingUIControler : IDebugRenderingUIControler
 {
-    private readonly ServiceLocator _sl;
     private readonly IDebugRenderingUI _debugRenderingUI;
 
-    public DebugRenderingUIControler(ServiceLocator sl)
+    public DebugRenderingUIControler(IDebugRenderingUI debugRenderingUI)
     {
-        _sl = sl;
-        _debugRenderingUI = sl.Get<IDebugRenderingUI>();
+        _debugRenderingUI = debugRenderingUI;
     }
 
     public void Activate(IRenderTextureView textureView)

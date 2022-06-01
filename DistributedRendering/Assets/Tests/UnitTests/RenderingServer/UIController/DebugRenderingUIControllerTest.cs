@@ -13,7 +13,7 @@ public class DebugRenderingUIControllerTest
         serviceLocator.RegisterMock<IDebugRenderingUI>();
         serviceLocator.RegisterMock<IRenderTextureView>();
 
-        var sut = new DebugRenderingUIControler(serviceLocator);
+        var sut = new DebugRenderingUIControler(serviceLocator.GetMock<IDebugRenderingUI>().Object);
 
         sut.Activate(It.IsAny<IRenderTextureView>());
 
