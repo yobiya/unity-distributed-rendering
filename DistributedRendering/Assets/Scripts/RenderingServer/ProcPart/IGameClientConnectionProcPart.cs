@@ -9,7 +9,6 @@ public interface IGameClientConnectionProcPart
 
     void Activate();
     void Deactivate();
-    void StartWaitConnection();
 }
 
 }

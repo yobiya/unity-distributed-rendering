@@ -31,17 +31,13 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
     public void Activate()
     {
         _gameClientWaitConnectionUIViewControler.Activate();
+        var _ = _namedPipeServer.WaitConnection();
+        _gameClientWaitConnectionUIViewControler.ShowWaitConnection();
     }
 
     public void Deactivate()
     {
         _gameClientWaitConnectionUIViewControler.Deactivate();
-    }
-
-    public void StartWaitConnection()
-    {
-        var _ = _namedPipeServer.WaitConnection();
-        _gameClientWaitConnectionUIViewControler.ShowWaitConnection();
     }
 }
 

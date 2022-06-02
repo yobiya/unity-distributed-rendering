@@ -28,6 +28,8 @@ public class GameClientConnectionProcPartTest
         serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.Activate(), Times.Once);
         serviceLocator.GetMock<IResponseDataNamedPipe>().Verify(m => m.Activate(), Times.Once);
         serviceLocator.GetMock<INamedPipeServer>().VerifyAdd(m => m.OnConnected += It.IsAny<Action>(), Times.Once);
+        serviceLocator.GetMock<INamedPipeServer>().Verify(m => m.WaitConnection(), Times.Once);
+        serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.ShowWaitConnection(), Times.Once);
 
         return (sut, serviceLocator);
     }
@@ -52,23 +54,9 @@ public class GameClientConnectionProcPartTest
     }
 
     [Test]
-    public void StartWaitClientConnection()
-    {
-        var (sut, serviceLocator) = CreateSUT();
-
-        sut.StartWaitConnection();
-
-        serviceLocator.GetMock<INamedPipeServer>().Verify(m => m.WaitConnection(), Times.Once);
-        serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.ShowWaitConnection(), Times.Once);
-        serviceLocator.VerifyNoOtherCallsAll();
-    }
-
-    [Test]
     public void ConnectedClient()
     {
         var (sut, serviceLocator) = CreateSUT();
-
-        sut.StartWaitConnection();
 
         serviceLocator.GetMock<INamedPipeServer>().Verify(m => m.WaitConnection(), Times.Once);
         serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.ShowWaitConnection(), Times.Once);
