@@ -52,7 +52,6 @@ public class RenderingServerScene : MonoBehaviour
             serviceLocator.Set<IDebugRenderingUI>(_debugRenderingUI);
 
             serviceLocator.Set<IOffscreenRenderingViewController>(_objectResolver.Resolve<IOffscreenRenderingViewController>());
-            serviceLocator.Set<IGameClientWaitConnectionUIViewControler>(_objectResolver.Resolve<IGameClientWaitConnectionUIViewControler>());
             serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
 
             _responseRenderingProcPart = new ResponseRenderingProcPart(serviceLocator);
@@ -63,7 +62,7 @@ public class RenderingServerScene : MonoBehaviour
 
         var syncCameraViewController = new SyncCameraViewController(_syncCameraView);
         _gameClientConnectionProcPart = new GameClientConnectionProcPart(
-            serviceLocator.Get<IGameClientWaitConnectionUIViewControler>(),
+            _objectResolver.Resolve<IGameClientWaitConnectionUIViewControler>(),
             serviceLocator.Get<INamedPipeServer>(),
             _objectResolver.Resolve<IResponseDataNamedPipe>());
 
@@ -78,7 +77,10 @@ public class RenderingServerScene : MonoBehaviour
         };
 
         // ゲームクライアントとの接続を確立する
-        _gameClientConnectionProcPart.Activate().Forget();
+        UniTask.Defer(async () =>
+            {
+                await _gameClientConnectionProcPart.Activate();
+            }).Forget();
     }
 
     private void StartProcPart()
