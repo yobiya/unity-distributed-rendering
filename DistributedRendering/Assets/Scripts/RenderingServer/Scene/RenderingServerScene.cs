@@ -3,6 +3,7 @@ using Common;
 using RenderingServer;
 using VContainer;
 using VContainer.Unity;
+using Cysharp.Threading.Tasks;
 
 public class RenderingServerScene : MonoBehaviour
 {
@@ -66,9 +67,6 @@ public class RenderingServerScene : MonoBehaviour
             serviceLocator.Get<INamedPipeServer>(),
             _objectResolver.Resolve<IResponseDataNamedPipe>());
 
-        // ゲームクライアントとの接続を確立する
-        _gameClientConnectionProcPart.Activate();
-
         _offscreenRenderingProcPart = new OffscreenRenderingProcPart(serviceLocator);
         _offscreenRenderingProcPart.OnActivated += _debugRenderingProcPart.Activate;
         _gameClientConnectionProcPart.OnConnected += () =>
@@ -78,6 +76,9 @@ public class RenderingServerScene : MonoBehaviour
 
             serviceLocator.Get<INamedPipeServer>().OnRecieved += (text) => syncCameraViewController.Sync(text);
         };
+
+        // ゲームクライアントとの接続を確立する
+        _gameClientConnectionProcPart.Activate().Forget();
     }
 
     private void StartProcPart()

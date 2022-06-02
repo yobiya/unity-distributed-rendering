@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 
 namespace RenderingServer
 {
@@ -7,7 +8,7 @@ public interface IGameClientConnectionProcPart
 {
     event Action OnConnected;
 
-    void Activate();
+    UniTask Activate();
     void Deactivate();
 }
 

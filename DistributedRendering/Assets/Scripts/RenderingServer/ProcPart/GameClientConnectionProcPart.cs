@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 
 namespace RenderingServer
 {
@@ -28,11 +29,11 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
         };
     }
 
-    public void Activate()
+    public async UniTask Activate()
     {
         _gameClientWaitConnectionUIViewControler.Activate();
-        var _ = _namedPipeServer.WaitConnection();
         _gameClientWaitConnectionUIViewControler.ShowWaitConnection();
+        await _namedPipeServer.WaitConnection();
     }
 
     public void Deactivate()
