@@ -22,7 +22,6 @@ public class RenderingServerScene : MonoBehaviour
     private IGameClientConnectionProcPart _gameClientConnectionProcPart;
     private ResponseRenderingProcPart _responseRenderingProcPart;
     private IOffscreenRenderingProcPart _offscreenRenderingProcPart;
-    private IDebugRenderingProcPart _debugRenderingProcPart;
     private IRenderingServerProcPart _renderingServerProcPart;
 
     private IObjectResolver _objectResolver;
@@ -46,7 +45,6 @@ public class RenderingServerScene : MonoBehaviour
             containerBuilder.Register<INamedPipeServer, NamedPipeServer>(Lifetime.Singleton);
 
             // ProcPartを登録
-            containerBuilder.Register<IDebugRenderingProcPart, DebugRenderingProcPart>(Lifetime.Singleton);
             containerBuilder.Register<IGameClientConnectionProcPart, GameClientConnectionProcPart>(Lifetime.Singleton);
             containerBuilder.Register<IOffscreenRenderingProcPart, OffscreenRenderingProcPart>(Lifetime.Singleton);
             containerBuilder.Register<IRenderingServerProcPart, RenderingServerProcPart>(Lifetime.Singleton);
@@ -62,11 +60,10 @@ public class RenderingServerScene : MonoBehaviour
             serviceLocator.Set<IResponseRenderingProcPart>(_responseRenderingProcPart);
         }
 
-        _debugRenderingProcPart = _objectResolver.Resolve<IDebugRenderingProcPart>();
         _gameClientConnectionProcPart = _objectResolver.Resolve<IGameClientConnectionProcPart>();
         _renderingServerProcPart = _objectResolver.Resolve<IRenderingServerProcPart>();
         _offscreenRenderingProcPart = _objectResolver.Resolve<IOffscreenRenderingProcPart>();
-        _offscreenRenderingProcPart.OnActivated += _debugRenderingProcPart.Activate;
+        _offscreenRenderingProcPart.OnActivated += _objectResolver.Resolve<IDebugRenderingUIControler>().Activate;
 
         // ゲームクライアントとの接続を確立する
         UniTask.Defer(async () =>
