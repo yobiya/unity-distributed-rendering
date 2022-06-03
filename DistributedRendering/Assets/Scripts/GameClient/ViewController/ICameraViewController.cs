@@ -6,7 +6,6 @@ namespace GameClient
 
 public interface ICameraViewController
 {
-    event Action<Transform> OnUpdateTransform;
 }
 
 }

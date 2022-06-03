@@ -10,6 +10,9 @@ namespace GameClient
 public class GameClientScene : MonoBehaviour
 {
     [SerializeField]
+    private Camera _camera;
+
+    [SerializeField]
     private RenderingServerConnectingUI _renderingServerConnectingUICollection;
 
     [SerializeField]
@@ -31,6 +34,7 @@ public class GameClientScene : MonoBehaviour
         var containerBuilder = new ContainerBuilder();
         {
             // SerializeFieldを登録
+            containerBuilder.RegisterComponent<Camera>(_camera);
             containerBuilder.RegisterComponent<IRenderingServerConnectingUI>(_renderingServerConnectingUICollection);
             containerBuilder.RegisterComponent<TestMessageSendUIViewController.IUICollection>(_testMessageSendUICollection);
             containerBuilder.RegisterComponent<IRenderingUI>(_renderingUI);

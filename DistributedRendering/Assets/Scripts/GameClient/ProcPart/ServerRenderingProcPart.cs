@@ -30,26 +30,13 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
     {
         _inversionProc.Register(_renderingUIController.Activate, _renderingUIController.Deactivate);
 
-        Action<Transform> updateCameraTransform = (transform) =>
-        {
-            string text
-                = $"@camera:"
-                + $"{transform.position.x},"
-                + $"{transform.position.y},"
-                + $"{transform.position.z},"
-                + $"{transform.forward.x},"
-                + $"{transform.forward.y},"
-                + $"{transform.forward.z}";
-            _namedPipeClient.Write(text);
-        };
-        _inversionProc.Register(
-            () => _cameraViewController.OnUpdateTransform += updateCameraTransform,
-            () => _cameraViewController.OnUpdateTransform -= updateCameraTransform);
-
         while (true)
         {
-            var buffer = await _namedPipeClient.RecieveDataAsync();
-            _renderingUIController.RenderImageBuffer(buffer);
+            var sendText = _syncronizeDataCreator.Create();
+            _namedPipeClient.Write(sendText);
+
+            var recievedData = await _namedPipeClient.RecieveDataAsync();
+            _renderingUIController.RenderImageBuffer(recievedData);
         }
     }
 

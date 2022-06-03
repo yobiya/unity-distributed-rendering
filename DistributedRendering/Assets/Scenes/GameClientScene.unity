@@ -370,6 +370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bd2ada2b2c9993418a5458337d3d382, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _camera: {fileID: 963194227}
   _renderingServerConnectingUICollection: {fileID: 458540058}
   _testMessageSendUICollection: {fileID: 674529272}
   _renderingUI: {fileID: 2046176765}
