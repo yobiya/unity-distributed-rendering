@@ -5,6 +5,7 @@ public interface INamedPipeServer
 {
     event Action<string> OnRecieved;
 
-    Task WaitConnection();
+    Task Activate();
+    void Deactivate();
     Task ReadCommandAsync();
 }

@@ -1,9 +1,11 @@
+using Cysharp.Threading.Tasks;
+
 namespace RenderingServer
 {
 
 public interface IRenderingServerProcPart
 {
-    void Activate();
+    UniTask Activate();
     void Deactivate();
 }
 

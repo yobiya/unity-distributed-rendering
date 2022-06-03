@@ -24,18 +24,13 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
     {
         _gameClientWaitConnectionUIViewControler.Activate();
         _gameClientWaitConnectionUIViewControler.ShowWaitConnection();
-        await _namedPipeServer.WaitConnection();
+        await _namedPipeServer.Activate();
         _gameClientWaitConnectionUIViewControler.ShowConnected();
     }
 
     public void Deactivate()
     {
         _gameClientWaitConnectionUIViewControler.Deactivate();
-    }
-
-    public async UniTask ReadCommandAsync()
-    {
-        await _namedPipeServer.ReadCommandAsync();
     }
 }
 

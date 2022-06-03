@@ -2,18 +2,18 @@ using Common;
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
 public class NamedPipeServer : INamedPipeServer
 {
-    private NamedPipeServerStream _pipeServer;
-
-    private bool _isFinished = false;
+    private readonly NamedPipeServerStream _pipeServer;
+    private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
     public event Action<string> OnRecieved;
 
-    public async Task WaitConnection()
+    public NamedPipeServer()
     {
         _pipeServer
             = new NamedPipeServerStream(
@@ -22,13 +22,22 @@ public class NamedPipeServer : INamedPipeServer
                 1,
                 PipeTransmissionMode.Message,
                 PipeOptions.Asynchronous);
-        await _pipeServer.WaitForConnectionAsync();
+    }
+
+    public async Task Activate()
+    {
+        await _pipeServer.WaitForConnectionAsync(_cancellationTokenSource.Token);
+    }
+
+    public void Deactivate()
+    {
+        _cancellationTokenSource.Cancel();
     }
 
     public async Task ReadCommandAsync()
     {
         using var pipeReader = new StreamReader(_pipeServer);
-        while (!_isFinished)
+        while (!_cancellationTokenSource.Token.IsCancellationRequested)
         {
             try
             {
@@ -47,14 +56,8 @@ public class NamedPipeServer : INamedPipeServer
             catch (Exception e)
             {
                 Debug.LogError(e.ToString());
-                _isFinished = true;
             }
         }
-    }
-
-    public void Finish()
-    {
-        _isFinished = true;
     }
 }
 

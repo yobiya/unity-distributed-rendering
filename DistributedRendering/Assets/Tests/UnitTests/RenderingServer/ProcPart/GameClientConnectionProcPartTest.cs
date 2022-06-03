@@ -47,7 +47,7 @@ public class GameClientConnectionProcPartTest
     private void VerifyActivate()
     {
         _responseDataNamedPipeMock.Verify(m => m.Activate(), Times.Once);
-        _namedPipeServerMock.Verify(m => m.WaitConnection(), Times.Once);
+        _namedPipeServerMock.Verify(m => m.Activate(), Times.Once);
         _gameClientWaitConnectionUIViewControlerMock.Verify(m => m.Activate(), Times.Once);
         _gameClientWaitConnectionUIViewControlerMock.Verify(m => m.ShowWaitConnection(), Times.Once);
         _gameClientWaitConnectionUIViewControlerMock.Verify(m => m.ShowConnected(), Times.Once);

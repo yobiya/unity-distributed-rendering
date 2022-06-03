@@ -7,7 +7,6 @@ public interface IGameClientConnectionProcPart
 {
     UniTask Activate();
     void Deactivate();
-    UniTask ReadCommandAsync();
 }
 
 }
