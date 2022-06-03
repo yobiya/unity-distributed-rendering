@@ -1,11 +1,11 @@
 namespace GameClient
 {
 
-public class RenderingProcPart : IRenderingProcPart
+public class ServerRenderingProcPart : IServerRenderingProcPart
 {
     private readonly IRenderingUIController _renderingUIController;
 
-    public RenderingProcPart(IRenderingUIController renderingUIController)
+    public ServerRenderingProcPart(IRenderingUIController renderingUIController)
     {
         _renderingUIController = renderingUIController;
     }

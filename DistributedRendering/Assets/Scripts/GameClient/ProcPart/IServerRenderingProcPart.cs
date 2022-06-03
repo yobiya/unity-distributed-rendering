@@ -1,7 +1,7 @@
 namespace GameClient
 {
 
-public interface IRenderingProcPart
+public interface IServerRenderingProcPart
 {
     void Activate();
     void Deactivate();

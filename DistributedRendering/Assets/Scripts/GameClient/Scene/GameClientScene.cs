@@ -22,6 +22,7 @@ public class GameClientScene : MonoBehaviour
     private CameraView _cameraView;
 
     private IRenderingServerConnectingProcPart _renderingServerConnectingProcPart;
+    private IServerRenderingProcPart _serverRenderingProcPart;
 
     private IObjectResolver _objectResolver;
 
@@ -43,18 +44,18 @@ public class GameClientScene : MonoBehaviour
 
             containerBuilder.Register<ITimerCreator, TimerCreator>(Lifetime.Singleton);
 
-            containerBuilder.Register<IRenderingProcPart, RenderingProcPart>(Lifetime.Singleton);
+            containerBuilder.Register<IServerRenderingProcPart, ServerRenderingProcPart>(Lifetime.Singleton);
             containerBuilder.Register<IRenderingServerConnectingProcPart, RenderingServerConnectingProcPart>(Lifetime.Singleton);
         }
 
         _objectResolver = containerBuilder.Build();
 
         _renderingServerConnectingProcPart = _objectResolver.Resolve<IRenderingServerConnectingProcPart>();
+        _serverRenderingProcPart = _objectResolver.Resolve<IServerRenderingProcPart>();
 
         _renderingServerConnectingProcPart.Activate().Forget();
-        var renderingProcPart = _objectResolver.Resolve<IRenderingProcPart>();
-        renderingProcPart.Activate();
-        _renderingServerConnectingProcPart.OnRecieved += renderingProcPart.RenderImageBuffer;
+        _serverRenderingProcPart.Activate();
+        _renderingServerConnectingProcPart.OnRecieved += _serverRenderingProcPart.RenderImageBuffer;
     }
 
     void Update()
