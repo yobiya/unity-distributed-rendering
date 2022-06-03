@@ -1,3 +1,7 @@
+using System;
+using Common;
+using UnityEngine;
+
 namespace GameClient
 {
 
@@ -6,6 +10,7 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
     private readonly IRenderingUIController _renderingUIController;
     private readonly ICameraViewController _cameraViewController;
     private readonly INamedPipeClient _namedPipeClient;
+    private readonly InversionProc _inversionProc = new InversionProc();
 
     public ServerRenderingProcPart(
         IRenderingUIController renderingUIController,
@@ -19,9 +24,12 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
 
     public void Activate()
     {
-        _renderingUIController.Activate();
+        _inversionProc.Register(_renderingUIController.Activate, _renderingUIController.Deactivate);
+        _inversionProc.Register(
+            () => _namedPipeClient.OnRecieved += _renderingUIController.RenderImageBuffer,
+            () => _namedPipeClient.OnRecieved -= _renderingUIController.RenderImageBuffer);
 
-        _cameraViewController.OnUpdateTransform += (transform) =>
+        Action<Transform> updateCameraTransform = (transform) =>
         {
             string text
                 = $"@camera:"
@@ -33,16 +41,14 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
                 + $"{transform.forward.z}";
             _namedPipeClient.Write(text);
         };
+        _inversionProc.Register(
+            () => _cameraViewController.OnUpdateTransform += updateCameraTransform,
+            () => _cameraViewController.OnUpdateTransform -= updateCameraTransform);
     }
 
     public void Deactivate()
     {
-        _renderingUIController.Deactivate();
-    }
-
-    public void RenderImageBuffer(byte[] buffer)
-    {
-        _renderingUIController.RenderImageBuffer(buffer);
+        _inversionProc.Inversion();
     }
 }
 

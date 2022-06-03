@@ -1,4 +1,3 @@
-using System;
 using Cysharp.Threading.Tasks;
 
 namespace GameClient
@@ -14,8 +13,6 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
     private readonly INamedPipeClient _namedPipeClient;
     private readonly ITimerCreator _timerCreator;
 
-    public event Action<byte[]> OnRecieved;
-
     public RenderingServerConnectingProcPart(
         IRenderingServerConnectingUIController renderingServerConnectingUIController,
         ITestMessageSendUIViewController testMessageSendUIViewController,
@@ -28,7 +25,6 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
         _testMessageSendUIViewController.OnSend += () => _namedPipeClient.Write("Test message.");
 
         _namedPipeClient = namedPipeClient;
-        _namedPipeClient.OnRecieved += (bytes) => OnRecieved?.Invoke(bytes);
 
         _timerCreator = timerCreator;
     }
