@@ -5,7 +5,7 @@ namespace GameClient
 
 public interface IRenderingServerConnectingProcPart
 {
-    UniTask<INamedPipeClient.ConnectResult> Activate();
+    UniTask<INamedPipeClient.ConnectResult> ActivateAsync();
     void Deactivate();
 }
 

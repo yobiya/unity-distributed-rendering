@@ -53,14 +53,14 @@ public class GameClientScene : MonoBehaviour
         _renderingServerConnectingProcPart = _objectResolver.Resolve<IRenderingServerConnectingProcPart>();
         _serverRenderingProcPart = _objectResolver.Resolve<IServerRenderingProcPart>();
 
-        StartProcPart().Forget();
+        StartProcPartAsync().Forget();
     }
 
-    private async UniTask StartProcPart()
+    private async UniTask StartProcPartAsync()
     {
         while (true)
         {
-            var result = await _renderingServerConnectingProcPart.Activate();
+            var result = await _renderingServerConnectingProcPart.ActivateAsync();
             if (result == INamedPipeClient.ConnectResult.Connected)
             {
                 // 接続に成功した
@@ -73,7 +73,7 @@ public class GameClientScene : MonoBehaviour
             }
         }
 
-        await _serverRenderingProcPart.Activate();
+        await _serverRenderingProcPart.ActivateAsync();
     }
 
     void Update()

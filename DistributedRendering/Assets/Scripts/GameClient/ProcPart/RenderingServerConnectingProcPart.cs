@@ -32,7 +32,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
         _timerCreator = timerCreator;
     }
 
-    public async UniTask<INamedPipeClient.ConnectResult> Activate()
+    public async UniTask<INamedPipeClient.ConnectResult> ActivateAsync()
     {
         _inversionProc.Register(_renderingServerConnectingUIController.Activate, _renderingServerConnectingUIController.Deactivate);
 

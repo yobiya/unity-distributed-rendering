@@ -68,7 +68,7 @@ public class RenderingServerConnectingProcPartTest
 
         var result = INamedPipeClient.ConnectResult.TimeOut;
         await UniTask.WhenAll(
-            UniTask.Defer(async () => result = await _sut.Activate()),
+            UniTask.Defer(async () => result = await _sut.ActivateAsync()),
             UniTask.Defer(async () =>
             {
                 await UniTask.NextFrame();
@@ -95,7 +95,7 @@ public class RenderingServerConnectingProcPartTest
 
         var result = INamedPipeClient.ConnectResult.Connected;
         await UniTask.WhenAll(
-            UniTask.Defer(async () => result = await _sut.Activate()),
+            UniTask.Defer(async () => result = await _sut.ActivateAsync()),
             UniTask.Defer(async () =>
             {
                 await UniTask.NextFrame();
@@ -118,7 +118,7 @@ public class RenderingServerConnectingProcPartTest
 
         var result = INamedPipeClient.ConnectResult.TimeOut;
         await UniTask.WhenAll(
-            UniTask.Defer(async () => result = await _sut.Activate()),
+            UniTask.Defer(async () => result = await _sut.ActivateAsync()),
             UniTask.Defer(async () =>
             {
                 await UniTask.NextFrame();

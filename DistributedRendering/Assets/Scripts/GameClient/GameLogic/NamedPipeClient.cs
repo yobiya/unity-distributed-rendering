@@ -5,7 +5,6 @@ using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine;
 
 namespace GameClient
 {
@@ -41,7 +40,7 @@ public class NamedPipeClient : INamedPipeClient
         }
     }
 
-    public async UniTask StartConnectBinaryPipe()
+    public async UniTask RecieveDataAsync()
     {
         while (true)
         {

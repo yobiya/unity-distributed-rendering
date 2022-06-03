@@ -23,7 +23,7 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
         _namedPipeClient = namedPipeClient;
     }
 
-    public async UniTask Activate()
+    public async UniTask ActivateAsync()
     {
         _inversionProc.Register(_renderingUIController.Activate, _renderingUIController.Deactivate);
         _inversionProc.Register(
@@ -46,7 +46,7 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
             () => _cameraViewController.OnUpdateTransform += updateCameraTransform,
             () => _cameraViewController.OnUpdateTransform -= updateCameraTransform);
 
-        await _namedPipeClient.StartConnectBinaryPipe();
+        await _namedPipeClient.RecieveDataAsync();
     }
 
     public void Deactivate()
