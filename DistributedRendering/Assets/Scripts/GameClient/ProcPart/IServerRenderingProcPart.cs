@@ -1,9 +1,11 @@
+using Cysharp.Threading.Tasks;
+
 namespace GameClient
 {
 
 public interface IServerRenderingProcPart
 {
-    void Activate();
+    UniTask Activate();
     void Deactivate();
 }
 

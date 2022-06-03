@@ -3,7 +3,9 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace GameClient
 {
@@ -38,21 +40,9 @@ public class NamedPipeClient : INamedPipeClient
             return INamedPipeClient.ConnectResult.TimeOut;
         }
     }
-/*
-    private async Task StartConnectBinaryPipe(int timeOutTime)
-    {
-        await Task.Run(() => 
-            {
-                try
-                {
-                    _recieveBinaryNamedPipe.Connect(timeOutTime);
-                }
-                catch (Exception)
-                {
-                    Debug.Log("Time out.");
-                }
-            });
 
+    public async UniTask StartConnectBinaryPipe()
+    {
         while (true)
         {
             var source = new CancellationTokenSource();
@@ -62,7 +52,7 @@ public class NamedPipeClient : INamedPipeClient
             OnRecieved?.Invoke(buffer);
         }
     }
-*/
+
     public void Write(string text)
     {
         _pipeWriter.WriteLine(text);

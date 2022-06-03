@@ -73,7 +73,7 @@ public class GameClientScene : MonoBehaviour
             }
         }
 
-        _serverRenderingProcPart.Activate();
+        await _serverRenderingProcPart.Activate();
     }
 
     void Update()

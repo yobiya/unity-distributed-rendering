@@ -1,5 +1,6 @@
 using System;
 using Common;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace GameClient
@@ -22,7 +23,7 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
         _namedPipeClient = namedPipeClient;
     }
 
-    public void Activate()
+    public async UniTask Activate()
     {
         _inversionProc.Register(_renderingUIController.Activate, _renderingUIController.Deactivate);
         _inversionProc.Register(
@@ -44,6 +45,8 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
         _inversionProc.Register(
             () => _cameraViewController.OnUpdateTransform += updateCameraTransform,
             () => _cameraViewController.OnUpdateTransform -= updateCameraTransform);
+
+        await _namedPipeClient.StartConnectBinaryPipe();
     }
 
     public void Deactivate()
