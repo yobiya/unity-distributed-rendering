@@ -1,9 +1,11 @@
 using UnityEngine;
 using Common;
-using GameClient;
 using VContainer;
 using VContainer.Unity;
 using Cysharp.Threading.Tasks;
+
+namespace GameClient
+{
 
 public class GameClientScene : MonoBehaviour
 {
@@ -19,10 +21,7 @@ public class GameClientScene : MonoBehaviour
     [SerializeField]
     private CameraView _cameraView;
 
-    private RenderingServerConnectingProcPart _renderingServerConnectingProcPart;
-
-    private ITestMessageSendUIViewController _testMessageSendUIViewController;
-    private CameraViewController _cameraViewController;
+    private IRenderingServerConnectingProcPart _renderingServerConnectingProcPart;
 
     private IObjectResolver _objectResolver;
 
@@ -34,34 +33,23 @@ public class GameClientScene : MonoBehaviour
             containerBuilder.RegisterComponent<IRenderingServerConnectingUI>(_renderingServerConnectingUICollection);
             containerBuilder.RegisterComponent<TestMessageSendUIViewController.IUICollection>(_testMessageSendUICollection);
             containerBuilder.RegisterComponent<IRenderingUI>(_renderingUI);
+            containerBuilder.RegisterComponent<ICameraView>(_cameraView);
 
             containerBuilder.Register<INamedPipeClient>(_ => new NamedPipeClient(".", Definisions.CommandMessageNamedPipeName), Lifetime.Singleton);
             containerBuilder.Register<IRenderingServerConnectingUIController, RenderingServerConnectingUIController>(Lifetime.Singleton);
             containerBuilder.Register<ITestMessageSendUIViewController, TestMessageSendUIViewController>(Lifetime.Singleton);
             containerBuilder.Register<IRenderingUIController, RenderingUIController>(Lifetime.Singleton);
+            containerBuilder.Register<ICameraViewController, CameraViewController>(Lifetime.Singleton);
+
+            containerBuilder.Register<ITimerCreator, TimerCreator>(Lifetime.Singleton);
 
             containerBuilder.Register<IRenderingProcPart, RenderingProcPart>(Lifetime.Singleton);
+            containerBuilder.Register<IRenderingServerConnectingProcPart, RenderingServerConnectingProcPart>(Lifetime.Singleton);
         }
 
         _objectResolver = containerBuilder.Build();
 
-        var serviceLocator = new ServiceLocator();
-        {
-        }
-
-        {
-            var namedPipeClient = _objectResolver.Resolve<INamedPipeClient>();
-            var renderingServerConnectingUIController = _objectResolver.Resolve<IRenderingServerConnectingUIController>();
-            _testMessageSendUIViewController = _objectResolver.Resolve<ITestMessageSendUIViewController>();
-            _cameraViewController = new CameraViewController(_cameraView);
-            _renderingServerConnectingProcPart
-                = new RenderingServerConnectingProcPart(
-                    renderingServerConnectingUIController,
-                    _testMessageSendUIViewController,
-                    _cameraViewController,
-                    namedPipeClient,
-                    new TimerCreator());
-        }
+        _renderingServerConnectingProcPart = _objectResolver.Resolve<IRenderingServerConnectingProcPart>();
 
         _renderingServerConnectingProcPart.Activate().Forget();
         var renderingProcPart = _objectResolver.Resolve<IRenderingProcPart>();
@@ -77,4 +65,6 @@ public class GameClientScene : MonoBehaviour
     {
         _objectResolver.Dispose();
     }
+}
+
 }
