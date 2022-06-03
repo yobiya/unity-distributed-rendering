@@ -1,3 +1,5 @@
+using System;
+using Common;
 using Cysharp.Threading.Tasks;
 
 namespace GameClient
@@ -12,6 +14,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
     private readonly ITestMessageSendUIViewController _testMessageSendUIViewController;
     private readonly INamedPipeClient _namedPipeClient;
     private readonly ITimerCreator _timerCreator;
+    private readonly InversionProc _inversionProc = new InversionProc();
 
     public RenderingServerConnectingProcPart(
         IRenderingServerConnectingUIController renderingServerConnectingUIController,
@@ -31,11 +34,14 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
 
     public async UniTask<INamedPipeClient.ConnectResult> Activate()
     {
-        _renderingServerConnectingUIController.Activate();
+        _inversionProc.Register(_renderingServerConnectingUIController.Activate, _renderingServerConnectingUIController.Deactivate);
 
         // ユーザーの開始入力を待つ
         bool isRequestedConnectiong = false;
-        _renderingServerConnectingUIController.OnRequestConnecting += () => isRequestedConnectiong = true;
+        Action requestConnecting = () => isRequestedConnectiong = true;
+        _inversionProc.Register(
+            () => _renderingServerConnectingUIController.OnRequestConnecting += requestConnecting,
+            () => _renderingServerConnectingUIController.OnRequestConnecting -= requestConnecting);
         await UniTask.WaitUntil(() => isRequestedConnectiong);
 
         // 接続を開始する
@@ -58,7 +64,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
 
     public void Deactivate()
     {
-        _renderingServerConnectingUIController.Deactivate();
+        _inversionProc.Inversion();
     }
 }
 
