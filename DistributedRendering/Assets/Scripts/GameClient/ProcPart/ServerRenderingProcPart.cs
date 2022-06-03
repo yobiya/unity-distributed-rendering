@@ -26,9 +26,6 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
     public async UniTask ActivateAsync()
     {
         _inversionProc.Register(_renderingUIController.Activate, _renderingUIController.Deactivate);
-        _inversionProc.Register(
-            () => _namedPipeClient.OnRecieved += _renderingUIController.RenderImageBuffer,
-            () => _namedPipeClient.OnRecieved -= _renderingUIController.RenderImageBuffer);
 
         Action<Transform> updateCameraTransform = (transform) =>
         {
@@ -46,7 +43,11 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
             () => _cameraViewController.OnUpdateTransform += updateCameraTransform,
             () => _cameraViewController.OnUpdateTransform -= updateCameraTransform);
 
-        await _namedPipeClient.RecieveDataAsync();
+        while (true)
+        {
+            var buffer = await _namedPipeClient.RecieveDataAsync();
+            _renderingUIController.RenderImageBuffer(buffer);
+        }
     }
 
     public void Deactivate()
