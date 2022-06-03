@@ -1,58 +1,81 @@
 using System;
+using System.Collections;
 using Common;
+using Cysharp.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using UnityEngine.TestTools;
 
 namespace RenderingServer
 {
 
 public class GameClientConnectionProcPartTest
 {
-    private (GameClientConnectionProcPart, MockServiceLocator) CreateSUT()
+    private GameClientConnectionProcPart _sut;
+    private Mock<IGameClientWaitConnectionUIViewControler> _gameClientWaitConnectionUIViewControlerMock;
+    private Mock<INamedPipeServer> _namedPipeServerMock;
+    private Mock<IResponseDataNamedPipe> _responseDataNamedPipe;
+
+    [SetUp]
+    public void SetUp()
     {
-        var serviceLocator = new MockServiceLocator();
-        serviceLocator.RegisterMock<IGameClientWaitConnectionUIViewControler>();
-        serviceLocator.RegisterMock<INamedPipeServer>();
-        serviceLocator.RegisterMock<IResponseDataNamedPipe>();
+        _gameClientWaitConnectionUIViewControlerMock = new Mock<IGameClientWaitConnectionUIViewControler>();
+        _namedPipeServerMock = new Mock<INamedPipeServer>();
+        _responseDataNamedPipe = new Mock<IResponseDataNamedPipe>();
 
-        serviceLocator.GetMock<INamedPipeServer>().SetupAdd(m => m.OnConnected += It.IsAny<Action>());
-
-        var sut
+        _sut
             = new GameClientConnectionProcPart(
-                serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Object,
-                serviceLocator.GetMock<INamedPipeServer>().Object,
-                serviceLocator.GetMock<IResponseDataNamedPipe>().Object);
+                _gameClientWaitConnectionUIViewControlerMock.Object,
+                _namedPipeServerMock.Object,
+                _responseDataNamedPipe.Object);
 
-        sut.Activate();
-
-        serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.Activate(), Times.Once);
-        serviceLocator.GetMock<IResponseDataNamedPipe>().Verify(m => m.Activate(), Times.Once);
-        serviceLocator.GetMock<INamedPipeServer>().VerifyAdd(m => m.OnConnected += It.IsAny<Action>(), Times.Once);
-        serviceLocator.GetMock<INamedPipeServer>().Verify(m => m.WaitConnection(), Times.Once);
-        serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.ShowWaitConnection(), Times.Once);
-
-        return (sut, serviceLocator);
+        // Activateが呼ばれるときに必要となる設定
+        _namedPipeServerMock.SetupAdd(m => m.OnConnected += It.IsAny<Action>());
     }
 
-    [Test]
-    public void Activate()
+    [TearDown]
+    public void TearDown()
     {
-        var (sut, serviceLocator) = CreateSUT();
+        _responseDataNamedPipe.Verify(m => m.Activate(), Times.Once);
 
-        serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().VerifyNoOtherCalls();
+        _gameClientWaitConnectionUIViewControlerMock.VerifyNoOtherCalls();
+        _namedPipeServerMock.VerifyNoOtherCalls();
+        _responseDataNamedPipe.VerifyNoOtherCalls();
+
+        _sut = null;
+        _gameClientWaitConnectionUIViewControlerMock = null;
+        _namedPipeServerMock = null;
+        _responseDataNamedPipe = null;
     }
 
-    [Test]
-    public void Deactivate()
+    // Activateが呼ばれた場合のVerifyを実行する
+    private void VerifyActivate()
     {
-        var (sut, serviceLocator) = CreateSUT();
-
-        sut.Deactivate();
-
-        serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.Deactivate(), Times.Once);
-        serviceLocator.VerifyNoOtherCallsAll();
+        _responseDataNamedPipe.Verify(m => m.Activate(), Times.Once);
+        _namedPipeServerMock.VerifyAdd(m => m.OnConnected += It.IsAny<Action>(), Times.Once);
+        _namedPipeServerMock.Verify(m => m.WaitConnection(), Times.Once);
+        _gameClientWaitConnectionUIViewControlerMock.Verify(m => m.Activate(), Times.Once);
+        _gameClientWaitConnectionUIViewControlerMock.Verify(m => m.ShowWaitConnection(), Times.Once);
     }
 
+    [UnityTest]
+    public IEnumerator Activate() => UniTask.ToCoroutine(async () =>
+    {
+        await _sut.Activate();
+
+        VerifyActivate();
+    });
+
+    [UnityTest]
+    public IEnumerator Deactivate() => UniTask.ToCoroutine(async () =>
+    {
+        await _sut.Activate();
+        _sut.Deactivate();
+
+        VerifyActivate();
+        _gameClientWaitConnectionUIViewControlerMock.Verify(m => m.Deactivate(), Times.Once);
+    });
+/*
     [Test]
     public void ConnectedClient()
     {
@@ -65,7 +88,7 @@ public class GameClientConnectionProcPartTest
 
         serviceLocator.GetMock<IGameClientWaitConnectionUIViewControler>().Verify(m => m.ShowConnected(), Times.Once);
         serviceLocator.VerifyNoOtherCallsAll();
-    }
+    }*/
 }
 
 }
