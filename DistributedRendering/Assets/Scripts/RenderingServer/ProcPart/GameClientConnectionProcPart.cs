@@ -1,4 +1,3 @@
-using System;
 using Cysharp.Threading.Tasks;
 
 namespace RenderingServer
@@ -13,8 +12,6 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
     private readonly INamedPipeServer _namedPipeServer;
     private readonly IResponseDataNamedPipe _responseDataNamedPipe;
 
-    public event Action OnConnected;
-
     public GameClientConnectionProcPart(IGameClientWaitConnectionUIViewControler gameClientWaitConnectionUIViewControler, INamedPipeServer namedPipeServer, IResponseDataNamedPipe responseDataNamedPipe)
     {
         _gameClientWaitConnectionUIViewControler = gameClientWaitConnectionUIViewControler;
@@ -28,7 +25,6 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
         _gameClientWaitConnectionUIViewControler.Activate();
         _gameClientWaitConnectionUIViewControler.ShowWaitConnection();
         await _namedPipeServer.WaitConnection();
-        OnConnected?.Invoke();
         _gameClientWaitConnectionUIViewControler.ShowConnected();
     }
 

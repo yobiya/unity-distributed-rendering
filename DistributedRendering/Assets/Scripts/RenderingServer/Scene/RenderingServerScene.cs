@@ -68,18 +68,15 @@ public class RenderingServerScene : MonoBehaviour
 
         _offscreenRenderingProcPart = new OffscreenRenderingProcPart(serviceLocator);
         _offscreenRenderingProcPart.OnActivated += _debugRenderingProcPart.Activate;
-        _gameClientConnectionProcPart.OnConnected += () =>
-        {
-            _offscreenRenderingProcPart.Activate();
-            syncCameraViewController.Activate();
-
-            serviceLocator.Get<INamedPipeServer>().OnRecieved += (text) => syncCameraViewController.Sync(text);
-        };
 
         // ゲームクライアントとの接続を確立する
         UniTask.Defer(async () =>
             {
                 await _gameClientConnectionProcPart.Activate();
+                _offscreenRenderingProcPart.Activate();
+                syncCameraViewController.Activate();
+                serviceLocator.Get<INamedPipeServer>().OnRecieved += (text) => syncCameraViewController.Sync(text);
+
                 await _gameClientConnectionProcPart.ReadCommandAsync();
             }).Forget();
     }
