@@ -40,9 +40,11 @@ public class RenderingServerScene : MonoBehaviour
             containerBuilder.Register<IGameClientWaitConnectionUIViewControler, GameClientWaitConnectionUIViewControler>(Lifetime.Singleton);
 
             containerBuilder.Register<IResponseDataNamedPipe, ResponseDataNamedPipe>(Lifetime.Singleton);
+            containerBuilder.Register<INamedPipeServer, NamedPipeServer>(Lifetime.Singleton);
 
             // ProcPartを登録
             containerBuilder.Register<IDebugRenderingProcPart, DebugRenderingProcPart>(Lifetime.Singleton);
+            containerBuilder.Register<IGameClientConnectionProcPart, GameClientConnectionProcPart>(Lifetime.Singleton);
         }
 
         _objectResolver = containerBuilder.Build();
@@ -52,7 +54,6 @@ public class RenderingServerScene : MonoBehaviour
             serviceLocator.Set<IDebugRenderingUI>(_debugRenderingUI);
 
             serviceLocator.Set<IOffscreenRenderingViewController>(_objectResolver.Resolve<IOffscreenRenderingViewController>());
-            serviceLocator.Set<INamedPipeServer>(new NamedPipeServer());
 
             _responseRenderingProcPart = new ResponseRenderingProcPart(serviceLocator);
             serviceLocator.Set<IResponseRenderingProcPart>(_responseRenderingProcPart);
@@ -61,10 +62,7 @@ public class RenderingServerScene : MonoBehaviour
         _debugRenderingProcPart = _objectResolver.Resolve<IDebugRenderingProcPart>();
 
         var syncCameraViewController = new SyncCameraViewController(_syncCameraView);
-        _gameClientConnectionProcPart = new GameClientConnectionProcPart(
-            _objectResolver.Resolve<IGameClientWaitConnectionUIViewControler>(),
-            serviceLocator.Get<INamedPipeServer>(),
-            _objectResolver.Resolve<IResponseDataNamedPipe>());
+        _gameClientConnectionProcPart = _objectResolver.Resolve<IGameClientConnectionProcPart>();
 
         _offscreenRenderingProcPart = new OffscreenRenderingProcPart(serviceLocator);
         _offscreenRenderingProcPart.OnActivated += _debugRenderingProcPart.Activate;
@@ -75,7 +73,8 @@ public class RenderingServerScene : MonoBehaviour
                 await _gameClientConnectionProcPart.Activate();
                 _offscreenRenderingProcPart.Activate();
                 syncCameraViewController.Activate();
-                serviceLocator.Get<INamedPipeServer>().OnRecieved += (text) => syncCameraViewController.Sync(text);
+
+                _objectResolver.Resolve<INamedPipeServer>().OnRecieved += (text) => syncCameraViewController.Sync(text);
 
                 await _gameClientConnectionProcPart.ReadCommandAsync();
             }).Forget();
