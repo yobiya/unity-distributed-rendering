@@ -1,33 +1,28 @@
-using Common;
-
 namespace GameClient
 {
 
 public class RenderingUIController : IRenderingUIController
 {
-    private readonly ServiceLocator _sl;
+    private readonly IRenderingUI _renderingUI;
 
-    public RenderingUIController(ServiceLocator sl)
+    public RenderingUIController(IRenderingUI renderingUI)
     {
-        _sl = sl;
+        _renderingUI = renderingUI;
     }
 
     public void Activate()
     {
-        var ui = _sl.Get<IRenderingUI>();
-        ui.Activate();
+        _renderingUI.Activate();
     }
 
     public void Deactivate()
     {
-        var ui = _sl.Get<IRenderingUI>();
-        ui.Deactivate();
+        _renderingUI.Deactivate();
     }
 
     public void RenderImageBuffer(byte[] buffer)
     {
-        var ui = _sl.Get<IRenderingUI>();
-        ui.SetImageBuffer(buffer);
+        _renderingUI.SetImageBuffer(buffer);
     }
 }
 

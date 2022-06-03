@@ -1,4 +1,3 @@
-using System;
 using Cysharp.Threading.Tasks;
 
 namespace GameClient
@@ -11,44 +10,29 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
 
     private readonly IRenderingServerConnectingUIController _renderingServerConnectingUIController;
     private readonly ITestMessageSendUIViewController _testMessageSendUIViewController;
-    private readonly ICameraViewController _cameraViewController;
     private readonly INamedPipeClient _namedPipeClient;
     private readonly ITimerCreator _timerCreator;
-
-    public event Action<byte[]> OnRecieved;
 
     public RenderingServerConnectingProcPart(
         IRenderingServerConnectingUIController renderingServerConnectingUIController,
         ITestMessageSendUIViewController testMessageSendUIViewController,
-        ICameraViewController cameraViewController,
         INamedPipeClient namedPipeClient,
         ITimerCreator timerCreator)
     {
         _renderingServerConnectingUIController = renderingServerConnectingUIController;
-        _cameraViewController = cameraViewController;
 
         _testMessageSendUIViewController = testMessageSendUIViewController;
         _testMessageSendUIViewController.OnSend += () => _namedPipeClient.Write("Test message.");
 
         _namedPipeClient = namedPipeClient;
-        _namedPipeClient.OnRecieved += (bytes) => OnRecieved?.Invoke(bytes);
 
         _timerCreator = timerCreator;
     }
 
-    public async UniTask Activate()
+    public async UniTask<INamedPipeClient.ConnectResult> Activate()
     {
         _renderingServerConnectingUIController.Activate();
-        await StartAsync();
-    }
 
-    public void Deactivate()
-    {
-        _renderingServerConnectingUIController.Deactivate();
-    }
-
-    private async UniTask StartAsync()
-    {
         // ユーザーの開始入力を待つ
         bool isRequestedConnectiong = false;
         _renderingServerConnectingUIController.OnRequestConnecting += () => isRequestedConnectiong = true;
@@ -61,19 +45,6 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
         {
             _renderingServerConnectingUIController.ShowConnected();
             _testMessageSendUIViewController.Activate();
-
-            _cameraViewController.OnUpdateTransform += (transform) =>
-            {
-                string text
-                    = $"@camera:"
-                    + $"{transform.position.x},"
-                    + $"{transform.position.y},"
-                    + $"{transform.position.z},"
-                    + $"{transform.forward.x},"
-                    + $"{transform.forward.y},"
-                    + $"{transform.forward.z}";
-                _namedPipeClient.Write(text);
-            };
         }
         else
         {
@@ -81,6 +52,13 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
 
             await _timerCreator.Create(FaildTextDisplayTime);
         }
+
+        return connectResult;
+    }
+
+    public void Deactivate()
+    {
+        _renderingServerConnectingUIController.Deactivate();
     }
 }
 

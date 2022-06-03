@@ -1,9 +1,11 @@
 using UnityEngine;
 using Common;
-using GameClient;
 using VContainer;
 using VContainer.Unity;
 using Cysharp.Threading.Tasks;
+
+namespace GameClient
+{
 
 public class GameClientScene : MonoBehaviour
 {
@@ -19,10 +21,8 @@ public class GameClientScene : MonoBehaviour
     [SerializeField]
     private CameraView _cameraView;
 
-    private RenderingServerConnectingProcPart _renderingServerConnectingProcPart;
-
-    private TestMessageSendUIViewController _testMessageSendUIViewController;
-    private CameraViewController _cameraViewController;
+    private IRenderingServerConnectingProcPart _renderingServerConnectingProcPart;
+    private IServerRenderingProcPart _serverRenderingProcPart;
 
     private IObjectResolver _objectResolver;
 
@@ -32,38 +32,48 @@ public class GameClientScene : MonoBehaviour
         {
             // SerializeFieldを登録
             containerBuilder.RegisterComponent<IRenderingServerConnectingUI>(_renderingServerConnectingUICollection);
+            containerBuilder.RegisterComponent<TestMessageSendUIViewController.IUICollection>(_testMessageSendUICollection);
+            containerBuilder.RegisterComponent<IRenderingUI>(_renderingUI);
+            containerBuilder.RegisterComponent<ICameraView>(_cameraView);
 
             containerBuilder.Register<INamedPipeClient>(_ => new NamedPipeClient(".", Definisions.CommandMessageNamedPipeName), Lifetime.Singleton);
             containerBuilder.Register<IRenderingServerConnectingUIController, RenderingServerConnectingUIController>(Lifetime.Singleton);
+            containerBuilder.Register<ITestMessageSendUIViewController, TestMessageSendUIViewController>(Lifetime.Singleton);
+            containerBuilder.Register<IRenderingUIController, RenderingUIController>(Lifetime.Singleton);
+            containerBuilder.Register<ICameraViewController, CameraViewController>(Lifetime.Singleton);
+
+            containerBuilder.Register<ITimerCreator, TimerCreator>(Lifetime.Singleton);
+
+            containerBuilder.Register<IServerRenderingProcPart, ServerRenderingProcPart>(Lifetime.Singleton);
+            containerBuilder.Register<IRenderingServerConnectingProcPart, RenderingServerConnectingProcPart>(Lifetime.Singleton);
         }
 
         _objectResolver = containerBuilder.Build();
 
-        var serviceLocator = new ServiceLocator();
-        {
-            serviceLocator.Set<IRenderingUI>(_renderingUI);
+        _renderingServerConnectingProcPart = _objectResolver.Resolve<IRenderingServerConnectingProcPart>();
+        _serverRenderingProcPart = _objectResolver.Resolve<IServerRenderingProcPart>();
 
-            serviceLocator.Set<IRenderingUIController>(new RenderingUIController(serviceLocator));
+        StartProcPart().Forget();
+    }
+
+    private async UniTask StartProcPart()
+    {
+        while (true)
+        {
+            var result = await _renderingServerConnectingProcPart.Activate();
+            if (result == INamedPipeClient.ConnectResult.Connected)
+            {
+                // 接続に成功した
+                break;
+            }
+            else
+            {
+                // 接続に失敗したので、もう一度最初からやり直す
+                _renderingServerConnectingProcPart.Deactivate();
+            }
         }
 
-        {
-            var namedPipeClient = _objectResolver.Resolve<INamedPipeClient>();
-            var renderingServerConnectingUIController = _objectResolver.Resolve<IRenderingServerConnectingUIController>();
-            _testMessageSendUIViewController = new TestMessageSendUIViewController(_testMessageSendUICollection);
-            _cameraViewController = new CameraViewController(_cameraView);
-            _renderingServerConnectingProcPart
-                = new RenderingServerConnectingProcPart(
-                    renderingServerConnectingUIController,
-                    _testMessageSendUIViewController,
-                    _cameraViewController,
-                    namedPipeClient,
-                    new TimerCreator());
-        }
-
-        _renderingServerConnectingProcPart.Activate().Forget();
-        var renderingProcPart = new RenderingProcPart(serviceLocator);
-        renderingProcPart.Activate();
-        _renderingServerConnectingProcPart.OnRecieved += renderingProcPart.RenderImageBuffer;
+        await _serverRenderingProcPart.Activate();
     }
 
     void Update()
@@ -74,4 +84,6 @@ public class GameClientScene : MonoBehaviour
     {
         _objectResolver.Dispose();
     }
+}
+
 }
