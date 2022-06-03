@@ -1,4 +1,3 @@
-using Common;
 using Moq;
 using NUnit.Framework;
 
@@ -7,42 +6,46 @@ namespace RenderingServer
 
 public class OffscreenRenderingProcPartTest
 {
-    private (OffscreenRenderingProcPart, MockServiceLocator) CreateSUT()
+    private OffscreenRenderingProcPart _sut;
+    private Mock<IOffscreenRenderingViewController> _offscreenRenderingViewControllerMock;
+
+    [SetUp]
+    public void SetUp()
     {
-        var serviceLocator = new MockServiceLocator();
-        serviceLocator.RegisterMock<IOffscreenRenderingViewController>();
+        _offscreenRenderingViewControllerMock = new Mock<IOffscreenRenderingViewController>();
+        _sut = new OffscreenRenderingProcPart(_offscreenRenderingViewControllerMock.Object);
+    }
 
-        var sut = new OffscreenRenderingProcPart(serviceLocator);
+    [TearDown]
+    public void TearDown()
+    {
+        _offscreenRenderingViewControllerMock.VerifyNoOtherCalls();
 
-        // 初期状態は無効になっているので、有効化する
-        sut.Activate();
+        _sut = null;
+        _offscreenRenderingViewControllerMock = null;
+    }
 
-        // CreateSUTメソッド内でsut.Activateメソッドが呼ばれているので
-        // IOffscreenRenderingViewController.Activateメソッドも呼ばれる
-        serviceLocator.GetMock<IOffscreenRenderingViewController>().Verify(m => m.Activate(), Times.Once);
-
-        return (sut, serviceLocator);
+    private void VerifyActivate()
+    {
+        _offscreenRenderingViewControllerMock.Verify(m => m.Activate(), Times.Once);
     }
 
     [Test]
     public void Activate()
     {
-        var (sut, serviceLocator) = CreateSUT();
+        _sut.Activate();
 
-        serviceLocator.VerifyNoOtherCallsAll();
+        VerifyActivate();
     }
 
     [Test]
     public void Deactivate()
     {
-        var (sut, serviceLocator) = CreateSUT();
+        _sut.Activate();
+        _sut.Deactivate();
 
-        sut.Deactivate();
-
-        // sutが無効化された場合に、IOffscreenRenderingViewControllerも無効化される
-        serviceLocator.GetMock<IOffscreenRenderingViewController>().Verify(m => m.Deactivate(), Times.Once);
-
-        serviceLocator.VerifyNoOtherCallsAll();
+        VerifyActivate();
+        _offscreenRenderingViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
     }
 }
 

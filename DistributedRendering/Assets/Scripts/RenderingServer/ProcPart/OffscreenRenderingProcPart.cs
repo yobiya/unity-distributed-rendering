@@ -10,9 +10,9 @@ public class OffscreenRenderingProcPart : IOffscreenRenderingProcPart
 
     public event Action<IRenderTextureView> OnActivated;
 
-    public OffscreenRenderingProcPart(ServiceLocator sl)
+    public OffscreenRenderingProcPart(IOffscreenRenderingViewController offscreenRenderingViewController)
     {
-        _offscreenRenderingViewController = sl.Get<IOffscreenRenderingViewController>();
+        _offscreenRenderingViewController = offscreenRenderingViewController;
     }
 
     public void Activate()
