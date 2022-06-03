@@ -9,6 +9,7 @@ namespace RenderingServer
 public class RenderingServerProcPart : IRenderingServerProcPart
 {
     private readonly INamedPipeServer _namedPipeServer;
+    private readonly IResponseDataNamedPipe _responseDataNamedPipe;
     private readonly ISyncCameraViewController _syncCameraViewController;
     private readonly IOffscreenRenderingViewController _offscreenRenderingViewController;
     private readonly IDebugRenderingUIControler _debugRenderingUIControler;
@@ -16,11 +17,13 @@ public class RenderingServerProcPart : IRenderingServerProcPart
 
     public RenderingServerProcPart(
         INamedPipeServer namedPipeServer,
+        IResponseDataNamedPipe responseDataNamedPipe,
         ISyncCameraViewController syncCameraViewController,
         IOffscreenRenderingViewController offscreenRenderingViewController,
         IDebugRenderingUIControler debugRenderingUIControler)
     {
         _namedPipeServer = namedPipeServer;
+        _responseDataNamedPipe = responseDataNamedPipe;
         _syncCameraViewController = syncCameraViewController;
         _offscreenRenderingViewController = offscreenRenderingViewController;
         _debugRenderingUIControler = debugRenderingUIControler;
@@ -34,7 +37,11 @@ public class RenderingServerProcPart : IRenderingServerProcPart
             () => _debugRenderingUIControler.Activate(_offscreenRenderingViewController.RenderTexture),
             _debugRenderingUIControler.Deactivate);
 
-         Action<string> syncEvent = (text) => _syncCameraViewController.Sync(text);
+         Action<string> syncEvent = (text) =>
+         {
+            _syncCameraViewController.Sync(text);
+            _responseDataNamedPipe.SendRenderingImage(_offscreenRenderingViewController.RenderTexture.RenderTexture);
+         };
         _inversionProc.Register(
             () => _namedPipeServer.OnRecieved += syncEvent,
             () => _namedPipeServer.OnRecieved -= syncEvent);

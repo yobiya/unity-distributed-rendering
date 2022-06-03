@@ -38,10 +38,10 @@ public class ResponseDataNamedPipe : IResponseDataNamedPipe
 
         var texture2d
             = new Texture2D(
-                    renderTexture.width,
-                    renderTexture.height,
-                    TextureFormat.ARGB32,
-                    false);
+                renderTexture.width,
+                renderTexture.height,
+                TextureFormat.ARGB32,
+                false);
 
         RenderTexture.active = renderTexture;
         texture2d.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
@@ -49,6 +49,7 @@ public class ResponseDataNamedPipe : IResponseDataNamedPipe
                                    
         byte[] byteArray = texture2d.GetRawTextureData();
         _namedPipeServer.Write(byteArray, 0, byteArray.Length);
+        _namedPipeServer.Flush();
 
         Texture2D.Destroy(texture2d);
     }

@@ -13,6 +13,7 @@ public class RenderingServerProcPartTest
 {
     private RenderingServerProcPart _sut;
     private Mock<INamedPipeServer> _namedPipeServerMock;
+    private Mock<IResponseDataNamedPipe> _responseDataNamedPipeMock;
     private Mock<ISyncCameraViewController> _syncCameraViewControllerMock;
     private Mock<IOffscreenRenderingViewController> _offscreenRenderingViewControllerMock;
     private Mock<IDebugRenderingUIControler> _debugRenderingUIControlerMock;
@@ -21,11 +22,13 @@ public class RenderingServerProcPartTest
     public void SetUp()
     {
         _namedPipeServerMock = new Mock<INamedPipeServer>();
+        _responseDataNamedPipeMock = new Mock<IResponseDataNamedPipe>();
         _syncCameraViewControllerMock = new Mock<ISyncCameraViewController>();
         _offscreenRenderingViewControllerMock = new Mock<IOffscreenRenderingViewController>();
         _debugRenderingUIControlerMock = new Mock<IDebugRenderingUIControler>();
         _sut = new RenderingServerProcPart(
             _namedPipeServerMock.Object,
+            _responseDataNamedPipeMock.Object,
             _syncCameraViewControllerMock.Object,
             _offscreenRenderingViewControllerMock.Object,
             _debugRenderingUIControlerMock.Object);
@@ -37,12 +40,14 @@ public class RenderingServerProcPartTest
     public void TearDown()
     {
         _namedPipeServerMock.VerifyNoOtherCalls();
+        _responseDataNamedPipeMock.VerifyNoOtherCalls();
         _syncCameraViewControllerMock.VerifyNoOtherCalls();
         _offscreenRenderingViewControllerMock.VerifyNoOtherCalls();
         _debugRenderingUIControlerMock.VerifyNoOtherCalls();
 
         _sut = null;
         _namedPipeServerMock = null;
+        _responseDataNamedPipeMock = null;
         _syncCameraViewControllerMock = null;
         _offscreenRenderingViewControllerMock = null;
         _debugRenderingUIControlerMock = null;
