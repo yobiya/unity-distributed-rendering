@@ -14,7 +14,6 @@ public class RenderingServerConnectingProcPartTest
         public RenderingServerConnectingProcPart sut;
         public Mock<IRenderingServerConnectingUIController> renderingServerConnectingUIViewControllerMock;
         public Mock<ITestMessageSendUIViewController> testMessageSendUIViewControllerMock;
-        public Mock<ICameraViewController> cameraViewControllerMock;
         public Mock<INamedPipeClient> namedPipeClientMock;
         public TestTimerCreator timerCreator;
 
@@ -39,7 +38,6 @@ public class RenderingServerConnectingProcPartTest
     {
         var renderingServerConnectingUIViewControllerMock = new Mock<IRenderingServerConnectingUIController>();
         var testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
-        var cameraViewControllerMock = new Mock<ICameraViewController>();
         var namedPipeClientMock = new Mock<INamedPipeClient>();
         var timerCreator = new TestTimerCreator();
 
@@ -54,7 +52,6 @@ public class RenderingServerConnectingProcPartTest
             = new RenderingServerConnectingProcPart(
                 renderingServerConnectingUIViewControllerMock.Object,
                 testMessageSendUIViewControllerMock.Object,
-                cameraViewControllerMock.Object,
                 namedPipeClientMock.Object,
                 timerCreator);
 
@@ -71,7 +68,6 @@ public class RenderingServerConnectingProcPartTest
         collection.sut = sut;
         collection.renderingServerConnectingUIViewControllerMock = renderingServerConnectingUIViewControllerMock;
         collection.testMessageSendUIViewControllerMock = testMessageSendUIViewControllerMock;
-        collection.cameraViewControllerMock = cameraViewControllerMock;
         collection.namedPipeClientMock = namedPipeClientMock;
         collection.timerCreator = timerCreator;
 

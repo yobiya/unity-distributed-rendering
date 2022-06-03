@@ -53,9 +53,26 @@ public class GameClientScene : MonoBehaviour
         _renderingServerConnectingProcPart = _objectResolver.Resolve<IRenderingServerConnectingProcPart>();
         _serverRenderingProcPart = _objectResolver.Resolve<IServerRenderingProcPart>();
 
-        _renderingServerConnectingProcPart.Activate().Forget();
-        _serverRenderingProcPart.Activate();
-        _renderingServerConnectingProcPart.OnRecieved += _serverRenderingProcPart.RenderImageBuffer;
+        UniTask.Defer(async () =>
+            {
+                while (true)
+                {
+                    var result = await _renderingServerConnectingProcPart.Activate();
+                    if (result == INamedPipeClient.ConnectResult.Connected)
+                    {
+                        // 接続に成功した
+                        break;
+                    }
+                    else
+                    {
+                        // 接続に失敗したので、もう一度最初からやり直す
+                        _renderingServerConnectingProcPart.Deactivate();
+                    }
+                }
+
+                _renderingServerConnectingProcPart.OnRecieved += _serverRenderingProcPart.RenderImageBuffer;
+                _serverRenderingProcPart.Activate();
+            }).Forget();
     }
 
     void Update()

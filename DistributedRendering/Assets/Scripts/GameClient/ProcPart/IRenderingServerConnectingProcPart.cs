@@ -8,7 +8,7 @@ public interface IRenderingServerConnectingProcPart
 {
     event Action<byte[]> OnRecieved;
 
-    UniTask Activate();
+    UniTask<INamedPipeClient.ConnectResult> Activate();
     void Deactivate();
 }
 
