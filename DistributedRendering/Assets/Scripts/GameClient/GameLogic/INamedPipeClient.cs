@@ -15,6 +15,7 @@ public interface INamedPipeClient
     event Action<byte[]> OnRecieved;
 
     UniTask<ConnectResult> ConnectAsync(int timeOutTime);
+    UniTask StartConnectBinaryPipe();
     void Write(string text);
 }
 
