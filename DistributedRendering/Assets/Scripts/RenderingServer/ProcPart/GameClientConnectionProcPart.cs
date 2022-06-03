@@ -21,12 +21,6 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
         _namedPipeServer = namedPipeServer;
         _responseDataNamedPipe = responseDataNamedPipe;
         _responseDataNamedPipe.Activate();
-
-        _namedPipeServer.OnConnected += () =>
-        {
-            OnConnected?.Invoke();
-            _gameClientWaitConnectionUIViewControler.ShowConnected();
-        };
     }
 
     public async UniTask Activate()
@@ -34,11 +28,18 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
         _gameClientWaitConnectionUIViewControler.Activate();
         _gameClientWaitConnectionUIViewControler.ShowWaitConnection();
         await _namedPipeServer.WaitConnection();
+        OnConnected?.Invoke();
+        _gameClientWaitConnectionUIViewControler.ShowConnected();
     }
 
     public void Deactivate()
     {
         _gameClientWaitConnectionUIViewControler.Deactivate();
+    }
+
+    public async UniTask ReadCommandAsync()
+    {
+        await _namedPipeServer.ReadCommandAsync();
     }
 }
 

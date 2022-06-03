@@ -7,25 +7,27 @@ using UnityEngine;
 
 public class NamedPipeServer : INamedPipeServer
 {
+    private NamedPipeServerStream _pipeServer;
+
     private bool _isFinished = false;
 
-    public event Action OnConnected;
     public event Action<string> OnRecieved;
 
     public async Task WaitConnection()
     {
-        using var pipeServer
+        _pipeServer
             = new NamedPipeServerStream(
                 Definisions.CommandMessageNamedPipeName,
                 PipeDirection.In,
                 1,
                 PipeTransmissionMode.Message,
                 PipeOptions.Asynchronous);
-        await pipeServer.WaitForConnectionAsync();
+        await _pipeServer.WaitForConnectionAsync();
+    }
 
-        OnConnected?.Invoke();
-
-        using var pipeReader = new StreamReader(pipeServer);
+    public async Task ReadCommandAsync()
+    {
+        using var pipeReader = new StreamReader(_pipeServer);
         while (!_isFinished)
         {
             try
