@@ -1,0 +1,33 @@
+@startuml game_client
+
+class RenderingServerConnectingProcPart
+note top
+レンダリングサーバーへの接続を行う
+endnote
+
+class ServerRenderingProcPart
+note top
+レンダリングサーバーへ情報を送って
+返ってきた画像を表示する
+endnote
+
+class NamedPipeClient
+
+class SyncronizeDataCreator
+note bottom
+レンダリングサーバーへ送る
+データを作成する
+endnote
+
+class SyncronizeObjectHolder
+note bottom
+レンダリングサーバーに送る
+データの元のオブジェクトを保持する
+endnote
+
+RenderingServerConnectingProcPart *--> NamedPipeClient
+ServerRenderingProcPart *--> NamedPipeClient
+ServerRenderingProcPart *--> SyncronizeDataCreator
+SyncronizeDataCreator *--> SyncronizeObjectHolder
+
+@enduml
