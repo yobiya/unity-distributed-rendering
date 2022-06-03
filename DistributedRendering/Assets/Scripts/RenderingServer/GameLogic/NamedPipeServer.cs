@@ -1,9 +1,9 @@
 using Common;
+using Cysharp.Threading.Tasks;
 using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class NamedPipeServer : INamedPipeServer
@@ -24,7 +24,7 @@ public class NamedPipeServer : INamedPipeServer
                 PipeOptions.Asynchronous);
     }
 
-    public async Task Activate()
+    public async UniTask Activate()
     {
         await _pipeServer.WaitForConnectionAsync(_cancellationTokenSource.Token);
     }
@@ -34,7 +34,7 @@ public class NamedPipeServer : INamedPipeServer
         _cancellationTokenSource.Cancel();
     }
 
-    public async Task ReadCommandAsync()
+    public async UniTask ReadCommandAsync()
     {
         using var pipeReader = new StreamReader(_pipeServer);
         while (!_cancellationTokenSource.Token.IsCancellationRequested)

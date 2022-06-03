@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace RenderingServer
@@ -8,7 +9,7 @@ public interface IResponseDataNamedPipe
 {
     event Action OnConnected;
 
-    void Activate();
+    UniTask Activate();
     void Deactivate();
     void SendRenderingImage(RenderTexture renderTexture);
 }

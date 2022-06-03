@@ -2,6 +2,7 @@ using System;
 using System.IO.Pipes;
 using System.Threading.Tasks;
 using Common;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace RenderingServer
@@ -15,9 +16,9 @@ public class ResponseDataNamedPipe : IResponseDataNamedPipe
 
     public event Action OnConnected;
 
-    public void Activate()
+    public async UniTask Activate()
     {
-        var _ = WaitConnection();
+        await WaitConnection();
     }
 
     public void Deactivate()

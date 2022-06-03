@@ -1,11 +1,11 @@
 using System;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 
 public interface INamedPipeServer
 {
     event Action<string> OnRecieved;
 
-    Task Activate();
+    UniTask Activate();
     void Deactivate();
-    Task ReadCommandAsync();
+    UniTask ReadCommandAsync();
 }
