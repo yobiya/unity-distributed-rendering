@@ -16,8 +16,6 @@ public class NamedPipeClient : INamedPipeClient
     private readonly NamedPipeClientStream _recieveBinaryNamedPipe;
     private StreamWriter _pipeWriter;
 
-    public event Action<byte[]> OnRecieved;
-
     public NamedPipeClient(string serverName, string pipeName)
     {
         _pipeClient = new NamedPipeClientStream(serverName, pipeName, PipeDirection.Out);
@@ -41,16 +39,13 @@ public class NamedPipeClient : INamedPipeClient
         }
     }
 
-    public async UniTask StartConnectBinaryPipe()
+    public async UniTask<byte[]> RecieveDataAsync()
     {
-        while (true)
-        {
-            var source = new CancellationTokenSource();
-            byte[] buffer = new byte[256 * 256 * 4 * 2];
-            await _recieveBinaryNamedPipe.ReadAsync(buffer, 0, buffer.Length, source.Token);
+        var source = new CancellationTokenSource();
+        byte[] buffer = new byte[256 * 256 * 4 * 2];
+        await _recieveBinaryNamedPipe.ReadAsync(buffer, 0, buffer.Length, source.Token);
 
-            OnRecieved?.Invoke(buffer);
-        }
+        return buffer;
     }
 
     public void Write(string text)

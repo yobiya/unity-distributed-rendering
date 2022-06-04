@@ -5,7 +5,7 @@ namespace GameClient
 
 public interface IServerRenderingProcPart
 {
-    UniTask Activate();
+    UniTask ActivateAsync();
     void Deactivate();
 }
 

@@ -10,6 +10,9 @@ namespace GameClient
 public class GameClientScene : MonoBehaviour
 {
     [SerializeField]
+    private Camera _camera;
+
+    [SerializeField]
     private RenderingServerConnectingUI _renderingServerConnectingUICollection;
 
     [SerializeField]
@@ -31,6 +34,7 @@ public class GameClientScene : MonoBehaviour
         var containerBuilder = new ContainerBuilder();
         {
             // SerializeFieldを登録
+            containerBuilder.RegisterComponent<Camera>(_camera);
             containerBuilder.RegisterComponent<IRenderingServerConnectingUI>(_renderingServerConnectingUICollection);
             containerBuilder.RegisterComponent<TestMessageSendUIViewController.IUICollection>(_testMessageSendUICollection);
             containerBuilder.RegisterComponent<IRenderingUI>(_renderingUI);
@@ -43,7 +47,10 @@ public class GameClientScene : MonoBehaviour
             containerBuilder.Register<ICameraViewController, CameraViewController>(Lifetime.Singleton);
 
             containerBuilder.Register<ITimerCreator, TimerCreator>(Lifetime.Singleton);
+            containerBuilder.Register<ISyncronizeDataCreator, SyncronizeDataCreator>(Lifetime.Singleton);
+            containerBuilder.Register<ISyncronizeObjectHolder, SyncronizeObjectHolder>(Lifetime.Singleton);
 
+            // ProcPartを登録
             containerBuilder.Register<IServerRenderingProcPart, ServerRenderingProcPart>(Lifetime.Singleton);
             containerBuilder.Register<IRenderingServerConnectingProcPart, RenderingServerConnectingProcPart>(Lifetime.Singleton);
         }
@@ -53,14 +60,14 @@ public class GameClientScene : MonoBehaviour
         _renderingServerConnectingProcPart = _objectResolver.Resolve<IRenderingServerConnectingProcPart>();
         _serverRenderingProcPart = _objectResolver.Resolve<IServerRenderingProcPart>();
 
-        StartProcPart().Forget();
+        StartProcPartAsync().Forget();
     }
 
-    private async UniTask StartProcPart()
+    private async UniTask StartProcPartAsync()
     {
         while (true)
         {
-            var result = await _renderingServerConnectingProcPart.Activate();
+            var result = await _renderingServerConnectingProcPart.ActivateAsync();
             if (result == INamedPipeClient.ConnectResult.Connected)
             {
                 // 接続に成功した
@@ -73,7 +80,7 @@ public class GameClientScene : MonoBehaviour
             }
         }
 
-        await _serverRenderingProcPart.Activate();
+        await _serverRenderingProcPart.ActivateAsync();
     }
 
     void Update()

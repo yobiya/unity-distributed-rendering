@@ -1,4 +1,3 @@
-using System;
 using Cysharp.Threading.Tasks;
 
 namespace GameClient
@@ -12,10 +11,8 @@ public interface INamedPipeClient
         TimeOut
     }
 
-    event Action<byte[]> OnRecieved;
-
     UniTask<ConnectResult> ConnectAsync(int timeOutTime);
-    UniTask StartConnectBinaryPipe();
+    UniTask<byte[]> RecieveDataAsync();
     void Write(string text);
 }
 

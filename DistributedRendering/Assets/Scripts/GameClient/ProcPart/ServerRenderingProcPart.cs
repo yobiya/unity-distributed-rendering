@@ -11,42 +11,33 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
     private readonly IRenderingUIController _renderingUIController;
     private readonly ICameraViewController _cameraViewController;
     private readonly INamedPipeClient _namedPipeClient;
+    private readonly ISyncronizeDataCreator _syncronizeDataCreator;
     private readonly InversionProc _inversionProc = new InversionProc();
 
     public ServerRenderingProcPart(
         IRenderingUIController renderingUIController,
         ICameraViewController cameraViewController,
-        INamedPipeClient namedPipeClient)
+        INamedPipeClient namedPipeClient,
+        ISyncronizeDataCreator syncronizeDataCreator)
     {
         _renderingUIController = renderingUIController;
         _cameraViewController = cameraViewController;
         _namedPipeClient = namedPipeClient;
+        _syncronizeDataCreator = syncronizeDataCreator;
     }
 
-    public async UniTask Activate()
+    public async UniTask ActivateAsync()
     {
         _inversionProc.Register(_renderingUIController.Activate, _renderingUIController.Deactivate);
-        _inversionProc.Register(
-            () => _namedPipeClient.OnRecieved += _renderingUIController.RenderImageBuffer,
-            () => _namedPipeClient.OnRecieved -= _renderingUIController.RenderImageBuffer);
 
-        Action<Transform> updateCameraTransform = (transform) =>
+        while (true)
         {
-            string text
-                = $"@camera:"
-                + $"{transform.position.x},"
-                + $"{transform.position.y},"
-                + $"{transform.position.z},"
-                + $"{transform.forward.x},"
-                + $"{transform.forward.y},"
-                + $"{transform.forward.z}";
-            _namedPipeClient.Write(text);
-        };
-        _inversionProc.Register(
-            () => _cameraViewController.OnUpdateTransform += updateCameraTransform,
-            () => _cameraViewController.OnUpdateTransform -= updateCameraTransform);
+            var sendText = _syncronizeDataCreator.Create();
+            _namedPipeClient.Write(sendText);
 
-        await _namedPipeClient.StartConnectBinaryPipe();
+            var recievedData = await _namedPipeClient.RecieveDataAsync();
+            _renderingUIController.RenderImageBuffer(recievedData);
+        }
     }
 
     public void Deactivate()
