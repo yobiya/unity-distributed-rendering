@@ -1,0 +1,63 @@
+
+@startuml syncronize_data
+
+namespace GameClient {
+
+class ServerRenderingProcPart
+note top
+レンダリングサーバーへ情報を送って
+返ってきた画像を表示する
+endnote
+
+class NamedPipeClient
+
+class SyncronizeDataSerializer
+note bottom
+レンダリングサーバーへ送る
+データを作成する
+endnote
+
+class SyncronizeObjectHolder
+note bottom
+レンダリングサーバーに送る
+データの元のオブジェクトを保持する
+endnote
+
+ServerRenderingProcPart *--> NamedPipeClient
+ServerRenderingProcPart *--> SyncronizeDataSerializer
+SyncronizeDataSerializer *--> SyncronizeObjectHolder
+
+}
+
+namespace RenderingServer {
+
+class SyncronizeRenderingProcPart
+note top
+ゲームクライアントから受け取った情報を
+反映させて描画し、結果を送り返す
+endnote
+
+class NamedPipeServer
+
+class SyncronizeDataDeserializer
+note bottom
+ゲームクライアントから受け取った
+データを対応するオブジェクトに適用する
+endnote
+
+class SyncronizeObjectHolder
+note bottom
+ゲームクライアントから受け取ったデータを
+反映させるオブジェクトを保持する
+endnote
+
+SyncronizeRenderingProcPart *--> NamedPipeServer
+SyncronizeRenderingProcPart *--> SyncronizeDataDeserializer
+SyncronizeDataDeserializer *--> SyncronizeObjectHolder
+
+}
+
+GameClient.NamedPipeClient ..> RenderingServer.NamedPipeServer
+
+
+@enduml
