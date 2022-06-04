@@ -20,7 +20,6 @@ public class RenderingServerScene : MonoBehaviour
     private DebugRenderingUI _debugRenderingUI;
 
     private IGameClientConnectionProcPart _gameClientConnectionProcPart;
-    private ResponseRenderingProcPart _responseRenderingProcPart;
     private ISyncronizeRenderingProcPart _syncronizeRenderingProcPart;
 
     private IObjectResolver _objectResolver;
@@ -50,12 +49,6 @@ public class RenderingServerScene : MonoBehaviour
 
         _objectResolver = containerBuilder.Build();
 
-        var serviceLocator = new ServiceLocator();
-        {
-            _responseRenderingProcPart = new ResponseRenderingProcPart(serviceLocator);
-            serviceLocator.Set<IResponseRenderingProcPart>(_responseRenderingProcPart);
-        }
-
         _gameClientConnectionProcPart = _objectResolver.Resolve<IGameClientConnectionProcPart>();
         _syncronizeRenderingProcPart = _objectResolver.Resolve<ISyncronizeRenderingProcPart>();
 
@@ -69,7 +62,6 @@ public class RenderingServerScene : MonoBehaviour
 
     void Update()
     {
-        _responseRenderingProcPart.Update();
     }
 
     void OnDestroy()
