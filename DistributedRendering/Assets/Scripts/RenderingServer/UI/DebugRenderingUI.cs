@@ -1,4 +1,3 @@
-using Common;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,11 +9,11 @@ public class DebugRenderingUI : MonoBehaviour, IDebugRenderingUI
     [SerializeField]
     private RawImage _rawImage;
 
-    public void Activate(IRenderTextureView textureView)
+    public void Activate(RenderTexture renderTexture)
     {
         gameObject.SetActive(true);
 
-        _rawImage.texture = textureView.RenderTexture;
+        _rawImage.texture = renderTexture;
     }
 
     public void Deactivate()

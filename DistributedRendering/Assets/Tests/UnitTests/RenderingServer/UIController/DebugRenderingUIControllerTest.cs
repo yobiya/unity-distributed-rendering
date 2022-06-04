@@ -1,6 +1,6 @@
-using Common;
 using Moq;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace RenderingServer
 {
@@ -29,20 +29,20 @@ public class DebugRenderingUIControllerTest
     [Test]
     public void Activate()
     {
-        _sut.Activate(It.IsAny<IRenderTextureView>());
+        _sut.Activate(It.IsAny<RenderTexture>());
 
         // DebugRenderingUIControlerの有効化に合わせて、有効化される
-        _debugRenderingUIMock.Verify(m => m.Activate(It.IsAny<IRenderTextureView>()), Times.Once);
+        _debugRenderingUIMock.Verify(m => m.Activate(It.IsAny<RenderTexture>()), Times.Once);
     }
 
     [Test]
     public void Deactivate()
     {
-        _sut.Activate(It.IsAny<IRenderTextureView>());
+        _sut.Activate(It.IsAny<RenderTexture>());
         _sut.Deactivate();
 
         // DebugRenderingUIControlerの有効化と無効化に合わせて、有効化と無効化される
-        _debugRenderingUIMock.Verify(m => m.Activate(It.IsAny<IRenderTextureView>()), Times.Once);
+        _debugRenderingUIMock.Verify(m => m.Activate(It.IsAny<RenderTexture>()), Times.Once);
         _debugRenderingUIMock.Verify(m => m.Deactivate(), Times.Once);
     }
 }

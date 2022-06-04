@@ -1,4 +1,4 @@
-using Common;
+using UnityEngine;
 using VContainer;
 
 namespace RenderingServer
@@ -8,7 +8,7 @@ public class OffscreenRenderingViewController : IOffscreenRenderingViewControlle
 {
     private readonly IOffscreenRenderingView _offscreenRenderingView;
 
-    public IRenderTextureView RenderTexture => _offscreenRenderingView.RenderTexture;
+    public RenderTexture RenderTexture => _offscreenRenderingView.RenderTexture;
 
     [Inject]
     public OffscreenRenderingViewController(IOffscreenRenderingView offscreenRenderingView)

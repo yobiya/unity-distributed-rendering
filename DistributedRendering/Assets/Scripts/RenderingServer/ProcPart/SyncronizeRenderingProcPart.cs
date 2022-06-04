@@ -40,7 +40,7 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
          Action<string> syncEvent = (text) =>
          {
             _syncCameraViewController.Sync(text);
-            _responseDataNamedPipe.SendRenderingImage(_offscreenRenderingViewController.RenderTexture.RenderTexture);
+            _responseDataNamedPipe.SendRenderingImage(_offscreenRenderingViewController.RenderTexture);
          };
         _inversionProc.Register(
             () => _namedPipeServer.OnRecieved += syncEvent,

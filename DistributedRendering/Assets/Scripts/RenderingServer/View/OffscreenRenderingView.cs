@@ -1,4 +1,3 @@
-using Common;
 using UnityEngine;
 
 namespace RenderingServer
@@ -9,7 +8,7 @@ public class OffscreenRenderingView : MonoBehaviour, IOffscreenRenderingView
     [SerializeField]
     private Camera _camera;
 
-    public IRenderTextureView RenderTexture { get; } = new RenderTextureWrapperView();
+    public RenderTexture RenderTexture { get; private set; }
 
     void Update()
     {
@@ -18,15 +17,16 @@ public class OffscreenRenderingView : MonoBehaviour, IOffscreenRenderingView
 
     public void Activate()
     {
+        RenderTexture = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32);
         gameObject.SetActive(true);
-        RenderTexture.Activate();
 
-        _camera.targetTexture = RenderTexture.RenderTexture;
+        _camera.targetTexture = RenderTexture;
     }
 
     public void Deactivate()
     {
         gameObject.SetActive(false);
+        RenderTexture.Destroy(RenderTexture);
     }
 }
 

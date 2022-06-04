@@ -1,11 +1,11 @@
-using Common;
+using UnityEngine;
 
 namespace RenderingServer
 {
 
 public interface IDebugRenderingUI
 {
-    void Activate(IRenderTextureView textureView);
+    void Activate(RenderTexture renderTexture);
     void Deactivate();
 }
 

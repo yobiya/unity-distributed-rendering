@@ -1,11 +1,11 @@
-using Common;
+using UnityEngine;
 
 namespace RenderingServer
 {
 
 public interface IDebugRenderingUIControler
 {
-    void Activate(IRenderTextureView textureView);
+    void Activate(RenderTexture renderTexture);
     void Deactivate();
 }
 
@@ -18,9 +18,9 @@ public class DebugRenderingUIControler : IDebugRenderingUIControler
         _debugRenderingUI = debugRenderingUI;
     }
 
-    public void Activate(IRenderTextureView textureView)
+    public void Activate(RenderTexture renderTexture)
     {
-        _debugRenderingUI.Activate(textureView);
+        _debugRenderingUI.Activate(renderTexture);
     }
 
     public void Deactivate()

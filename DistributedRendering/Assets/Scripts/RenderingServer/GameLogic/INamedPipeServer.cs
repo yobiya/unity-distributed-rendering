@@ -8,4 +8,5 @@ public interface INamedPipeServer
     UniTask Activate();
     void Deactivate();
     UniTask ReadCommandAsync();
+    UniTask<string> RecieveMessageAsync();
 }

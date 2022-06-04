@@ -1,11 +1,11 @@
-using Common;
+using UnityEngine;
 
 namespace RenderingServer
 {
 
 public interface IOffscreenRenderingView
 {
-    IRenderTextureView RenderTexture { get; }
+    RenderTexture RenderTexture { get; }
 
     void Activate();
     void Deactivate();

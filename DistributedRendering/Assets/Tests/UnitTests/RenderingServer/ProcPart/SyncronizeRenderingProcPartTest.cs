@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
-using Common;
 using Cysharp.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using UnityEngine;
 using UnityEngine.TestTools;
 
 namespace RenderingServer
@@ -58,7 +58,7 @@ public class SyncronizeRenderingProcPartTest
         _namedPipeServerMock.VerifyAdd(m => m.OnRecieved += It.IsAny<Action<string>>(), Times.Once);
         _offscreenRenderingViewControllerMock.Verify(m => m.Activate(), Times.Once);
         _offscreenRenderingViewControllerMock.VerifyGet(m => m.RenderTexture, Times.Once);
-        _debugRenderingUIControlerMock.Verify(m => m.Activate(It.IsAny<IRenderTextureView>()), Times.Once);
+        _debugRenderingUIControlerMock.Verify(m => m.Activate(It.IsAny<RenderTexture>()), Times.Once);
         _syncCameraViewControllerMock.Verify(m => m.Activate(), Times.Once);
         _namedPipeServerMock.Verify(m => m.ReadCommandAsync(), Times.Once);
     }

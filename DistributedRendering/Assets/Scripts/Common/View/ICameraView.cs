@@ -1,9 +1,11 @@
+using UnityEngine;
+
 namespace Common
 {
 
 public interface ICameraView : IBaseView
 {
-    void SetRenderingTargetTexture(IRenderTextureView texture);
+    void SetRenderingTargetTexture(RenderTexture renderTexture);
 }
 
 }

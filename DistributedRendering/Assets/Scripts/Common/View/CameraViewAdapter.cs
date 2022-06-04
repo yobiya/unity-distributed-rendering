@@ -8,9 +8,9 @@ public class CameraViewAdapter : BaseViewAdapter, ICameraView
     [SerializeField]
     private Camera _camera;
 
-    public void SetRenderingTargetTexture(IRenderTextureView renderTexture)
+    public void SetRenderingTargetTexture(RenderTexture renderTexture)
     {
-        _camera.targetTexture = renderTexture.RenderTexture;
+        _camera.targetTexture = renderTexture;
     }
 }
 
