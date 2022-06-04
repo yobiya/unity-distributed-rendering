@@ -11,6 +11,7 @@ public interface IResponseDataNamedPipe
 
     UniTask Activate();
     void Deactivate();
+    UniTask<byte[]> RecieveDataAsync();
     void SendRenderingImage(RenderTexture renderTexture);
 }
 

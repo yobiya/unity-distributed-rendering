@@ -28,21 +28,26 @@ public class RenderingServerScene : MonoBehaviour
     {
         var containerBuilder = new ContainerBuilder();
         {
-            // SerializeFieldを登録
+            // SerializeField
             containerBuilder.RegisterComponent<IOffscreenRenderingView>(_offscreenRenderingView);
             containerBuilder.RegisterComponent<IDebugRenderingUI>(_debugRenderingUI);
             containerBuilder.RegisterComponent<ISyncCameraView>(_syncCameraView);
             containerBuilder.RegisterComponent<GameClientWaitConnectionUIViewControler.IUICollection>(_gameClientWaitConnectionUICollection);
 
-            containerBuilder.Register<IOffscreenRenderingViewController, OffscreenRenderingViewController>(Lifetime.Singleton);
+            // UIController
             containerBuilder.Register<IDebugRenderingUIControler, DebugRenderingUIControler>(Lifetime.Singleton);
+
+            // ViewController
+            containerBuilder.Register<IOffscreenRenderingViewController, OffscreenRenderingViewController>(Lifetime.Singleton);
             containerBuilder.Register<IGameClientWaitConnectionUIViewControler, GameClientWaitConnectionUIViewControler>(Lifetime.Singleton);
             containerBuilder.Register<ISyncCameraViewController, SyncCameraViewController>(Lifetime.Singleton);
+            containerBuilder.Register<ISyncronizeDeserializeViewController, SyncronizeDeserializeViewController>(Lifetime.Singleton);
 
+            // GameLogic
             containerBuilder.Register<IResponseDataNamedPipe, ResponseDataNamedPipe>(Lifetime.Singleton);
             containerBuilder.Register<INamedPipeServer, NamedPipeServer>(Lifetime.Singleton);
 
-            // ProcPartを登録
+            // ProcPart
             containerBuilder.Register<IGameClientConnectionProcPart, GameClientConnectionProcPart>(Lifetime.Singleton);
             containerBuilder.Register<ISyncronizeRenderingProcPart, SyncronizeRenderingProcPart>(Lifetime.Singleton);
         }

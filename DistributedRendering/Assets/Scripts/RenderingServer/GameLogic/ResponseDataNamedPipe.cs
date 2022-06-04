@@ -54,6 +54,11 @@ public class ResponseDataNamedPipe : IResponseDataNamedPipe
         Texture2D.Destroy(texture2d);
     }
 
+    public async UniTask<byte[]> RecieveDataAsync()
+    {
+        return await UniTask.FromResult(new byte[] { 0 });
+    }
+
     public async Task WaitConnection()
     {
         _namedPipeServer

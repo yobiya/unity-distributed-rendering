@@ -14,6 +14,11 @@ public class InversionProc
         _inversionStack.Push(inversion);
     }
 
+    public void RegisterInversion(Action inversion)
+    {
+        _inversionStack.Push(inversion);
+    }
+
     public void Inversion()
     {
         foreach (var proc in _inversionStack)

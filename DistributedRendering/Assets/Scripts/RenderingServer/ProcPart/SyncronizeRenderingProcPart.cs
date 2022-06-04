@@ -10,6 +10,7 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
 {
     private readonly INamedPipeServer _namedPipeServer;
     private readonly IResponseDataNamedPipe _responseDataNamedPipe;
+    private readonly ISyncronizeDeserializeViewController _syncronizeDeserializerViewController;
     private readonly ISyncCameraViewController _syncCameraViewController;
     private readonly IOffscreenRenderingViewController _offscreenRenderingViewController;
     private readonly IDebugRenderingUIControler _debugRenderingUIControler;
@@ -18,12 +19,14 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
     public SyncronizeRenderingProcPart(
         INamedPipeServer namedPipeServer,
         IResponseDataNamedPipe responseDataNamedPipe,
+        ISyncronizeDeserializeViewController syncronizeDeserializerViewController,
         ISyncCameraViewController syncCameraViewController,
         IOffscreenRenderingViewController offscreenRenderingViewController,
         IDebugRenderingUIControler debugRenderingUIControler)
     {
         _namedPipeServer = namedPipeServer;
         _responseDataNamedPipe = responseDataNamedPipe;
+        _syncronizeDeserializerViewController = syncronizeDeserializerViewController;
         _syncCameraViewController = syncCameraViewController;
         _offscreenRenderingViewController = offscreenRenderingViewController;
         _debugRenderingUIControler = debugRenderingUIControler;
@@ -31,6 +34,8 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
 
     public async UniTask ActivateAsync()
     {
+        // _namedPipeServerは既に有効化されているので、Deactivateのみ登録する
+        _inversionProc.RegisterInversion(_namedPipeServer.Deactivate);
         _inversionProc.Register(_syncCameraViewController.Activate, _syncCameraViewController.Deactivate);
         _inversionProc.Register(_offscreenRenderingViewController.Activate, _offscreenRenderingViewController.Deactivate);
         _inversionProc.Register(
@@ -38,7 +43,7 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
             _debugRenderingUIControler.Deactivate);
 
         var cancellationTokenSource = new CancellationTokenSource();
-        _inversionProc.Register(() => {}, cancellationTokenSource.Cancel);
+        _inversionProc.RegisterInversion(cancellationTokenSource.Cancel);
         while (!cancellationTokenSource.Token.IsCancellationRequested)
         {
             var text = await _namedPipeServer.RecieveMessageAsync();
@@ -47,6 +52,10 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
                 continue;
             }
             _syncCameraViewController.Sync(text);
+
+            var recievedData = await _responseDataNamedPipe.RecieveDataAsync();
+            _syncronizeDeserializerViewController.Deserialize(recievedData);
+
             _responseDataNamedPipe.SendRenderingImage(_offscreenRenderingViewController.RenderTexture);
 
             await UniTask.NextFrame();
@@ -55,7 +64,6 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
 
     public void Deactivate()
     {
-        _namedPipeServer.Deactivate();
         _inversionProc.Inversion();
     }
 }
