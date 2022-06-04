@@ -6,7 +6,7 @@ using Cysharp.Threading.Tasks;
 namespace RenderingServer
 {
 
-public class RenderingServerProcPart : IRenderingServerProcPart
+public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
 {
     private readonly INamedPipeServer _namedPipeServer;
     private readonly IResponseDataNamedPipe _responseDataNamedPipe;
@@ -15,7 +15,7 @@ public class RenderingServerProcPart : IRenderingServerProcPart
     private readonly IDebugRenderingUIControler _debugRenderingUIControler;
     private readonly InversionProc _inversionProc = new InversionProc();
 
-    public RenderingServerProcPart(
+    public SyncronizeRenderingProcPart(
         INamedPipeServer namedPipeServer,
         IResponseDataNamedPipe responseDataNamedPipe,
         ISyncCameraViewController syncCameraViewController,

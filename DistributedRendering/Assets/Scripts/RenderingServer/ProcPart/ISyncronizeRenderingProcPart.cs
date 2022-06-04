@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 namespace RenderingServer
 {
 
-public interface IRenderingServerProcPart
+public interface ISyncronizeRenderingProcPart
 {
     UniTask Activate();
     void Deactivate();

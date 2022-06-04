@@ -9,9 +9,9 @@ using UnityEngine.TestTools;
 namespace RenderingServer
 {
 
-public class RenderingServerProcPartTest
+public class SyncronizeRenderingProcPartTest
 {
-    private RenderingServerProcPart _sut;
+    private SyncronizeRenderingProcPart _sut;
     private Mock<INamedPipeServer> _namedPipeServerMock;
     private Mock<IResponseDataNamedPipe> _responseDataNamedPipeMock;
     private Mock<ISyncCameraViewController> _syncCameraViewControllerMock;
@@ -26,7 +26,7 @@ public class RenderingServerProcPartTest
         _syncCameraViewControllerMock = new Mock<ISyncCameraViewController>();
         _offscreenRenderingViewControllerMock = new Mock<IOffscreenRenderingViewController>();
         _debugRenderingUIControlerMock = new Mock<IDebugRenderingUIControler>();
-        _sut = new RenderingServerProcPart(
+        _sut = new SyncronizeRenderingProcPart(
             _namedPipeServerMock.Object,
             _responseDataNamedPipeMock.Object,
             _syncCameraViewControllerMock.Object,

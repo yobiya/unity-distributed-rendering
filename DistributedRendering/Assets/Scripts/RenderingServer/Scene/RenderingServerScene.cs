@@ -21,7 +21,7 @@ public class RenderingServerScene : MonoBehaviour
 
     private IGameClientConnectionProcPart _gameClientConnectionProcPart;
     private ResponseRenderingProcPart _responseRenderingProcPart;
-    private IRenderingServerProcPart _renderingServerProcPart;
+    private ISyncronizeRenderingProcPart _syncronizeRenderingProcPart;
 
     private IObjectResolver _objectResolver;
 
@@ -45,7 +45,7 @@ public class RenderingServerScene : MonoBehaviour
 
             // ProcPartを登録
             containerBuilder.Register<IGameClientConnectionProcPart, GameClientConnectionProcPart>(Lifetime.Singleton);
-            containerBuilder.Register<IRenderingServerProcPart, RenderingServerProcPart>(Lifetime.Singleton);
+            containerBuilder.Register<ISyncronizeRenderingProcPart, SyncronizeRenderingProcPart>(Lifetime.Singleton);
         }
 
         _objectResolver = containerBuilder.Build();
@@ -57,13 +57,13 @@ public class RenderingServerScene : MonoBehaviour
         }
 
         _gameClientConnectionProcPart = _objectResolver.Resolve<IGameClientConnectionProcPart>();
-        _renderingServerProcPart = _objectResolver.Resolve<IRenderingServerProcPart>();
+        _syncronizeRenderingProcPart = _objectResolver.Resolve<ISyncronizeRenderingProcPart>();
 
         // ゲームクライアントとの接続を確立する
         UniTask.Defer(async () =>
             {
                 await _gameClientConnectionProcPart.Activate();
-                await _renderingServerProcPart.Activate();
+                await _syncronizeRenderingProcPart.Activate();
             }).Forget();
     }
 
