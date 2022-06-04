@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
@@ -84,7 +85,7 @@ public class SyncronizeRenderingProcPartTest
         _syncCameraViewControllerMock.Verify(m => m.Sync(It.IsAny<string>()), Times.Once);
 
         // ゲームクライアントからデータを受け取って同期させる
-        _responseDataNamedPipeMock.Verify(m => m.RecieveDataAsync(), Times.Once);
+        _responseDataNamedPipeMock.Verify(m => m.RecieveDataAsync(It.IsAny<CancellationToken>()), Times.Once);
         _syncronizeDeserializeViewController.Verify(m => m.Deserialize(It.IsAny<byte[]>()), Times.Once);
 
         // 同期した後にレンダリングした画像をゲームクライアントに送る

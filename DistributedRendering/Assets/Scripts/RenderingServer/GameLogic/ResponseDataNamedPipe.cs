@@ -1,5 +1,6 @@
 using System;
 using System.IO.Pipes;
+using System.Threading;
 using System.Threading.Tasks;
 using Common;
 using Cysharp.Threading.Tasks;
@@ -54,9 +55,12 @@ public class ResponseDataNamedPipe : IResponseDataNamedPipe
         Texture2D.Destroy(texture2d);
     }
 
-    public async UniTask<byte[]> RecieveDataAsync()
+    public async UniTask<byte[]> RecieveDataAsync(CancellationToken token)
     {
-        return await UniTask.FromResult(new byte[] { 0 });
+        var buffer = new byte[Definisions.SyncronizeDataSize];
+        await _namedPipeServer.ReadAsync(buffer, 0, buffer.Length, token);
+
+        return buffer;
     }
 
     public async Task WaitConnection()
@@ -64,7 +68,7 @@ public class ResponseDataNamedPipe : IResponseDataNamedPipe
         _namedPipeServer
             = new NamedPipeServerStream(
                 Definisions.ResponseDataPipeName,
-                PipeDirection.Out,
+                PipeDirection.InOut,
                 1,
                 PipeTransmissionMode.Byte,
                 PipeOptions.Asynchronous);
