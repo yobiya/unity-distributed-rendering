@@ -7,39 +7,43 @@ namespace RenderingServer
 
 public class DebugRenderingUIControllerTest
 {
-    private (DebugRenderingUIControler, MockServiceLocator) CreateSUT()
+    private DebugRenderingUIControler _sut;
+    private Mock<IDebugRenderingUI> _debugRenderingUIMock;
+
+    [SetUp]
+    public void SetUp()
     {
-        var serviceLocator = new MockServiceLocator();
-        serviceLocator.RegisterMock<IDebugRenderingUI>();
-        serviceLocator.RegisterMock<IRenderTextureView>();
+        _debugRenderingUIMock = new Mock<IDebugRenderingUI>();
+        _sut = new DebugRenderingUIControler(_debugRenderingUIMock.Object);
+    }
 
-        var sut = new DebugRenderingUIControler(serviceLocator.GetMock<IDebugRenderingUI>().Object);
+    [TearDown]
+    public void TearDown()
+    {
+        _debugRenderingUIMock.VerifyNoOtherCalls();
 
-        sut.Activate(It.IsAny<IRenderTextureView>());
-
-        // 表示するテクスチャをUIのActivate時に渡す
-        serviceLocator.GetMock<IDebugRenderingUI>().Verify(m => m.Activate(It.IsAny<IRenderTextureView>()), Times.Once);
-
-        return (sut, serviceLocator);
+        _sut = null;
+        _debugRenderingUIMock = null;
     }
 
     [Test]
     public void Activate()
     {
-        var (sut, sl) = CreateSUT();
+        _sut.Activate(It.IsAny<IRenderTextureView>());
 
-        sl.VerifyNoOtherCallsAll();
+        // DebugRenderingUIControlerの有効化に合わせて、有効化される
+        _debugRenderingUIMock.Verify(m => m.Activate(It.IsAny<IRenderTextureView>()), Times.Once);
     }
 
     [Test]
     public void Deactivate()
     {
-        var (sut, sl) = CreateSUT();
+        _sut.Activate(It.IsAny<IRenderTextureView>());
+        _sut.Deactivate();
 
-        sut.Deactivate();
-
-        sl.GetMock<IDebugRenderingUI>().Verify(m => m.Deactivate(), Times.Once);
-        sl.VerifyNoOtherCallsAll();
+        // DebugRenderingUIControlerの有効化と無効化に合わせて、有効化と無効化される
+        _debugRenderingUIMock.Verify(m => m.Activate(It.IsAny<IRenderTextureView>()), Times.Once);
+        _debugRenderingUIMock.Verify(m => m.Deactivate(), Times.Once);
     }
 }
 
