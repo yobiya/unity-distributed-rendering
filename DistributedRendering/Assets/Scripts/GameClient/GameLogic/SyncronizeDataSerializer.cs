@@ -1,11 +1,11 @@
 namespace GameClient
 {
 
-public class SyncronizeDataCreator : ISyncronizeDataCreator
+public class SyncronizeDataSerializer : ISyncronizeDataSerializer
 {
     private readonly ISyncronizeObjectHolder _objectHolder;
 
-    public SyncronizeDataCreator(ISyncronizeObjectHolder objectHolder)
+    public SyncronizeDataSerializer(ISyncronizeObjectHolder objectHolder)
     {
         _objectHolder = objectHolder;
     }

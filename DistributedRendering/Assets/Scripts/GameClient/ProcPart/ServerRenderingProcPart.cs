@@ -11,19 +11,19 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
     private readonly IRenderingUIController _renderingUIController;
     private readonly ICameraViewController _cameraViewController;
     private readonly INamedPipeClient _namedPipeClient;
-    private readonly ISyncronizeDataCreator _syncronizeDataCreator;
+    private readonly ISyncronizeDataSerializer _syncronizeDataSerializer;
     private readonly InversionProc _inversionProc = new InversionProc();
 
     public ServerRenderingProcPart(
         IRenderingUIController renderingUIController,
         ICameraViewController cameraViewController,
         INamedPipeClient namedPipeClient,
-        ISyncronizeDataCreator syncronizeDataCreator)
+        ISyncronizeDataSerializer syncronizeDataSerializer)
     {
         _renderingUIController = renderingUIController;
         _cameraViewController = cameraViewController;
         _namedPipeClient = namedPipeClient;
-        _syncronizeDataCreator = syncronizeDataCreator;
+        _syncronizeDataSerializer = syncronizeDataSerializer;
     }
 
     public async UniTask ActivateAsync()
@@ -32,7 +32,7 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
 
         while (true)
         {
-            var sendText = _syncronizeDataCreator.Create();
+            var sendText = _syncronizeDataSerializer.Create();
             _namedPipeClient.Write(sendText);
 
             var recievedData = await _namedPipeClient.RecieveDataAsync();

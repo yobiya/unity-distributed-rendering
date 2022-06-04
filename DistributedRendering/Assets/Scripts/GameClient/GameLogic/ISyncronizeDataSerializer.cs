@@ -1,7 +1,7 @@
 namespace GameClient
 {
 
-public interface ISyncronizeDataCreator
+public interface ISyncronizeDataSerializer
 {
     string Create();
 }
