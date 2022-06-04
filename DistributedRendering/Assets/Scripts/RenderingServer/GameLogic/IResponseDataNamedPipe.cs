@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ public interface IResponseDataNamedPipe
 
     UniTask Activate();
     void Deactivate();
-    UniTask<byte[]> RecieveDataAsync();
+    UniTask<byte[]> RecieveDataAsync(CancellationToken token);
     void SendRenderingImage(RenderTexture renderTexture);
 }
 

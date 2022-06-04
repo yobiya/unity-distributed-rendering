@@ -53,7 +53,7 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
             }
             _syncCameraViewController.Sync(text);
 
-            var recievedData = await _responseDataNamedPipe.RecieveDataAsync();
+            var recievedData = await _responseDataNamedPipe.RecieveDataAsync(cancellationTokenSource.Token);
             _syncronizeDeserializerViewController.Deserialize(recievedData);
 
             _responseDataNamedPipe.SendRenderingImage(_offscreenRenderingViewController.RenderTexture);
