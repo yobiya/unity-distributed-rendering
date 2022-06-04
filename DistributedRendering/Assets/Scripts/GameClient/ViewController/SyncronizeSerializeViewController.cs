@@ -1,18 +1,20 @@
+using Common;
+
 namespace GameClient
 {
 
-public class SyncronizeSerializrViewController : ISyncronizeSerializrViewController
+public class SyncronizeSerializeViewController : ISyncronizeSerializeViewController
 {
-    private readonly ISyncronizeObjectHolder _objectHolder;
+    private readonly ISyncronizeView _syncronizeView;
 
-    public SyncronizeSerializrViewController(ISyncronizeObjectHolder objectHolder)
+    public SyncronizeSerializeViewController(ISyncronizeView syncronizeView)
     {
-        _objectHolder = objectHolder;
+        _syncronizeView = syncronizeView;
     }
 
     public string Create()
     {
-        var camera = _objectHolder.Camera;
+        var camera = _syncronizeView.Camera;
 
         var transform = camera.transform;
         return $"@camera:"

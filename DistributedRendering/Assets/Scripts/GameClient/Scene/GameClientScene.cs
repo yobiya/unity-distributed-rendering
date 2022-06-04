@@ -33,24 +33,30 @@ public class GameClientScene : MonoBehaviour
     {
         var containerBuilder = new ContainerBuilder();
         {
-            // SerializeFieldを登録
+            // SerializeField
             containerBuilder.RegisterComponent<Camera>(_camera);
             containerBuilder.RegisterComponent<IRenderingServerConnectingUI>(_renderingServerConnectingUICollection);
             containerBuilder.RegisterComponent<TestMessageSendUIViewController.IUICollection>(_testMessageSendUICollection);
             containerBuilder.RegisterComponent<IRenderingUI>(_renderingUI);
             containerBuilder.RegisterComponent<ICameraView>(_cameraView);
 
+            // View
+            containerBuilder.Register<ISyncronizeView, SyncronizeView>(Lifetime.Singleton);
+
+            // ViewController
+            containerBuilder.Register<ICameraViewController, CameraViewController>(Lifetime.Singleton);
+            containerBuilder.Register<ISyncronizeSerializeViewController, SyncronizeSerializeViewController>(Lifetime.Singleton);
+
+            // UIController
             containerBuilder.Register<INamedPipeClient>(_ => new NamedPipeClient(".", Definisions.CommandMessageNamedPipeName), Lifetime.Singleton);
             containerBuilder.Register<IRenderingServerConnectingUIController, RenderingServerConnectingUIController>(Lifetime.Singleton);
             containerBuilder.Register<ITestMessageSendUIViewController, TestMessageSendUIViewController>(Lifetime.Singleton);
             containerBuilder.Register<IRenderingUIController, RenderingUIController>(Lifetime.Singleton);
-            containerBuilder.Register<ICameraViewController, CameraViewController>(Lifetime.Singleton);
-            containerBuilder.Register<ISyncronizeSerializrViewController, SyncronizeSerializrViewController>(Lifetime.Singleton);
 
+            // GameObject
             containerBuilder.Register<ITimerCreator, TimerCreator>(Lifetime.Singleton);
-            containerBuilder.Register<ISyncronizeObjectHolder, SyncronizeObjectHolder>(Lifetime.Singleton);
 
-            // ProcPartを登録
+            // ProcPart
             containerBuilder.Register<IServerRenderingProcPart, ServerRenderingProcPart>(Lifetime.Singleton);
             containerBuilder.Register<IRenderingServerConnectingProcPart, RenderingServerConnectingProcPart>(Lifetime.Singleton);
         }

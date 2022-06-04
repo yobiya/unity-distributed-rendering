@@ -1,7 +1,7 @@
 namespace GameClient
 {
 
-public interface ISyncronizeSerializrViewController
+public interface ISyncronizeSerializeViewController
 {
     string Create();
 }
