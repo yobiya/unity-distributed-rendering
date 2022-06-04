@@ -29,7 +29,7 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
         _debugRenderingUIControler = debugRenderingUIControler;
     }
 
-    public async UniTask Activate()
+    public async UniTask ActivateAsync()
     {
         _inversionProc.Register(_syncCameraViewController.Activate, _syncCameraViewController.Deactivate);
         _inversionProc.Register(_offscreenRenderingViewController.Activate, _offscreenRenderingViewController.Deactivate);
@@ -37,16 +37,20 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
             () => _debugRenderingUIControler.Activate(_offscreenRenderingViewController.RenderTexture),
             _debugRenderingUIControler.Deactivate);
 
-         Action<string> syncEvent = (text) =>
-         {
+        var cancellationTokenSource = new CancellationTokenSource();
+        _inversionProc.Register(() => {}, cancellationTokenSource.Cancel);
+        while (!cancellationTokenSource.Token.IsCancellationRequested)
+        {
+            var text = await _namedPipeServer.RecieveMessageAsync();
+            if (String.Empty == text)
+            {
+                continue;
+            }
             _syncCameraViewController.Sync(text);
             _responseDataNamedPipe.SendRenderingImage(_offscreenRenderingViewController.RenderTexture);
-         };
-        _inversionProc.Register(
-            () => _namedPipeServer.OnRecieved += syncEvent,
-            () => _namedPipeServer.OnRecieved -= syncEvent);
 
-        await _namedPipeServer.ReadCommandAsync();
+            await UniTask.NextFrame();
+        }
     }
 
     public void Deactivate()

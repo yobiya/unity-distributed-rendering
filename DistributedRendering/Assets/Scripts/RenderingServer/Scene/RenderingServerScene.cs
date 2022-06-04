@@ -56,7 +56,7 @@ public class RenderingServerScene : MonoBehaviour
         UniTask.Defer(async () =>
             {
                 await _gameClientConnectionProcPart.Activate();
-                await _syncronizeRenderingProcPart.Activate();
+                await _syncronizeRenderingProcPart.ActivateAsync();
             }).Forget();
     }
 

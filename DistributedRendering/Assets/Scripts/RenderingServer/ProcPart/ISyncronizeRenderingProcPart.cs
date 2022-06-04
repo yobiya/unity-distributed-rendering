@@ -5,7 +5,7 @@ namespace RenderingServer
 
 public interface ISyncronizeRenderingProcPart
 {
-    UniTask Activate();
+    UniTask ActivateAsync();
     void Deactivate();
 }
 

@@ -32,8 +32,6 @@ public class SyncronizeRenderingProcPartTest
             _syncCameraViewControllerMock.Object,
             _offscreenRenderingViewControllerMock.Object,
             _debugRenderingUIControlerMock.Object);
-
-        _namedPipeServerMock.SetupAdd(m => m.OnRecieved += It.IsAny<Action<string>>());
     }
 
     [TearDown]
@@ -53,36 +51,40 @@ public class SyncronizeRenderingProcPartTest
         _debugRenderingUIControlerMock = null;
     }
 
-    private void VerifyActivate()
+    [UnityTest]
+    public IEnumerator ActivateToDeactivate() => UniTask.ToCoroutine(async () =>
     {
-        _namedPipeServerMock.VerifyAdd(m => m.OnRecieved += It.IsAny<Action<string>>(), Times.Once);
-        _offscreenRenderingViewControllerMock.Verify(m => m.Activate(), Times.Once);
-        _offscreenRenderingViewControllerMock.VerifyGet(m => m.RenderTexture, Times.Once);
-        _debugRenderingUIControlerMock.Verify(m => m.Activate(It.IsAny<RenderTexture>()), Times.Once);
+        // ActivateAsyncはDesactivateが呼ばれるまで終わらないので
+        // 最後のメソッドが呼ばれたときにDeactivateを読んで終了させる
+        _responseDataNamedPipeMock
+            .Setup(m => m.SendRenderingImage(It.IsAny<RenderTexture>()))
+            .Callback(_sut.Deactivate);
+
+        await _sut.ActivateAsync();
+
+        // SyncronizeRenderingProcPartの有効化と無効化時に、一緒に有効化と無効化される要素
         _syncCameraViewControllerMock.Verify(m => m.Activate(), Times.Once);
-        _namedPipeServerMock.Verify(m => m.ReadCommandAsync(), Times.Once);
-    }
-
-    [UnityTest]
-    public IEnumerator Activate() => UniTask.ToCoroutine(async () =>
-    {
-        await _sut.Activate();
-
-        VerifyActivate();
-    });
-
-    [UnityTest]
-    public IEnumerator Deactivate() => UniTask.ToCoroutine(async () =>
-    {
-        await _sut.Activate();
-        _sut.Deactivate();
-
-        VerifyActivate();
         _syncCameraViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
+        _offscreenRenderingViewControllerMock.Verify(m => m.Activate(), Times.Once);
         _offscreenRenderingViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
+        _debugRenderingUIControlerMock.Verify(m => m.Activate(It.IsAny<RenderTexture>()), Times.Once);
         _debugRenderingUIControlerMock.Verify(m => m.Deactivate(), Times.Once);
+
+        // レンダリングした画像をデバッグ表示とゲームクライアント送る場合で２回呼ばれる
+        _offscreenRenderingViewControllerMock.VerifyGet(m => m.RenderTexture, Times.Exactly(2));
+
+        // ゲームクライアントから同期するためのデータを受け取る
+        _namedPipeServerMock.Verify(m => m.RecieveMessageAsync(), Times.Once);
+
+        // 受け取った情報からカメラを同期させる
+        _syncCameraViewControllerMock.Verify(m => m.Sync(It.IsAny<string>()), Times.Once);
+
+        // 同期した後にレンダリングした画像をゲームクライアントに送る
+        _responseDataNamedPipeMock.Verify(m => m.SendRenderingImage(It.IsAny<RenderTexture>()), Times.Once);
+
+        // NamedPipeServerはゲームクライアントと接続済みの状態で渡されるのでActivateは呼ばれないが
+        // SyncronizeRenderingProcPart.Deactivateが呼ばれたときに接続を終了するので、Deactivateは呼ばれる
         _namedPipeServerMock.Verify(m => m.Deactivate(), Times.Once);
-        _namedPipeServerMock.VerifyRemove(m => m.OnRecieved -= It.IsAny<Action<string>>(), Times.Once);
     });
 }
 
