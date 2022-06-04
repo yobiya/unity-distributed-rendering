@@ -45,9 +45,9 @@ public class GameClientScene : MonoBehaviour
             containerBuilder.Register<ITestMessageSendUIViewController, TestMessageSendUIViewController>(Lifetime.Singleton);
             containerBuilder.Register<IRenderingUIController, RenderingUIController>(Lifetime.Singleton);
             containerBuilder.Register<ICameraViewController, CameraViewController>(Lifetime.Singleton);
+            containerBuilder.Register<ISyncronizeSerializrViewController, SyncronizeSerializrViewController>(Lifetime.Singleton);
 
             containerBuilder.Register<ITimerCreator, TimerCreator>(Lifetime.Singleton);
-            containerBuilder.Register<ISyncronizeDataSerializer, SyncronizeDataSerializer>(Lifetime.Singleton);
             containerBuilder.Register<ISyncronizeObjectHolder, SyncronizeObjectHolder>(Lifetime.Singleton);
 
             // ProcPartを登録

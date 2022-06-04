@@ -1,11 +1,11 @@
 namespace GameClient
 {
 
-public class SyncronizeDataSerializer : ISyncronizeDataSerializer
+public class SyncronizeSerializrViewController : ISyncronizeSerializrViewController
 {
     private readonly ISyncronizeObjectHolder _objectHolder;
 
-    public SyncronizeDataSerializer(ISyncronizeObjectHolder objectHolder)
+    public SyncronizeSerializrViewController(ISyncronizeObjectHolder objectHolder)
     {
         _objectHolder = objectHolder;
     }
