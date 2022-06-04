@@ -37,8 +37,13 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
             var sendText = _syncronizeSerializeViewController.Create();
             _namedPipeClient.Write(sendText);
 
+            var sendData = _syncronizeSerializeViewController.Serialize();
+            await _namedPipeClient.SendDataAsync(sendData, cancellationTokenSource.Token);
+
             var recievedData = await _namedPipeClient.RecieveDataAsync(cancellationTokenSource.Token);
             _renderingUIController.RenderImageBuffer(recievedData);
+
+            await UniTask.NextFrame();
         }
     }
 

@@ -25,6 +25,11 @@ public class SyncronizeSerializeViewController : ISyncronizeSerializeViewControl
                 + $"{transform.forward.y},"
                 + $"{transform.forward.z}";
     }
+
+    public byte[] Serialize()
+    {
+        return new byte[] { 1 };
+    }
 }
 
 }

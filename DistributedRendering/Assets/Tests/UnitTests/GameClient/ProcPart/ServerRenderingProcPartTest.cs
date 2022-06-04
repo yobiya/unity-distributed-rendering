@@ -71,6 +71,10 @@ public class ServerRenderingProcPartTest
         _syncronizeSerializeViewControllerMock.Verify(m => m.Create(), Times.Once);
         _namedPipeClientMock.Verify(m => m.Write(It.IsAny<string>()), Times.Once);
 
+        // 同期するデータをシリアライズして、レンダリングサーバーに送る
+        _syncronizeSerializeViewControllerMock.Verify(m => m.Serialize(), Times.Once);
+        _namedPipeClientMock.Verify(m => m.SendDataAsync(It.IsAny<byte[]>(), It.IsAny<CancellationToken>()), Times.Once);
+
         // レンダリングサーバーからデータを受け取って、それを表示用に書き込む
         _namedPipeClientMock.Verify(m => m.RecieveDataAsync(It.IsAny<CancellationToken>()), Times.Once);
         _renderingUIControllerMock.Verify(m => m.RenderImageBuffer(It.IsAny<byte[]>()), Times.Once);

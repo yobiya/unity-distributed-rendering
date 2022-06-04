@@ -18,7 +18,7 @@ public class NamedPipeClient : INamedPipeClient
     public NamedPipeClient(string serverName, string pipeName)
     {
         _pipeClient = new NamedPipeClientStream(serverName, pipeName, PipeDirection.Out);
-        _recieveBinaryNamedPipe = new NamedPipeClientStream(serverName, Definisions.ResponseDataPipeName, PipeDirection.In);
+        _recieveBinaryNamedPipe = new NamedPipeClientStream(serverName, Definisions.ResponseDataPipeName, PipeDirection.InOut);
     }
 
     public async UniTask<INamedPipeClient.ConnectResult> ConnectAsync(int timeOutTime)
@@ -36,6 +36,12 @@ public class NamedPipeClient : INamedPipeClient
         {
             return INamedPipeClient.ConnectResult.TimeOut;
         }
+    }
+
+    public async UniTask SendDataAsync(byte[] data, CancellationToken token)
+    {
+        await _recieveBinaryNamedPipe.WriteAsync(data, 0, data.Length, token);
+        await _recieveBinaryNamedPipe.FlushAsync(token);
     }
 
     public async UniTask<byte[]> RecieveDataAsync(CancellationToken token)
