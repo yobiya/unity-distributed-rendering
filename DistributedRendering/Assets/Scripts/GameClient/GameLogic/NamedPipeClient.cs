@@ -5,7 +5,6 @@ using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine;
 
 namespace GameClient
 {
@@ -39,11 +38,10 @@ public class NamedPipeClient : INamedPipeClient
         }
     }
 
-    public async UniTask<byte[]> RecieveDataAsync()
+    public async UniTask<byte[]> RecieveDataAsync(CancellationToken token)
     {
-        var source = new CancellationTokenSource();
         byte[] buffer = new byte[256 * 256 * 4 * 2];
-        await _recieveBinaryNamedPipe.ReadAsync(buffer, 0, buffer.Length, source.Token);
+        await _recieveBinaryNamedPipe.ReadAsync(buffer, 0, buffer.Length, token);
 
         return buffer;
     }

@@ -1,3 +1,4 @@
+using System.Threading;
 using Common;
 using Cysharp.Threading.Tasks;
 
@@ -28,12 +29,15 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
     {
         _inversionProc.Register(_renderingUIController.Activate, _renderingUIController.Deactivate);
 
-        while (true)
+        var cancellationTokenSource = new CancellationTokenSource();
+        _inversionProc.Register(() => {}, cancellationTokenSource.Cancel);
+
+        while (!cancellationTokenSource.IsCancellationRequested)
         {
             var sendText = _syncronizeSerializeViewController.Create();
             _namedPipeClient.Write(sendText);
 
-            var recievedData = await _namedPipeClient.RecieveDataAsync();
+            var recievedData = await _namedPipeClient.RecieveDataAsync(cancellationTokenSource.Token);
             _renderingUIController.RenderImageBuffer(recievedData);
         }
     }
