@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using VContainer;
 
 namespace RenderingServer
 {
@@ -11,6 +12,7 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
     private readonly IGameClientWaitConnectionUIViewControler _gameClientWaitConnectionUIViewControler;
     private readonly INamedPipeServer _namedPipeServer;
 
+    [Inject]
     public GameClientConnectionProcPart(IGameClientWaitConnectionUIViewControler gameClientWaitConnectionUIViewControler, INamedPipeServer namedPipeServer)
     {
         _gameClientWaitConnectionUIViewControler = gameClientWaitConnectionUIViewControler;

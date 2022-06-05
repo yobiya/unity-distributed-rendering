@@ -1,4 +1,5 @@
 using UnityEngine;
+using VContainer;
 
 namespace RenderingServer
 {
@@ -13,6 +14,7 @@ public class DebugRenderingUIControler : IDebugRenderingUIControler
 {
     private readonly IDebugRenderingUI _debugRenderingUI;
 
+    [Inject]
     public DebugRenderingUIControler(IDebugRenderingUI debugRenderingUI)
     {
         _debugRenderingUI = debugRenderingUI;

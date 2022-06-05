@@ -1,4 +1,5 @@
 using UnityEngine;
+using VContainer;
 
 namespace RenderingServer
 {
@@ -7,6 +8,7 @@ public class SyncCameraViewController : ISyncCameraViewController
 {
     private readonly ISyncCameraView _syncCameraView;
 
+    [Inject]
     public SyncCameraViewController(ISyncCameraView syncCameraView)
     {
         _syncCameraView = syncCameraView;

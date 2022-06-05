@@ -1,7 +1,7 @@
-using System;
 using System.Threading;
 using Common;
 using Cysharp.Threading.Tasks;
+using VContainer;
 
 namespace RenderingServer
 {
@@ -15,6 +15,7 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
     private readonly IDebugRenderingUIControler _debugRenderingUIControler;
     private readonly InversionProc _inversionProc = new InversionProc();
 
+    [Inject]
     public SyncronizeRenderingProcPart(
         INamedPipeServer namedPipeServer,
         ISyncronizeDeserializeViewController syncronizeDeserializerViewController,

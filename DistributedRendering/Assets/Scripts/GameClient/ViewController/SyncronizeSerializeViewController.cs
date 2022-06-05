@@ -1,6 +1,7 @@
 using Common;
 using MessagePack;
 using MessagePackFormat;
+using VContainer;
 
 namespace GameClient
 {
@@ -9,6 +10,7 @@ public class SyncronizeSerializeViewController : ISyncronizeSerializeViewControl
 {
     private readonly ISyncronizeView _syncronizeView;
 
+    [Inject]
     public SyncronizeSerializeViewController(ISyncronizeView syncronizeView)
     {
         _syncronizeView = syncronizeView;

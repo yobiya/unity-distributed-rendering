@@ -1,6 +1,7 @@
 using System;
 using Common;
 using Cysharp.Threading.Tasks;
+using VContainer;
 
 namespace GameClient
 {
@@ -15,6 +16,7 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
     private readonly ITimerCreator _timerCreator;
     private readonly InversionProc _inversionProc = new InversionProc();
 
+    [Inject]
     public RenderingServerConnectingProcPart(
         IRenderingServerConnectingUIController renderingServerConnectingUIController,
         INamedPipeClient namedPipeClient,

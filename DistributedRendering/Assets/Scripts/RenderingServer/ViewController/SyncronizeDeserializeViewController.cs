@@ -1,6 +1,7 @@
 using Common;
 using MessagePack;
 using MessagePackFormat;
+using VContainer;
 
 namespace RenderingServer
 {
@@ -9,6 +10,7 @@ public class SyncronizeDeserializeViewController : ISyncronizeDeserializeViewCon
 {
     private readonly ISyncronizeView _syncronizeView;
 
+    [Inject]
     public SyncronizeDeserializeViewController(ISyncronizeView syncronizeView)
     {
         _syncronizeView = syncronizeView;

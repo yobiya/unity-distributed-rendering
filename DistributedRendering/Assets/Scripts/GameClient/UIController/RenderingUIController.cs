@@ -1,3 +1,5 @@
+using VContainer;
+
 namespace GameClient
 {
 
@@ -5,6 +7,7 @@ public class RenderingUIController : IRenderingUIController
 {
     private readonly IRenderingUI _renderingUI;
 
+    [Inject]
     public RenderingUIController(IRenderingUI renderingUI)
     {
         _renderingUI = renderingUI;
