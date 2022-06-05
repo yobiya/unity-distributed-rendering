@@ -46,14 +46,10 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
         _inversionProc.RegisterInversion(cancellationTokenSource.Cancel);
         while (!cancellationTokenSource.Token.IsCancellationRequested)
         {
-            var text = await _namedPipeServer.RecieveMessageAsync();
-            if (String.Empty == text)
-            {
-                continue;
-            }
-            _syncCameraViewController.Sync(text);
-
+            // ゲームクライアントから同期するデータを受け取る
             var recievedData = await _responseDataNamedPipe.RecieveDataAsync(cancellationTokenSource.Token);
+
+            // 同期するデータをデシリアライズして、対応するオブジェクトに適用する
             _syncronizeDeserializerViewController.Deserialize(recievedData);
 
             _responseDataNamedPipe.SendRenderingImage(_offscreenRenderingViewController.RenderTexture);

@@ -383,6 +383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74b2d3cea418d884fa6c213a74be73b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _renderingCamera: {fileID: 429061121}
   _gameClientWaitConnectionUICollection: {fileID: 280995437}
   _offscreenRenderingView: {fileID: 887134526}
   _syncCameraView: {fileID: 429061123}

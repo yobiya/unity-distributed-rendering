@@ -8,6 +8,9 @@ using Cysharp.Threading.Tasks;
 public class RenderingServerScene : MonoBehaviour
 {
     [SerializeField]
+    private Camera _renderingCamera;
+
+    [SerializeField]
     private GameClientWaitConnectionUICollection _gameClientWaitConnectionUICollection;
 
     [SerializeField]
@@ -29,10 +32,14 @@ public class RenderingServerScene : MonoBehaviour
         var containerBuilder = new ContainerBuilder();
         {
             // SerializeField
+            containerBuilder.RegisterComponent<Camera>(_renderingCamera);
             containerBuilder.RegisterComponent<IOffscreenRenderingView>(_offscreenRenderingView);
             containerBuilder.RegisterComponent<IDebugRenderingUI>(_debugRenderingUI);
             containerBuilder.RegisterComponent<ISyncCameraView>(_syncCameraView);
             containerBuilder.RegisterComponent<GameClientWaitConnectionUIViewControler.IUICollection>(_gameClientWaitConnectionUICollection);
+
+            // View
+            containerBuilder.Register<ISyncronizeView, SyncronizeView>(Lifetime.Singleton);
 
             // UIController
             containerBuilder.Register<IDebugRenderingUIControler, DebugRenderingUIControler>(Lifetime.Singleton);
