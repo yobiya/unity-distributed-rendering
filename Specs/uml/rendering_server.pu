@@ -1,20 +1,34 @@
 @startuml rendering_server
 
 class GameClientConnectionProcPart
-note bottom
+note top
 ゲームクライアントからの接続を行う
 endnote
 
-class RenderingProcPart
-note bottom
+class SyncronizeRenderingProcPart
+note top
 ゲームクライアントから送られた情報を同期し
 同期したオブジェクトのレンダリングを行い
 ゲームクライアントに送り返す
 endnote
 
 class NamedPipeServer
+class DebugRenderingUIController
+class DebugRenderingUI
+class OffscreenRenderingViewController
+class OffscreenRenderingView
+note bottom
+レンダリングを行う
+endnote
 
 GameClientConnectionProcPart *--> NamedPipeServer
-RenderingProcPart *--> NamedPipeServer
+SyncronizeRenderingProcPart *--> NamedPipeServer
+SyncronizeRenderingProcPart *--> OffscreenRenderingViewController
+SyncronizeRenderingProcPart o--> DebugRenderingUIController
+
+OffscreenRenderingViewController *--> OffscreenRenderingView
+DebugRenderingUIController *--> DebugRenderingUI
+DebugRenderingUIController *--> OffscreenRenderingView
+DebugRenderingUI ..> OffscreenRenderingView
 
 @enduml
