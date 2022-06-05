@@ -4,6 +4,14 @@ using VContainer;
 namespace RenderingServer
 {
 
+public interface IOffscreenRenderingViewController
+{
+    RenderTexture RenderTexture { get; }
+
+    void Activate();
+    void Deactivate();
+}
+
 public class OffscreenRenderingViewController : IOffscreenRenderingViewController
 {
     private readonly IOffscreenRenderingView _offscreenRenderingView;

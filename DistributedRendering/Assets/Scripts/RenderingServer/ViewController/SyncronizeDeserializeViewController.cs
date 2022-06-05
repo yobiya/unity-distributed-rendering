@@ -6,6 +6,13 @@ using VContainer;
 namespace RenderingServer
 {
 
+public interface ISyncronizeDeserializeViewController
+{
+    void Activate();
+    void Deactivate();
+    void Deserialize(byte[] data);
+}
+
 public class SyncronizeDeserializeViewController : ISyncronizeDeserializeViewController
 {
     private readonly ISyncronizeView _syncronizeView;
