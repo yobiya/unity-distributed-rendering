@@ -10,21 +10,18 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
 {
     private readonly IGameClientWaitConnectionUIViewControler _gameClientWaitConnectionUIViewControler;
     private readonly INamedPipeServer _namedPipeServer;
-    private readonly IResponseDataNamedPipe _responseDataNamedPipe;
 
-    public GameClientConnectionProcPart(IGameClientWaitConnectionUIViewControler gameClientWaitConnectionUIViewControler, INamedPipeServer namedPipeServer, IResponseDataNamedPipe responseDataNamedPipe)
+    public GameClientConnectionProcPart(IGameClientWaitConnectionUIViewControler gameClientWaitConnectionUIViewControler, INamedPipeServer namedPipeServer)
     {
         _gameClientWaitConnectionUIViewControler = gameClientWaitConnectionUIViewControler;
         _namedPipeServer = namedPipeServer;
-        _responseDataNamedPipe = responseDataNamedPipe;
-        _responseDataNamedPipe.Activate();
     }
 
-    public async UniTask Activate()
+    public async UniTask ActivateAsync()
     {
         _gameClientWaitConnectionUIViewControler.Activate();
         _gameClientWaitConnectionUIViewControler.ShowWaitConnection();
-        await _namedPipeServer.Activate();
+        await _namedPipeServer.ActivateAsync();
         _gameClientWaitConnectionUIViewControler.ShowConnected();
     }
 

@@ -1,12 +1,11 @@
-using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 public interface INamedPipeServer
 {
-    event Action<string> OnRecieved;
-
-    UniTask Activate();
+    UniTask ActivateAsync();
     void Deactivate();
-    UniTask ReadCommandAsync();
-    UniTask<string> RecieveMessageAsync();
+    UniTask<byte[]> RecieveDataAsync(CancellationToken token);
+    void SendRenderingImage(RenderTexture renderTexture);
 }

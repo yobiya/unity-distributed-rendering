@@ -9,7 +9,6 @@ namespace RenderingServer
 public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
 {
     private readonly INamedPipeServer _namedPipeServer;
-    private readonly IResponseDataNamedPipe _responseDataNamedPipe;
     private readonly ISyncronizeDeserializeViewController _syncronizeDeserializerViewController;
     private readonly ISyncCameraViewController _syncCameraViewController;
     private readonly IOffscreenRenderingViewController _offscreenRenderingViewController;
@@ -18,14 +17,12 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
 
     public SyncronizeRenderingProcPart(
         INamedPipeServer namedPipeServer,
-        IResponseDataNamedPipe responseDataNamedPipe,
         ISyncronizeDeserializeViewController syncronizeDeserializerViewController,
         ISyncCameraViewController syncCameraViewController,
         IOffscreenRenderingViewController offscreenRenderingViewController,
         IDebugRenderingUIControler debugRenderingUIControler)
     {
         _namedPipeServer = namedPipeServer;
-        _responseDataNamedPipe = responseDataNamedPipe;
         _syncronizeDeserializerViewController = syncronizeDeserializerViewController;
         _syncCameraViewController = syncCameraViewController;
         _offscreenRenderingViewController = offscreenRenderingViewController;
@@ -47,12 +44,12 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
         while (!cancellationTokenSource.Token.IsCancellationRequested)
         {
             // ゲームクライアントから同期するデータを受け取る
-            var recievedData = await _responseDataNamedPipe.RecieveDataAsync(cancellationTokenSource.Token);
+            var recievedData = await _namedPipeServer.RecieveDataAsync(cancellationTokenSource.Token);
 
             // 同期するデータをデシリアライズして、対応するオブジェクトに適用する
             _syncronizeDeserializerViewController.Deserialize(recievedData);
 
-            _responseDataNamedPipe.SendRenderingImage(_offscreenRenderingViewController.RenderTexture);
+            _namedPipeServer.SendRenderingImage(_offscreenRenderingViewController.RenderTexture);
 
             await UniTask.NextFrame();
         }

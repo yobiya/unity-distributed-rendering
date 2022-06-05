@@ -13,7 +13,6 @@ public class SyncronizeRenderingProcPartTest
 {
     private SyncronizeRenderingProcPart _sut;
     private Mock<INamedPipeServer> _namedPipeServerMock;
-    private Mock<IResponseDataNamedPipe> _responseDataNamedPipeMock;
     private Mock<ISyncCameraViewController> _syncCameraViewControllerMock;
     private Mock<IOffscreenRenderingViewController> _offscreenRenderingViewControllerMock;
     private Mock<ISyncronizeDeserializeViewController> _syncronizeDeserializeViewController;
@@ -23,14 +22,12 @@ public class SyncronizeRenderingProcPartTest
     public void SetUp()
     {
         _namedPipeServerMock = new Mock<INamedPipeServer>();
-        _responseDataNamedPipeMock = new Mock<IResponseDataNamedPipe>();
         _syncCameraViewControllerMock = new Mock<ISyncCameraViewController>();
         _offscreenRenderingViewControllerMock = new Mock<IOffscreenRenderingViewController>();
         _syncronizeDeserializeViewController = new Mock<ISyncronizeDeserializeViewController>();
         _debugRenderingUIControlerMock = new Mock<IDebugRenderingUIControler>();
         _sut = new SyncronizeRenderingProcPart(
             _namedPipeServerMock.Object,
-            _responseDataNamedPipeMock.Object,
             _syncronizeDeserializeViewController.Object,
             _syncCameraViewControllerMock.Object,
             _offscreenRenderingViewControllerMock.Object,
@@ -41,7 +38,6 @@ public class SyncronizeRenderingProcPartTest
     public void TearDown()
     {
         _namedPipeServerMock.VerifyNoOtherCalls();
-        _responseDataNamedPipeMock.VerifyNoOtherCalls();
         _syncronizeDeserializeViewController.VerifyNoOtherCalls();
         _syncCameraViewControllerMock.VerifyNoOtherCalls();
         _offscreenRenderingViewControllerMock.VerifyNoOtherCalls();
@@ -49,7 +45,6 @@ public class SyncronizeRenderingProcPartTest
 
         _sut = null;
         _namedPipeServerMock = null;
-        _responseDataNamedPipeMock = null;
         _syncronizeDeserializeViewController = null;
         _syncCameraViewControllerMock = null;
         _offscreenRenderingViewControllerMock = null;
@@ -61,7 +56,7 @@ public class SyncronizeRenderingProcPartTest
     {
         // ActivateAsyncはDesactivateが呼ばれるまで終わらないので
         // 最後のメソッドが呼ばれたときにDeactivateを読んで終了させる
-        _responseDataNamedPipeMock
+        _namedPipeServerMock
             .Setup(m => m.SendRenderingImage(It.IsAny<RenderTexture>()))
             .Callback(_sut.Deactivate);
 
@@ -79,11 +74,11 @@ public class SyncronizeRenderingProcPartTest
         _offscreenRenderingViewControllerMock.VerifyGet(m => m.RenderTexture, Times.Exactly(2));
 
         // ゲームクライアントからデータを受け取って同期させる
-        _responseDataNamedPipeMock.Verify(m => m.RecieveDataAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _namedPipeServerMock.Verify(m => m.RecieveDataAsync(It.IsAny<CancellationToken>()), Times.Once);
         _syncronizeDeserializeViewController.Verify(m => m.Deserialize(It.IsAny<byte[]>()), Times.Once);
 
         // 同期した後にレンダリングした画像をゲームクライアントに送る
-        _responseDataNamedPipeMock.Verify(m => m.SendRenderingImage(It.IsAny<RenderTexture>()), Times.Once);
+        _namedPipeServerMock.Verify(m => m.SendRenderingImage(It.IsAny<RenderTexture>()), Times.Once);
 
         // NamedPipeServerはゲームクライアントと接続済みの状態で渡されるのでActivateは呼ばれないが
         // SyncronizeRenderingProcPart.Deactivateが呼ばれたときに接続を終了するので、Deactivateは呼ばれる

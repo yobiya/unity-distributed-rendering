@@ -5,7 +5,7 @@ namespace RenderingServer
 
 public interface IGameClientConnectionProcPart
 {
-    UniTask Activate();
+    UniTask ActivateAsync();
     void Deactivate();
 }
 

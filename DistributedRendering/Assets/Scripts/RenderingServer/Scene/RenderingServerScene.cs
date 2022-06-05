@@ -51,7 +51,6 @@ public class RenderingServerScene : MonoBehaviour
             containerBuilder.Register<ISyncronizeDeserializeViewController, SyncronizeDeserializeViewController>(Lifetime.Singleton);
 
             // GameLogic
-            containerBuilder.Register<IResponseDataNamedPipe, ResponseDataNamedPipe>(Lifetime.Singleton);
             containerBuilder.Register<INamedPipeServer, NamedPipeServer>(Lifetime.Singleton);
 
             // ProcPart
@@ -67,7 +66,7 @@ public class RenderingServerScene : MonoBehaviour
         // ゲームクライアントとの接続を確立する
         UniTask.Defer(async () =>
             {
-                await _gameClientConnectionProcPart.Activate();
+                await _gameClientConnectionProcPart.ActivateAsync();
                 await _syncronizeRenderingProcPart.ActivateAsync();
             }).Forget();
     }

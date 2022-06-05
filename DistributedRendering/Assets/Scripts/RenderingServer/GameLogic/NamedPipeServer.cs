@@ -1,6 +1,5 @@
 using Common;
 using Cysharp.Threading.Tasks;
-using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
@@ -8,28 +7,30 @@ using UnityEngine;
 
 public class NamedPipeServer : INamedPipeServer
 {
-    private readonly NamedPipeServerStream _pipeServer;
+    private readonly NamedPipeServerStream _namedPipeServer;
     private readonly StreamReader _pipeReader;
-    private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-
-    public event Action<string> OnRecieved;
+    private readonly byte[] _receiveBuffer;
+    private readonly CancellationTokenSource _cancellationTokenSource;
 
     public NamedPipeServer()
     {
-        _pipeServer
+        _namedPipeServer
             = new NamedPipeServerStream(
-                Definisions.CommandMessageNamedPipeName,
-                PipeDirection.In,
+                Definisions.ResponseDataPipeName,
+                PipeDirection.InOut,
                 1,
-                PipeTransmissionMode.Message,
+                PipeTransmissionMode.Byte,
                 PipeOptions.Asynchronous);
 
-        _pipeReader = new StreamReader(_pipeServer);
+        _pipeReader = new StreamReader(_namedPipeServer);
+
+        _receiveBuffer = new byte[Definisions.SyncronizeDataSize];
+        _cancellationTokenSource = new CancellationTokenSource();
     }
 
-    public async UniTask Activate()
+    public async UniTask ActivateAsync()
     {
-        await _pipeServer.WaitForConnectionAsync(_cancellationTokenSource.Token);
+        await _namedPipeServer.WaitForConnectionAsync(_cancellationTokenSource.Token);
     }
 
     public void Deactivate()
@@ -37,54 +38,31 @@ public class NamedPipeServer : INamedPipeServer
         _cancellationTokenSource.Cancel();
     }
 
-    public async UniTask ReadCommandAsync()
+    public async UniTask<byte[]> RecieveDataAsync(CancellationToken token)
     {
-        using var pipeReader = new StreamReader(_pipeServer);
-        while (!_cancellationTokenSource.Token.IsCancellationRequested)
-        {
-            try
-            {
-                var text = await pipeReader.ReadLineAsync();
+        await _namedPipeServer.ReadAsync(_receiveBuffer, 0, _receiveBuffer.Length, token);
 
-                if (text.Length > 0)
-                {
-                    Debug.Log(text);
-
-                    if (text[0] == '@')
-                    {
-                        OnRecieved?.Invoke(text);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e.ToString());
-            }
-        }
+        return _receiveBuffer;
     }
 
-    public async UniTask<string> RecieveMessageAsync()
+    public void SendRenderingImage(RenderTexture renderTexture)
     {
-        try
-        {
-            var text = await _pipeReader.ReadLineAsync();
+        var texture2d
+            = new Texture2D(
+                renderTexture.width,
+                renderTexture.height,
+                TextureFormat.ARGB32,
+                false);
 
-            if (text.Length > 0)
-            {
-                Debug.Log(text);
+        RenderTexture.active = renderTexture;
+        texture2d.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+        RenderTexture.active = null;
+                                   
+        byte[] byteArray = texture2d.GetRawTextureData();
+        _namedPipeServer.Write(byteArray, 0, byteArray.Length);
+        _namedPipeServer.Flush();
 
-                if (text[0] == '@')
-                {
-                    return text;
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e.ToString());
-        }
-
-        return "";
+        Texture2D.Destroy(texture2d);
     }
 }
 
