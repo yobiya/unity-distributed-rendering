@@ -1,12 +1,9 @@
 {
-    "name": "Scripts",
+    "name": "Generated",
     "rootNamespace": "",
     "references": [
-        "GUID:f51ebe6a0ceec4240a699833d6309b23",
-        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
         "GUID:bbde805d927e795439d7a746d1749cab",
-        "GUID:5a46ad82eac024e4fbb6a0516a5def17",
-        "GUID:ec9749b4d40b2594fb758e39cd2e9920"
+        "GUID:5a46ad82eac024e4fbb6a0516a5def17"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
