@@ -1,3 +1,4 @@
+using Common;
 using UnityEngine;
 using VContainer;
 
@@ -13,6 +14,7 @@ public interface IDebugRenderingUIControler
 public class DebugRenderingUIControler : IDebugRenderingUIControler
 {
     private readonly IDebugRenderingUI _debugRenderingUI;
+    private readonly InversionProc _inversionProc = new InversionProc();
 
     [Inject]
     public DebugRenderingUIControler(IDebugRenderingUI debugRenderingUI)
@@ -22,12 +24,14 @@ public class DebugRenderingUIControler : IDebugRenderingUIControler
 
     public void Activate(RenderTexture renderTexture)
     {
-        _debugRenderingUI.Activate(renderTexture);
+        _inversionProc.Register(
+            () => _debugRenderingUI.Activate(renderTexture),
+            _debugRenderingUI.Deactivate);
     }
 
     public void Deactivate()
     {
-        _debugRenderingUI.Deactivate();
+        _inversionProc.Inversion();
     }
 }
 

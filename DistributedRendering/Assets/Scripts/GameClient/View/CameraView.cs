@@ -12,8 +12,6 @@ public class CameraView : MonoBehaviour, ICameraView
     [SerializeField]
     private Transform _targetTransform;
 
-    public event Action<Transform> OnUpdateTransform;
-
     void Update()
     {
         // 対象の向き

@@ -1,3 +1,4 @@
+using Common;
 using UnityEngine;
 
 namespace RenderingServer
@@ -5,6 +6,8 @@ namespace RenderingServer
 
 public class OffscreenRenderingView : MonoBehaviour, IOffscreenRenderingView
 {
+    private readonly InversionProc _inversionProc = new InversionProc();
+
     [SerializeField]
     private Camera _camera;
 
@@ -17,16 +20,22 @@ public class OffscreenRenderingView : MonoBehaviour, IOffscreenRenderingView
 
     public void Activate()
     {
-        RenderTexture = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32);
-        gameObject.SetActive(true);
+        _inversionProc.Register(
+            () => RenderTexture = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32),
+            () => RenderTexture.Destroy(RenderTexture));
 
-        _camera.targetTexture = RenderTexture;
+        _inversionProc.Register(
+            () => gameObject.SetActive(true),
+            () => gameObject.SetActive(false));
+
+        _inversionProc.Register(
+            () => _camera.targetTexture = RenderTexture,
+            () => _camera.targetTexture = null);
     }
 
     public void Deactivate()
     {
-        gameObject.SetActive(false);
-        RenderTexture.Destroy(RenderTexture);
+        _inversionProc.Inversion();
     }
 }
 
