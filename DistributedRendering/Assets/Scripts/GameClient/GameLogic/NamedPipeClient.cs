@@ -1,35 +1,28 @@
 using Common;
 using Cysharp.Threading.Tasks;
 using System;
-using System.IO;
 using System.IO.Pipes;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace GameClient
 {
 
 public class NamedPipeClient : INamedPipeClient
 {
-    private readonly NamedPipeClientStream _pipeClient;
-    private readonly NamedPipeClientStream _recieveBinaryNamedPipe;
-    private StreamWriter _pipeWriter;
+    private readonly NamedPipeClientStream _namedPipeClient;
+    private readonly byte[] _recieveBuffer;
 
     public NamedPipeClient(string serverName, string pipeName)
     {
-        _pipeClient = new NamedPipeClientStream(serverName, pipeName, PipeDirection.Out);
-        _recieveBinaryNamedPipe = new NamedPipeClientStream(serverName, Definisions.ResponseDataPipeName, PipeDirection.InOut);
+        _namedPipeClient = new NamedPipeClientStream(serverName, Definisions.ResponseDataPipeName, PipeDirection.InOut);
+        _recieveBuffer = new byte[Definisions.RenderingDataSize];
     }
 
     public async UniTask<INamedPipeClient.ConnectResult> ConnectAsync(int timeOutTime)
     {
         try
         {
-            await Task.WhenAll(
-                _pipeClient.ConnectAsync(timeOutTime),
-                _recieveBinaryNamedPipe.ConnectAsync(timeOutTime));
-
-            _pipeWriter = new StreamWriter(_pipeClient);
+            await _namedPipeClient.ConnectAsync(timeOutTime);
             return INamedPipeClient.ConnectResult.Connected;
         }
         catch (Exception)
@@ -40,22 +33,15 @@ public class NamedPipeClient : INamedPipeClient
 
     public async UniTask SendDataAsync(byte[] data, CancellationToken token)
     {
-        await _recieveBinaryNamedPipe.WriteAsync(data, 0, data.Length, token);
-        await _recieveBinaryNamedPipe.FlushAsync(token);
+        await _namedPipeClient.WriteAsync(data, 0, data.Length, token);
+        await _namedPipeClient.FlushAsync(token);
     }
 
     public async UniTask<byte[]> RecieveDataAsync(CancellationToken token)
     {
-        byte[] buffer = new byte[256 * 256 * 4 * 2];
-        await _recieveBinaryNamedPipe.ReadAsync(buffer, 0, buffer.Length, token);
+        await _namedPipeClient.ReadAsync(_recieveBuffer, 0, _recieveBuffer.Length, token);
 
-        return buffer;
-    }
-
-    public void Write(string text)
-    {
-        _pipeWriter.WriteLine(text);
-        _pipeWriter.Flush();
+        return _recieveBuffer;
     }
 }
 

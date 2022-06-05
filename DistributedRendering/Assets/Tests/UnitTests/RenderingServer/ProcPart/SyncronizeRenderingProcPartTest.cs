@@ -78,12 +78,6 @@ public class SyncronizeRenderingProcPartTest
         // レンダリングした画像をデバッグ表示とゲームクライアント送る場合で２回呼ばれる
         _offscreenRenderingViewControllerMock.VerifyGet(m => m.RenderTexture, Times.Exactly(2));
 
-        // ゲームクライアントから同期するためのデータを受け取る
-        _namedPipeServerMock.Verify(m => m.RecieveMessageAsync(), Times.Once);
-
-        // 受け取った情報からカメラを同期させる
-        _syncCameraViewControllerMock.Verify(m => m.Sync(It.IsAny<string>()), Times.Once);
-
         // ゲームクライアントからデータを受け取って同期させる
         _responseDataNamedPipeMock.Verify(m => m.RecieveDataAsync(It.IsAny<CancellationToken>()), Times.Once);
         _syncronizeDeserializeViewController.Verify(m => m.Deserialize(It.IsAny<byte[]>()), Times.Once);

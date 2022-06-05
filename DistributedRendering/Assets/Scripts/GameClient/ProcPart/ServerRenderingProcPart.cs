@@ -8,19 +8,16 @@ namespace GameClient
 public class ServerRenderingProcPart : IServerRenderingProcPart
 {
     private readonly IRenderingUIController _renderingUIController;
-    private readonly ICameraViewController _cameraViewController;
     private readonly ISyncronizeSerializeViewController _syncronizeSerializeViewController;
     private readonly INamedPipeClient _namedPipeClient;
     private readonly InversionProc _inversionProc = new InversionProc();
 
     public ServerRenderingProcPart(
         IRenderingUIController renderingUIController,
-        ICameraViewController cameraViewController,
         ISyncronizeSerializeViewController syncronizeSerializeViewController,
         INamedPipeClient namedPipeClient)
     {
         _renderingUIController = renderingUIController;
-        _cameraViewController = cameraViewController;
         _namedPipeClient = namedPipeClient;
         _syncronizeSerializeViewController = syncronizeSerializeViewController;
     }
@@ -34,9 +31,6 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
 
         while (!cancellationTokenSource.IsCancellationRequested)
         {
-            var sendText = _syncronizeSerializeViewController.Create();
-            _namedPipeClient.Write(sendText);
-
             var sendData = _syncronizeSerializeViewController.Serialize();
             await _namedPipeClient.SendDataAsync(sendData, cancellationTokenSource.Token);
 

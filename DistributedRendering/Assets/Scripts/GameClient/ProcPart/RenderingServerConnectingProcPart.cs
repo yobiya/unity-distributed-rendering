@@ -11,21 +11,16 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
     private const float FaildTextDisplayTime = 3.0f;
 
     private readonly IRenderingServerConnectingUIController _renderingServerConnectingUIController;
-    private readonly ITestMessageSendUIViewController _testMessageSendUIViewController;
     private readonly INamedPipeClient _namedPipeClient;
     private readonly ITimerCreator _timerCreator;
     private readonly InversionProc _inversionProc = new InversionProc();
 
     public RenderingServerConnectingProcPart(
         IRenderingServerConnectingUIController renderingServerConnectingUIController,
-        ITestMessageSendUIViewController testMessageSendUIViewController,
         INamedPipeClient namedPipeClient,
         ITimerCreator timerCreator)
     {
         _renderingServerConnectingUIController = renderingServerConnectingUIController;
-
-        _testMessageSendUIViewController = testMessageSendUIViewController;
-        _testMessageSendUIViewController.OnSend += () => _namedPipeClient.Write("Test message.");
 
         _namedPipeClient = namedPipeClient;
 
@@ -50,7 +45,6 @@ public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcP
         if (connectResult == INamedPipeClient.ConnectResult.Connected)
         {
             _renderingServerConnectingUIController.ShowConnected();
-            _testMessageSendUIViewController.Activate();
         }
         else
         {

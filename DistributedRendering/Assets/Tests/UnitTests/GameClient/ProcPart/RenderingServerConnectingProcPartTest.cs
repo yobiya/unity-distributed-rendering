@@ -12,7 +12,6 @@ public class RenderingServerConnectingProcPartTest
 {
     private RenderingServerConnectingProcPart _sut;
     private Mock<IRenderingServerConnectingUIController> _renderingServerConnectingUIControllerMock;
-    private Mock<ITestMessageSendUIViewController> _testMessageSendUIViewControllerMock;
     private Mock<INamedPipeClient> _namedPipeClientMock;
     private Mock<ITimerCreator> _timerCreatorMock;
 
@@ -20,17 +19,14 @@ public class RenderingServerConnectingProcPartTest
     public void SetUp()
     {
         _renderingServerConnectingUIControllerMock = new Mock<IRenderingServerConnectingUIController>();
-        _testMessageSendUIViewControllerMock = new Mock<ITestMessageSendUIViewController>();
         _namedPipeClientMock = new Mock<INamedPipeClient>();
         _timerCreatorMock = new Mock<ITimerCreator>();
 
         _renderingServerConnectingUIControllerMock.SetupAdd(m => m.OnRequestConnecting += It.IsAny<Action>());
-        _testMessageSendUIViewControllerMock.SetupAdd(m => m.OnSend += It.IsAny<Action>());
 
         _sut
             = new RenderingServerConnectingProcPart(
                 _renderingServerConnectingUIControllerMock.Object,
-                _testMessageSendUIViewControllerMock.Object,
                 _namedPipeClientMock.Object,
                 _timerCreatorMock.Object);
     }
@@ -39,13 +35,11 @@ public class RenderingServerConnectingProcPartTest
     public void TearDown()
     {
         _renderingServerConnectingUIControllerMock.VerifyNoOtherCalls();
-        _testMessageSendUIViewControllerMock.VerifyNoOtherCalls();
         _namedPipeClientMock.VerifyNoOtherCalls();
         _timerCreatorMock.VerifyNoOtherCalls();
 
         _sut = null;
         _renderingServerConnectingUIControllerMock = null;
-        _testMessageSendUIViewControllerMock = null;
         _namedPipeClientMock = null;
         _timerCreatorMock = null;
     }
@@ -54,7 +48,6 @@ public class RenderingServerConnectingProcPartTest
     {
         _renderingServerConnectingUIControllerMock.VerifyAdd(m => m.OnRequestConnecting += It.IsAny<Action>(), Times.Once);
         _renderingServerConnectingUIControllerMock.Verify(m => m.Activate(), Times.Once);
-        _testMessageSendUIViewControllerMock.VerifyAdd(m => m.OnSend += It.IsAny<Action>());
         _renderingServerConnectingUIControllerMock.Verify(m => m.ShowConnecting(), Times.Once);
         _namedPipeClientMock.Verify(m => m.ConnectAsync(It.IsAny<int>()), Times.Once);
     }
@@ -79,7 +72,6 @@ public class RenderingServerConnectingProcPartTest
         VerifyActivate();
 
         _renderingServerConnectingUIControllerMock.Verify(m => m.ShowConnected(), Times.Once);
-        _testMessageSendUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
     });
 
     [UnityTest]
@@ -132,7 +124,6 @@ public class RenderingServerConnectingProcPartTest
         VerifyActivate();
 
         _renderingServerConnectingUIControllerMock.Verify(m => m.ShowConnected(), Times.Once);
-        _testMessageSendUIViewControllerMock.Verify(m => m.Activate(), Times.Once);
         _renderingServerConnectingUIControllerMock.Verify(m => m.Deactivate(), Times.Once);
         _renderingServerConnectingUIControllerMock.VerifyRemove(m => m.OnRequestConnecting -= It.IsAny<Action>(), Times.Once);
     });

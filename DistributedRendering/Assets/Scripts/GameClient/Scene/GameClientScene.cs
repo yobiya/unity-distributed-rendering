@@ -16,9 +16,6 @@ public class GameClientScene : MonoBehaviour
     private RenderingServerConnectingUI _renderingServerConnectingUICollection;
 
     [SerializeField]
-    private TestMessageSendUICollection _testMessageSendUICollection;
-
-    [SerializeField]
     private RenderingUI _renderingUI;
 
     [SerializeField]
@@ -36,7 +33,6 @@ public class GameClientScene : MonoBehaviour
             // SerializeField
             containerBuilder.RegisterComponent<Camera>(_camera);
             containerBuilder.RegisterComponent<IRenderingServerConnectingUI>(_renderingServerConnectingUICollection);
-            containerBuilder.RegisterComponent<TestMessageSendUIViewController.IUICollection>(_testMessageSendUICollection);
             containerBuilder.RegisterComponent<IRenderingUI>(_renderingUI);
             containerBuilder.RegisterComponent<ICameraView>(_cameraView);
 
@@ -44,13 +40,11 @@ public class GameClientScene : MonoBehaviour
             containerBuilder.Register<ISyncronizeView, SyncronizeView>(Lifetime.Singleton);
 
             // ViewController
-            containerBuilder.Register<ICameraViewController, CameraViewController>(Lifetime.Singleton);
             containerBuilder.Register<ISyncronizeSerializeViewController, SyncronizeSerializeViewController>(Lifetime.Singleton);
 
             // UIController
             containerBuilder.Register<INamedPipeClient>(_ => new NamedPipeClient(".", Definisions.CommandMessageNamedPipeName), Lifetime.Singleton);
             containerBuilder.Register<IRenderingServerConnectingUIController, RenderingServerConnectingUIController>(Lifetime.Singleton);
-            containerBuilder.Register<ITestMessageSendUIViewController, TestMessageSendUIViewController>(Lifetime.Singleton);
             containerBuilder.Register<IRenderingUIController, RenderingUIController>(Lifetime.Singleton);
 
             // GameObject

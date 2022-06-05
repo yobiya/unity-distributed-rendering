@@ -51,8 +51,6 @@ public class CameraView : MonoBehaviour, ICameraView
         transform.position = position + moveDistance.normalized * _moveDistanceOfSecond * Time.deltaTime;
 
         transform.LookAt(_targetTransform);
-
-        OnUpdateTransform?.Invoke(transform);
     }
 }
 
