@@ -1,0 +1,32 @@
+@startuml debug_rendering
+
+class SyncronizeRenderingProcPart
+class OffscreenRenderingViewController
+class OffscreenRenderingViewController.RequestBox
+note bottom
+OffscreenRenderingViewが有効になったら
+DebugRenderingUIControlerに
+OffscreenRenderingViewのRenderTextureを
+渡すためのリクエストを処理する
+endnote
+
+class OffscreenRenderingView
+class DebugRenderingUIControler
+class DebugRenderingUI
+note bottom
+OffscreenRenderingViewが描画した
+テクスチャを表示する
+endnote
+
+class RenderTexture
+
+SyncronizeRenderingProcPart *--> OffscreenRenderingViewController
+SyncronizeRenderingProcPart o--> DebugRenderingUIControler
+OffscreenRenderingViewController *--> OffscreenRenderingView
+OffscreenRenderingViewController o--> OffscreenRenderingViewController.RequestBox
+OffscreenRenderingView *--> RenderTexture
+DebugRenderingUIControler *--> DebugRenderingUI
+DebugRenderingUIControler *--> OffscreenRenderingViewController.RequestBox 
+DebugRenderingUI ..> RenderTexture
+
+@enduml
