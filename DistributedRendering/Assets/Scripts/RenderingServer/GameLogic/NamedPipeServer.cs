@@ -16,7 +16,7 @@ public class NamedPipeServer : INamedPipeServer
     {
         _namedPipeServer
             = new NamedPipeServerStream(
-                Definisions.ResponseDataPipeName,
+                Definisions.NamedPipeName,
                 PipeDirection.InOut,
                 1,
                 PipeTransmissionMode.Byte,

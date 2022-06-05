@@ -14,7 +14,7 @@ public class NamedPipeClient : INamedPipeClient
 
     public NamedPipeClient(string serverName, string pipeName)
     {
-        _namedPipeClient = new NamedPipeClientStream(serverName, Definisions.ResponseDataPipeName, PipeDirection.InOut);
+        _namedPipeClient = new NamedPipeClientStream(serverName, pipeName, PipeDirection.InOut);
         _recieveBuffer = new byte[Definisions.RenderingDataSize];
     }
 

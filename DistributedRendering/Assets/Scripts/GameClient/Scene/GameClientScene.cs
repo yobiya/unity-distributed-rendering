@@ -43,7 +43,7 @@ public class GameClientScene : MonoBehaviour
             containerBuilder.Register<ISyncronizeSerializeViewController, SyncronizeSerializeViewController>(Lifetime.Singleton);
 
             // UIController
-            containerBuilder.Register<INamedPipeClient>(_ => new NamedPipeClient(".", Definisions.CommandMessageNamedPipeName), Lifetime.Singleton);
+            containerBuilder.Register<INamedPipeClient>(_ => new NamedPipeClient(".", Definisions.NamedPipeName), Lifetime.Singleton);
             containerBuilder.Register<IRenderingServerConnectingUIController, RenderingServerConnectingUIController>(Lifetime.Singleton);
             containerBuilder.Register<IRenderingUIController, RenderingUIController>(Lifetime.Singleton);
 
