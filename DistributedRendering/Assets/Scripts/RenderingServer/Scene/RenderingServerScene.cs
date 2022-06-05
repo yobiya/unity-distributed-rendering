@@ -17,9 +17,6 @@ public class RenderingServerScene : MonoBehaviour
     private OffscreenRenderingView _offscreenRenderingView;
 
     [SerializeField]
-    private SyncCameraView _syncCameraView;
-
-    [SerializeField]
     private DebugRenderingUI _debugRenderingUI;
 
     private IGameClientConnectionProcPart _gameClientConnectionProcPart;
@@ -35,7 +32,6 @@ public class RenderingServerScene : MonoBehaviour
             containerBuilder.RegisterComponent<Camera>(_renderingCamera);
             containerBuilder.RegisterComponent<IOffscreenRenderingView>(_offscreenRenderingView);
             containerBuilder.RegisterComponent<IDebugRenderingUI>(_debugRenderingUI);
-            containerBuilder.RegisterComponent<ISyncCameraView>(_syncCameraView);
             containerBuilder.RegisterComponent<GameClientWaitConnectionUIViewControler.IUICollection>(_gameClientWaitConnectionUICollection);
 
             // View
@@ -47,7 +43,6 @@ public class RenderingServerScene : MonoBehaviour
             // ViewController
             containerBuilder.Register<IOffscreenRenderingViewController, OffscreenRenderingViewController>(Lifetime.Singleton);
             containerBuilder.Register<IGameClientWaitConnectionUIViewControler, GameClientWaitConnectionUIViewControler>(Lifetime.Singleton);
-            containerBuilder.Register<ISyncCameraViewController, SyncCameraViewController>(Lifetime.Singleton);
             containerBuilder.Register<ISyncronizeDeserializeViewController, SyncronizeDeserializeViewController>(Lifetime.Singleton);
 
             // GameLogic

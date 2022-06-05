@@ -13,7 +13,6 @@ public class SyncronizeRenderingProcPartTest
 {
     private SyncronizeRenderingProcPart _sut;
     private Mock<INamedPipeServer> _namedPipeServerMock;
-    private Mock<ISyncCameraViewController> _syncCameraViewControllerMock;
     private Mock<IOffscreenRenderingViewController> _offscreenRenderingViewControllerMock;
     private Mock<ISyncronizeDeserializeViewController> _syncronizeDeserializeViewController;
     private Mock<IDebugRenderingUIControler> _debugRenderingUIControlerMock;
@@ -22,14 +21,12 @@ public class SyncronizeRenderingProcPartTest
     public void SetUp()
     {
         _namedPipeServerMock = new Mock<INamedPipeServer>();
-        _syncCameraViewControllerMock = new Mock<ISyncCameraViewController>();
         _offscreenRenderingViewControllerMock = new Mock<IOffscreenRenderingViewController>();
         _syncronizeDeserializeViewController = new Mock<ISyncronizeDeserializeViewController>();
         _debugRenderingUIControlerMock = new Mock<IDebugRenderingUIControler>();
         _sut = new SyncronizeRenderingProcPart(
             _namedPipeServerMock.Object,
             _syncronizeDeserializeViewController.Object,
-            _syncCameraViewControllerMock.Object,
             _offscreenRenderingViewControllerMock.Object,
             _debugRenderingUIControlerMock.Object);
     }
@@ -39,14 +36,12 @@ public class SyncronizeRenderingProcPartTest
     {
         _namedPipeServerMock.VerifyNoOtherCalls();
         _syncronizeDeserializeViewController.VerifyNoOtherCalls();
-        _syncCameraViewControllerMock.VerifyNoOtherCalls();
         _offscreenRenderingViewControllerMock.VerifyNoOtherCalls();
         _debugRenderingUIControlerMock.VerifyNoOtherCalls();
 
         _sut = null;
         _namedPipeServerMock = null;
         _syncronizeDeserializeViewController = null;
-        _syncCameraViewControllerMock = null;
         _offscreenRenderingViewControllerMock = null;
         _debugRenderingUIControlerMock = null;
     }
@@ -63,8 +58,6 @@ public class SyncronizeRenderingProcPartTest
         await _sut.ActivateAsync();
 
         // SyncronizeRenderingProcPartの有効化と無効化時に、一緒に有効化と無効化される要素
-        _syncCameraViewControllerMock.Verify(m => m.Activate(), Times.Once);
-        _syncCameraViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
         _offscreenRenderingViewControllerMock.Verify(m => m.Activate(), Times.Once);
         _offscreenRenderingViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
         _debugRenderingUIControlerMock.Verify(m => m.Activate(It.IsAny<RenderTexture>()), Times.Once);
