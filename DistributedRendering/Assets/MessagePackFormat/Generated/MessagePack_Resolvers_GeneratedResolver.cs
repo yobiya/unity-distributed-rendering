@@ -49,9 +49,10 @@ namespace MessagePack.Resolvers
 
         static GeneratedResolverGetFormatterHelper()
         {
-            lookup = new global::System.Collections.Generic.Dictionary<Type, int>(1)
+            lookup = new global::System.Collections.Generic.Dictionary<Type, int>(2)
             {
-                { typeof(global::Common.SyncronizeData), 0 },
+                { typeof(global::MessagePackFormat.CameraData), 0 },
+                { typeof(global::MessagePackFormat.SyncronizeData), 1 },
             };
         }
 
@@ -65,7 +66,8 @@ namespace MessagePack.Resolvers
 
             switch (key)
             {
-                case 0: return new MessagePack.Formatters.Common.SyncronizeDataFormatter();
+                case 0: return new MessagePack.Formatters.MessagePackFormat.CameraDataFormatter();
+                case 1: return new MessagePack.Formatters.MessagePackFormat.SyncronizeDataFormatter();
                 default: return null;
             }
         }

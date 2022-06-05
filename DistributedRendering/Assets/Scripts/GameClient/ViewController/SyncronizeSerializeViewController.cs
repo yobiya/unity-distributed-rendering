@@ -1,4 +1,7 @@
 using Common;
+using MessagePack;
+using MessagePackFormat;
+using UnityEngine;
 
 namespace GameClient
 {
@@ -28,7 +31,12 @@ public class SyncronizeSerializeViewController : ISyncronizeSerializeViewControl
 
     public byte[] Serialize()
     {
-        return new byte[] { 1 };
+        var data = new SyncronizeData();
+        data.camera = new CameraData();
+        data.camera.position = _syncronizeView.Camera.transform.position;
+        data.camera.forward = _syncronizeView.Camera.transform.forward;
+
+        return MessagePackSerializer.Serialize(data);
     }
 }
 

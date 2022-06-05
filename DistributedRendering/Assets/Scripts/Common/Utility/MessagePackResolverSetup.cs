@@ -17,11 +17,14 @@ public class MessagePackResolverSetup : MonoBehaviour
             return;
         }
 
-        StaticCompositeResolver.Instance.Register(
-            MessagePack.Resolvers.GeneratedResolver.Instance,
-            MessagePack.Resolvers.StandardResolver.Instance);
+        var resolver
+            = MessagePack.Resolvers.CompositeResolver.Create(
+                MessagePack.Unity.Extension.UnityBlitResolver.Instance,
+                MessagePack.Unity.UnityResolver.Instance,
+                GeneratedResolver.Instance,
+                StandardResolver.Instance);
 
-        var option = MessagePackSerializerOptions.Standard.WithResolver(StaticCompositeResolver.Instance);
+        var option = MessagePackSerializerOptions.Standard.WithResolver(resolver);
 
         MessagePackSerializer.DefaultOptions = option;
 

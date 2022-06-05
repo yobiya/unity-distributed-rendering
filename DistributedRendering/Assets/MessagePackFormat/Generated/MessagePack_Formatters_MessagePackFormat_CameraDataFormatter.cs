@@ -14,15 +14,15 @@
 #pragma warning disable SA1403 // File may only contain a single namespace
 #pragma warning disable SA1649 // File name should match first type name
 
-namespace MessagePack.Formatters.Common
+namespace MessagePack.Formatters.MessagePackFormat
 {
     using global::System.Buffers;
     using global::MessagePack;
 
-    public sealed class SyncronizeDataFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::Common.SyncronizeData>
+    public sealed class CameraDataFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::MessagePackFormat.CameraData>
     {
 
-        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::Common.SyncronizeData value, global::MessagePack.MessagePackSerializerOptions options)
+        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::MessagePackFormat.CameraData value, global::MessagePack.MessagePackSerializerOptions options)
         {
             if (value == null)
             {
@@ -30,11 +30,13 @@ namespace MessagePack.Formatters.Common
                 return;
             }
 
-            writer.WriteArrayHeader(1);
-            writer.Write(value.test);
+            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
+            writer.WriteArrayHeader(2);
+            formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Serialize(ref writer, value.position, options);
+            formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Serialize(ref writer, value.forward, options);
         }
 
-        public global::Common.SyncronizeData Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
+        public global::MessagePackFormat.CameraData Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
         {
             if (reader.TryReadNil())
             {
@@ -42,15 +44,19 @@ namespace MessagePack.Formatters.Common
             }
 
             options.Security.DepthStep(ref reader);
+            global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             var length = reader.ReadArrayHeader();
-            var ____result = new global::Common.SyncronizeData();
+            var ____result = new global::MessagePackFormat.CameraData();
 
             for (int i = 0; i < length; i++)
             {
                 switch (i)
                 {
                     case 0:
-                        ____result.test = reader.ReadInt32();
+                        ____result.position = formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Deserialize(ref reader, options);
+                        break;
+                    case 1:
+                        ____result.forward = formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Deserialize(ref reader, options);
                         break;
                     default:
                         reader.Skip();
