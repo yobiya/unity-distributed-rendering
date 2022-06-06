@@ -2,15 +2,13 @@
 
 class SyncronizeRenderingProcPart
 class OffscreenRenderingViewController
-class OffscreenRenderingViewController.RequestBox
-note bottom
-OffscreenRenderingViewが有効になったら
-DebugRenderingUIControlerに
-OffscreenRenderingViewのRenderTextureを
-渡すためのリクエストを処理する
-endnote
 
 class OffscreenRenderingView
+note left
+OffscreenRenderingViewControllerが
+状態の管理を行う
+endnote
+
 class DebugRenderingUIControler
 class DebugRenderingUI
 note bottom
@@ -23,10 +21,9 @@ class RenderTexture
 SyncronizeRenderingProcPart *--> OffscreenRenderingViewController
 SyncronizeRenderingProcPart o--> DebugRenderingUIControler
 OffscreenRenderingViewController *--> OffscreenRenderingView
-OffscreenRenderingViewController o--> OffscreenRenderingViewController.RequestBox
+DebugRenderingUIControler o--> OffscreenRenderingView
 OffscreenRenderingView *--> RenderTexture
 DebugRenderingUIControler *--> DebugRenderingUI
-DebugRenderingUIControler *--> OffscreenRenderingViewController.RequestBox 
 DebugRenderingUI ..> RenderTexture
 
 @enduml
