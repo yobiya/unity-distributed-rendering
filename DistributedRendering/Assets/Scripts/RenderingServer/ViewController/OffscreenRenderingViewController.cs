@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using VContainer;
 
@@ -8,7 +9,7 @@ public interface IOffscreenRenderingViewController
 {
     RenderTexture RenderTexture { get; }
 
-    void Activate();
+    UniTask ActivateAsync();
     void Deactivate();
 }
 
@@ -24,9 +25,11 @@ public class OffscreenRenderingViewController : IOffscreenRenderingViewControlle
         _offscreenRenderingView = offscreenRenderingView;
     }
 
-    public void Activate()
+    public async UniTask ActivateAsync()
     {
         _offscreenRenderingView.Activate();
+
+        await UniTask.CompletedTask;
     }
 
     public void Deactivate()

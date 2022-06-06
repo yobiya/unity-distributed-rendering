@@ -58,7 +58,7 @@ public class SyncronizeRenderingProcPartTest
         await _sut.ActivateAsync();
 
         // SyncronizeRenderingProcPartの有効化と無効化時に、一緒に有効化と無効化される要素
-        _offscreenRenderingViewControllerMock.Verify(m => m.Activate(), Times.Once);
+        _offscreenRenderingViewControllerMock.Verify(m => m.ActivateAsync(), Times.Once);
         _offscreenRenderingViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
         _debugRenderingUIControlerMock.Verify(m => m.Activate(It.IsAny<RenderTexture>()), Times.Once);
         _debugRenderingUIControlerMock.Verify(m => m.Deactivate(), Times.Once);
