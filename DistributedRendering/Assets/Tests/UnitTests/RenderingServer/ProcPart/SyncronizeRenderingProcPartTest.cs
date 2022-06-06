@@ -50,9 +50,9 @@ public class SyncronizeRenderingProcPartTest
     public IEnumerator ActivateToDeactivate() => UniTask.ToCoroutine(async () =>
     {
         // ActivateAsyncはDesactivateが呼ばれるまで終わらないので
-        // 最後のメソッドが呼ばれたときにDeactivateを読んで終了させる
+        // 最後のメソッドが呼ばれたときにDeactivateを呼んで終了させる
         _namedPipeServerMock
-            .Setup(m => m.SendRenderingImage(It.IsAny<RenderTexture>()))
+            .Setup(m => m.SendDataAsync(It.IsAny<byte[]>(), It.IsAny<CancellationToken>()))
             .Callback(_sut.Deactivate);
 
         await _sut.ActivateAsync();
@@ -68,8 +68,8 @@ public class SyncronizeRenderingProcPartTest
         _syncronizeDeserializeViewController.Verify(m => m.Deserialize(It.IsAny<byte[]>()), Times.Once);
 
         // 同期した後にレンダリングした画像をゲームクライアントに送る
-        _offscreenRenderingViewControllerMock.VerifyGet(m => m.RenderTexture, Times.Once);
-        _namedPipeServerMock.Verify(m => m.SendRenderingImage(It.IsAny<RenderTexture>()), Times.Once);
+        _offscreenRenderingViewControllerMock.Verify(m => m.Render(), Times.Once);
+        _namedPipeServerMock.Verify(m => m.SendDataAsync(It.IsAny<byte[]>(), It.IsAny<CancellationToken>()), Times.Once);
 
         // NamedPipeServerはゲームクライアントと接続済みの状態で渡されるのでActivateは呼ばれないが
         // SyncronizeRenderingProcPart.Deactivateが呼ばれたときに接続を終了するので、Deactivateは呼ばれる

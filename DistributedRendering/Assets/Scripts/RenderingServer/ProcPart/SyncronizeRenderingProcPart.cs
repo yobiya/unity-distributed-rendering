@@ -6,6 +6,12 @@ using VContainer;
 namespace RenderingServer
 {
 
+public interface ISyncronizeRenderingProcPart
+{
+    UniTask ActivateAsync();
+    void Deactivate();
+}
+
 public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
 {
     private readonly INamedPipeServer _namedPipeServer;
@@ -48,7 +54,11 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
             // 同期するデータをデシリアライズして、対応するオブジェクトに適用する
             _syncronizeDeserializerViewController.Deserialize(recievedData);
 
-            _namedPipeServer.SendRenderingImage(_offscreenRenderingViewController.RenderTexture);
+            // レンダリングした結果をバイト配列に変換する
+            var sendData = _offscreenRenderingViewController.Render();
+
+            // ゲームクライアントにレンダリング結果を送る
+            await _namedPipeServer.SendDataAsync(sendData, cancellationTokenSource.Token);
 
             await UniTask.NextFrame();
         }

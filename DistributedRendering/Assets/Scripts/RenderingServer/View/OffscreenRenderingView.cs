@@ -16,6 +16,7 @@ public interface IOffscreenRenderingView : IOffscreenRenderingRefView
 {
     UniTask ActivateAsync();
     void Deactivate();
+    void Render();
 }
 
 public class OffscreenRenderingView : MonoBehaviour, IOffscreenRenderingView
@@ -27,11 +28,6 @@ public class OffscreenRenderingView : MonoBehaviour, IOffscreenRenderingView
     private Camera _camera;
 
     public RenderTexture RenderTexture { get; private set; }
-
-    void Update()
-    {
-        _camera.Render();
-    }
 
     public async UniTask ActivateAsync()
     {
@@ -67,6 +63,11 @@ public class OffscreenRenderingView : MonoBehaviour, IOffscreenRenderingView
     public async UniTask WaitOnActivatedAsync()
     {
         await UniTask.WaitUntil(() => _isActivated);
+    }
+
+    public void Render()
+    {
+        _camera.Render();
     }
 }
 

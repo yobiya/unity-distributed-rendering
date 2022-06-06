@@ -3,7 +3,6 @@ using Cysharp.Threading.Tasks;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
-using UnityEngine;
 
 namespace RenderingServer
 {
@@ -13,7 +12,7 @@ public interface INamedPipeServer
     UniTask ActivateAsync();
     void Deactivate();
     UniTask<byte[]> RecieveDataAsync(CancellationToken token);
-    void SendRenderingImage(RenderTexture renderTexture);
+    UniTask SendDataAsync(byte[] data, CancellationToken token);
 }
 
 public class NamedPipeServer : INamedPipeServer
@@ -56,24 +55,10 @@ public class NamedPipeServer : INamedPipeServer
         return _receiveBuffer;
     }
 
-    public void SendRenderingImage(RenderTexture renderTexture)
+    public async UniTask SendDataAsync(byte[] data, CancellationToken token)
     {
-        var texture2d
-            = new Texture2D(
-                renderTexture.width,
-                renderTexture.height,
-                TextureFormat.ARGB32,
-                false);
-
-        RenderTexture.active = renderTexture;
-        texture2d.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
-        RenderTexture.active = null;
-                                   
-        byte[] byteArray = texture2d.GetRawTextureData();
-        _namedPipeServer.Write(byteArray, 0, byteArray.Length);
-        _namedPipeServer.Flush();
-
-        Texture2D.Destroy(texture2d);
+        await _namedPipeServer.WriteAsync(data, 0, data.Length, token);
+        await _namedPipeServer.FlushAsync(token);
     }
 }
 
