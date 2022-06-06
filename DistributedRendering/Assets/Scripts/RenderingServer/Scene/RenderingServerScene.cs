@@ -30,27 +30,27 @@ public class RenderingServerScene : MonoBehaviour
         {
             // SerializeField
             containerBuilder.RegisterComponent<Camera>(_renderingCamera);
-            containerBuilder.RegisterComponent<IOffscreenRenderingView>(_offscreenRenderingView);
+            containerBuilder.RegisterComponent<IOffscreenRenderingView>(_offscreenRenderingView).As<IOffscreenRenderingRefView>();
             containerBuilder.RegisterComponent<IDebugRenderingUI>(_debugRenderingUI);
             containerBuilder.RegisterComponent<GameClientWaitConnectionUIViewControler.IUICollection>(_gameClientWaitConnectionUICollection);
 
             // View
-            containerBuilder.Register<ISyncronizeView, SyncronizeView>(Lifetime.Singleton);
+            containerBuilder.Register<ISyncronizeView, SyncronizeView>(Lifetime.Scoped);
 
             // UIController
-            containerBuilder.Register<IDebugRenderingUIControler, DebugRenderingUIControler>(Lifetime.Singleton);
+            containerBuilder.Register<IDebugRenderingUIControler, DebugRenderingUIControler>(Lifetime.Scoped);
 
             // ViewController
-            containerBuilder.Register<IOffscreenRenderingViewController, OffscreenRenderingViewController>(Lifetime.Singleton);
-            containerBuilder.Register<IGameClientWaitConnectionUIViewControler, GameClientWaitConnectionUIViewControler>(Lifetime.Singleton);
-            containerBuilder.Register<ISyncronizeDeserializeViewController, SyncronizeDeserializeViewController>(Lifetime.Singleton);
+            containerBuilder.Register<IOffscreenRenderingViewController, OffscreenRenderingViewController>(Lifetime.Scoped);
+            containerBuilder.Register<IGameClientWaitConnectionUIViewControler, GameClientWaitConnectionUIViewControler>(Lifetime.Scoped);
+            containerBuilder.Register<ISyncronizeDeserializeViewController, SyncronizeDeserializeViewController>(Lifetime.Scoped);
 
             // GameLogic
-            containerBuilder.Register<INamedPipeServer, NamedPipeServer>(Lifetime.Singleton);
+            containerBuilder.Register<INamedPipeServer, NamedPipeServer>(Lifetime.Scoped);
 
             // ProcPart
-            containerBuilder.Register<IGameClientConnectionProcPart, GameClientConnectionProcPart>(Lifetime.Singleton);
-            containerBuilder.Register<ISyncronizeRenderingProcPart, SyncronizeRenderingProcPart>(Lifetime.Singleton);
+            containerBuilder.Register<IGameClientConnectionProcPart, GameClientConnectionProcPart>(Lifetime.Scoped);
+            containerBuilder.Register<ISyncronizeRenderingProcPart, SyncronizeRenderingProcPart>(Lifetime.Scoped);
         }
 
         _objectResolver = containerBuilder.Build();

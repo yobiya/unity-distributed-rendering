@@ -1,5 +1,5 @@
 using Common;
-using UnityEngine;
+using Cysharp.Threading.Tasks;
 using VContainer;
 
 namespace RenderingServer
@@ -7,25 +7,28 @@ namespace RenderingServer
 
 public interface IDebugRenderingUIControler
 {
-    void Activate(RenderTexture renderTexture);
+    UniTask ActivateAsync();
     void Deactivate();
 }
 
 public class DebugRenderingUIControler : IDebugRenderingUIControler
 {
     private readonly IDebugRenderingUI _debugRenderingUI;
+    private readonly IOffscreenRenderingRefView _offscreenRenderingRefView;
     private readonly InversionProc _inversionProc = new InversionProc();
 
     [Inject]
-    public DebugRenderingUIControler(IDebugRenderingUI debugRenderingUI)
+    public DebugRenderingUIControler(IDebugRenderingUI debugRenderingUI, IOffscreenRenderingRefView offscreenRenderingView)
     {
         _debugRenderingUI = debugRenderingUI;
+        _offscreenRenderingRefView = offscreenRenderingView;
     }
 
-    public void Activate(RenderTexture renderTexture)
+    public async UniTask ActivateAsync()
     {
+        await _offscreenRenderingRefView.WaitOnActivatedAsync();
         _inversionProc.Register(
-            () => _debugRenderingUI.Activate(renderTexture),
+            () => _debugRenderingUI.Activate(_offscreenRenderingRefView.RenderTexture),
             _debugRenderingUI.Deactivate);
     }
 

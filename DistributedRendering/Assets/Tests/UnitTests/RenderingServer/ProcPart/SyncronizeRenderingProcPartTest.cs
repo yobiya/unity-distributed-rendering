@@ -60,17 +60,15 @@ public class SyncronizeRenderingProcPartTest
         // SyncronizeRenderingProcPartの有効化と無効化時に、一緒に有効化と無効化される要素
         _offscreenRenderingViewControllerMock.Verify(m => m.ActivateAsync(), Times.Once);
         _offscreenRenderingViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
-        _debugRenderingUIControlerMock.Verify(m => m.Activate(It.IsAny<RenderTexture>()), Times.Once);
+        _debugRenderingUIControlerMock.Verify(m => m.ActivateAsync(), Times.Once);
         _debugRenderingUIControlerMock.Verify(m => m.Deactivate(), Times.Once);
-
-        // レンダリングした画像をデバッグ表示とゲームクライアント送る場合で２回呼ばれる
-        _offscreenRenderingViewControllerMock.VerifyGet(m => m.RenderTexture, Times.Exactly(2));
 
         // ゲームクライアントからデータを受け取って同期させる
         _namedPipeServerMock.Verify(m => m.RecieveDataAsync(It.IsAny<CancellationToken>()), Times.Once);
         _syncronizeDeserializeViewController.Verify(m => m.Deserialize(It.IsAny<byte[]>()), Times.Once);
 
         // 同期した後にレンダリングした画像をゲームクライアントに送る
+        _offscreenRenderingViewControllerMock.VerifyGet(m => m.RenderTexture, Times.Once);
         _namedPipeServerMock.Verify(m => m.SendRenderingImage(It.IsAny<RenderTexture>()), Times.Once);
 
         // NamedPipeServerはゲームクライアントと接続済みの状態で渡されるのでActivateは呼ばれないが

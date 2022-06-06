@@ -1,12 +1,27 @@
 using Common;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace RenderingServer
 {
 
+public interface IOffscreenRenderingRefView
+{
+    RenderTexture RenderTexture { get; }
+
+    UniTask WaitOnActivatedAsync();
+}
+
+public interface IOffscreenRenderingView : IOffscreenRenderingRefView
+{
+    UniTask ActivateAsync();
+    void Deactivate();
+}
+
 public class OffscreenRenderingView : MonoBehaviour, IOffscreenRenderingView
 {
     private readonly InversionProc _inversionProc = new InversionProc();
+    private bool _isActivated = false;
 
     [SerializeField]
     private Camera _camera;
@@ -18,7 +33,7 @@ public class OffscreenRenderingView : MonoBehaviour, IOffscreenRenderingView
         _camera.Render();
     }
 
-    public void Activate()
+    public async UniTask ActivateAsync()
     {
         _inversionProc.Register(
             () => RenderTexture = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32),
@@ -31,11 +46,22 @@ public class OffscreenRenderingView : MonoBehaviour, IOffscreenRenderingView
         _inversionProc.Register(
             () => _camera.targetTexture = RenderTexture,
             () => _camera.targetTexture = null);
+
+        _inversionProc.Register(
+            () => _isActivated = true,
+            () => _isActivated = false);
+
+        await UniTask.CompletedTask;
     }
 
     public void Deactivate()
     {
         _inversionProc.Inversion();
+    }
+
+    public async UniTask WaitOnActivatedAsync()
+    {
+        await UniTask.WaitUntil(() => _isActivated);
     }
 }
 

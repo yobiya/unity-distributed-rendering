@@ -27,9 +27,7 @@ public class OffscreenRenderingViewController : IOffscreenRenderingViewControlle
 
     public async UniTask ActivateAsync()
     {
-        _offscreenRenderingView.Activate();
-
-        await UniTask.CompletedTask;
+        await _offscreenRenderingView.ActivateAsync();
     }
 
     public void Deactivate()

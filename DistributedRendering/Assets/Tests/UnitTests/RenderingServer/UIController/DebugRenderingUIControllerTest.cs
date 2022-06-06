@@ -1,6 +1,9 @@
+using System.Collections;
+using Cysharp.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace RenderingServer
 {
@@ -9,42 +12,50 @@ public class DebugRenderingUIControllerTest
 {
     private DebugRenderingUIControler _sut;
     private Mock<IDebugRenderingUI> _debugRenderingUIMock;
+    private Mock<IOffscreenRenderingRefView> _offscreenRenderingRefViewMock;
 
     [SetUp]
     public void SetUp()
     {
         _debugRenderingUIMock = new Mock<IDebugRenderingUI>();
-        _sut = new DebugRenderingUIControler(_debugRenderingUIMock.Object);
+        _offscreenRenderingRefViewMock = new Mock<IOffscreenRenderingRefView>();
+        _sut = new DebugRenderingUIControler(_debugRenderingUIMock.Object, _offscreenRenderingRefViewMock.Object);
     }
 
     [TearDown]
     public void TearDown()
     {
         _debugRenderingUIMock.VerifyNoOtherCalls();
+        _offscreenRenderingRefViewMock.VerifyNoOtherCalls();
 
         _sut = null;
         _debugRenderingUIMock = null;
+        _offscreenRenderingRefViewMock = null;
     }
 
-    [Test]
-    public void Activate()
+    private void VerifyActivate()
     {
-        _sut.Activate(It.IsAny<RenderTexture>());
-
-        // DebugRenderingUIControlerの有効化に合わせて、有効化される
+        _offscreenRenderingRefViewMock.Verify(m => m.WaitOnActivatedAsync(), Times.Once);
+        _offscreenRenderingRefViewMock.VerifyGet(m => m.RenderTexture, Times.Once);
         _debugRenderingUIMock.Verify(m => m.Activate(It.IsAny<RenderTexture>()), Times.Once);
     }
 
-    [Test]
-    public void Deactivate()
+    [UnityTest]
+    public IEnumerator Activate() => UniTask.ToCoroutine(async () =>
     {
-        _sut.Activate(It.IsAny<RenderTexture>());
+        await _sut.ActivateAsync();
+        VerifyActivate();
+    });
+
+    [UnityTest]
+    public IEnumerator Deactivate() => UniTask.ToCoroutine(async () =>
+    {
+        await _sut.ActivateAsync();
         _sut.Deactivate();
 
-        // DebugRenderingUIControlerの有効化と無効化に合わせて、有効化と無効化される
-        _debugRenderingUIMock.Verify(m => m.Activate(It.IsAny<RenderTexture>()), Times.Once);
+        VerifyActivate();
         _debugRenderingUIMock.Verify(m => m.Deactivate(), Times.Once);
-    }
+    });
 }
 
 }

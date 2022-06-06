@@ -31,9 +31,11 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
     {
         // _namedPipeServerは既に有効化されているので、Deactivateのみ登録する
         _inversionProc.RegisterInversion(_namedPipeServer.Deactivate);
-        await _inversionProc.RegisterAsync(_offscreenRenderingViewController.ActivateAsync(), _offscreenRenderingViewController.Deactivate);
-        _inversionProc.Register(
-            () => _debugRenderingUIControler.Activate(_offscreenRenderingViewController.RenderTexture),
+        await _inversionProc.RegisterAsync(
+            _offscreenRenderingViewController.ActivateAsync(),
+            _offscreenRenderingViewController.Deactivate);
+        await _inversionProc.RegisterAsync(
+            _debugRenderingUIControler.ActivateAsync(),
             _debugRenderingUIControler.Deactivate);
 
         var cancellationTokenSource = new CancellationTokenSource();
