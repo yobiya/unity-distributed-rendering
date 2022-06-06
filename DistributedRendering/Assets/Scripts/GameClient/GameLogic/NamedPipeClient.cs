@@ -7,6 +7,19 @@ using System.Threading;
 namespace GameClient
 {
 
+public interface INamedPipeClient
+{
+    public enum ConnectResult
+    {
+        Connected,
+        TimeOut
+    }
+
+    UniTask<ConnectResult> ConnectAsync(int timeOutTime);
+    UniTask SendDataAsync(byte[] data, CancellationToken token);
+    UniTask<byte[]> RecieveDataAsync(CancellationToken token);
+}
+
 public class NamedPipeClient : INamedPipeClient
 {
     private readonly NamedPipeClientStream _namedPipeClient;
@@ -15,7 +28,7 @@ public class NamedPipeClient : INamedPipeClient
     public NamedPipeClient(string serverName, string pipeName)
     {
         _namedPipeClient = new NamedPipeClientStream(serverName, pipeName, PipeDirection.InOut);
-        _recieveBuffer = new byte[Definisions.RenderingDataSize];
+        _recieveBuffer = new byte[NamedPipeDefinisions.RenderingDataSize];
     }
 
     public async UniTask<INamedPipeClient.ConnectResult> ConnectAsync(int timeOutTime)

@@ -5,6 +5,17 @@ using System.IO.Pipes;
 using System.Threading;
 using UnityEngine;
 
+namespace RenderingServer
+{
+
+public interface INamedPipeServer
+{
+    UniTask ActivateAsync();
+    void Deactivate();
+    UniTask<byte[]> RecieveDataAsync(CancellationToken token);
+    void SendRenderingImage(RenderTexture renderTexture);
+}
+
 public class NamedPipeServer : INamedPipeServer
 {
     private readonly NamedPipeServerStream _namedPipeServer;
@@ -16,7 +27,7 @@ public class NamedPipeServer : INamedPipeServer
     {
         _namedPipeServer
             = new NamedPipeServerStream(
-                Definisions.NamedPipeName,
+                NamedPipeDefinisions.PipeName,
                 PipeDirection.InOut,
                 1,
                 PipeTransmissionMode.Byte,
@@ -24,7 +35,7 @@ public class NamedPipeServer : INamedPipeServer
 
         _pipeReader = new StreamReader(_namedPipeServer);
 
-        _receiveBuffer = new byte[Definisions.SyncronizeDataSize];
+        _receiveBuffer = new byte[NamedPipeDefinisions.SyncronizeDataSize];
         _cancellationTokenSource = new CancellationTokenSource();
     }
 
@@ -66,3 +77,4 @@ public class NamedPipeServer : INamedPipeServer
     }
 }
 
+}

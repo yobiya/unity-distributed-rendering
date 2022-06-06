@@ -36,7 +36,12 @@ public class OffscreenRenderingView : MonoBehaviour, IOffscreenRenderingView
     public async UniTask ActivateAsync()
     {
         _inversionProc.Register(
-            () => RenderTexture = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32),
+            () => RenderTexture
+                = new RenderTexture(
+                    RenderingDefinisions.RenderingTextureWidth,
+                    RenderingDefinisions.RenderingTextureHight,
+                    16,
+                    RenderTextureFormat.ARGB32),
             () => RenderTexture.Destroy(RenderTexture));
 
         _inversionProc.Register(

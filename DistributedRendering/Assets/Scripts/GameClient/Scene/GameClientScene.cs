@@ -37,22 +37,22 @@ public class GameClientScene : MonoBehaviour
             containerBuilder.RegisterComponent<ICameraView>(_cameraView);
 
             // View
-            containerBuilder.Register<ISyncronizeView, SyncronizeView>(Lifetime.Singleton);
+            containerBuilder.Register<ISyncronizeView, SyncronizeView>(Lifetime.Scoped);
 
             // ViewController
-            containerBuilder.Register<ISyncronizeSerializeViewController, SyncronizeSerializeViewController>(Lifetime.Singleton);
+            containerBuilder.Register<ISyncronizeSerializeViewController, SyncronizeSerializeViewController>(Lifetime.Scoped);
 
             // UIController
-            containerBuilder.Register<INamedPipeClient>(_ => new NamedPipeClient(".", Definisions.NamedPipeName), Lifetime.Singleton);
-            containerBuilder.Register<IRenderingServerConnectingUIController, RenderingServerConnectingUIController>(Lifetime.Singleton);
-            containerBuilder.Register<IRenderingUIController, RenderingUIController>(Lifetime.Singleton);
+            containerBuilder.Register<INamedPipeClient>(_ => new NamedPipeClient(".", NamedPipeDefinisions.PipeName), Lifetime.Scoped);
+            containerBuilder.Register<IRenderingServerConnectingUIController, RenderingServerConnectingUIController>(Lifetime.Scoped);
+            containerBuilder.Register<IRenderingUIController, RenderingUIController>(Lifetime.Scoped);
 
             // GameObject
-            containerBuilder.Register<ITimerCreator, TimerCreator>(Lifetime.Singleton);
+            containerBuilder.Register<ITimerCreator, TimerCreator>(Lifetime.Scoped);
 
             // ProcPart
-            containerBuilder.Register<IServerRenderingProcPart, ServerRenderingProcPart>(Lifetime.Singleton);
-            containerBuilder.Register<IRenderingServerConnectingProcPart, RenderingServerConnectingProcPart>(Lifetime.Singleton);
+            containerBuilder.Register<IServerRenderingProcPart, ServerRenderingProcPart>(Lifetime.Scoped);
+            containerBuilder.Register<IRenderingServerConnectingProcPart, RenderingServerConnectingProcPart>(Lifetime.Scoped);
         }
 
         _objectResolver = containerBuilder.Build();
