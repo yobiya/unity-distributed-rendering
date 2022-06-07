@@ -70,10 +70,6 @@ public class SyncronizeRenderingProcPartTest
         // 同期した後にレンダリングした画像をゲームクライアントに送る
         _offscreenRenderingViewControllerMock.Verify(m => m.Render(), Times.Once);
         _namedPipeServerMock.Verify(m => m.SendDataAsync(It.IsAny<byte[]>(), It.IsAny<CancellationToken>()), Times.Once);
-
-        // NamedPipeServerはゲームクライアントと接続済みの状態で渡されるのでActivateは呼ばれないが
-        // SyncronizeRenderingProcPart.Deactivateが呼ばれたときに接続を終了するので、Deactivateは呼ばれる
-        _namedPipeServerMock.Verify(m => m.Deactivate(), Times.Once);
     });
 }
 

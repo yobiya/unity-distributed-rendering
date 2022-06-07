@@ -1,3 +1,4 @@
+using Common;
 using Cysharp.Threading.Tasks;
 using VContainer;
 
@@ -17,6 +18,7 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
 {
     private readonly IGameClientWaitConnectionUIViewControler _gameClientWaitConnectionUIViewControler;
     private readonly INamedPipeServer _namedPipeServer;
+    private readonly InversionProc _inversionProc = new InversionProc();
 
     [Inject]
     public GameClientConnectionProcPart(IGameClientWaitConnectionUIViewControler gameClientWaitConnectionUIViewControler, INamedPipeServer namedPipeServer)
@@ -27,15 +29,16 @@ public class GameClientConnectionProcPart : IGameClientConnectionProcPart
 
     public async UniTask ActivateAsync()
     {
-        _gameClientWaitConnectionUIViewControler.Activate();
+        _inversionProc.Register(_gameClientWaitConnectionUIViewControler.Activate, _gameClientWaitConnectionUIViewControler.Deactivate);
         _gameClientWaitConnectionUIViewControler.ShowWaitConnection();
-        await _namedPipeServer.ActivateAsync();
+
+        await _inversionProc.RegisterAsync(_namedPipeServer.ActivateAsync(), _namedPipeServer.Deactivate);
         _gameClientWaitConnectionUIViewControler.ShowConnected();
     }
 
     public void Deactivate()
     {
-        _gameClientWaitConnectionUIViewControler.Deactivate();
+        _inversionProc.Inversion();
     }
 }
 

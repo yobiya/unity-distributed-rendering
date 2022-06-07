@@ -35,8 +35,6 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
 
     public async UniTask ActivateAsync()
     {
-        // _namedPipeServerは既に有効化されているので、Deactivateのみ登録する
-        _inversionProc.RegisterInversion(_namedPipeServer.Deactivate);
         await _inversionProc.RegisterAsync(
             _offscreenRenderingViewController.ActivateAsync(),
             _offscreenRenderingViewController.Deactivate);

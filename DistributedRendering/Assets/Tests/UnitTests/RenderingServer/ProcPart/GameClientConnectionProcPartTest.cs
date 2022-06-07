@@ -61,6 +61,7 @@ public class GameClientConnectionProcPartTest
 
         VerifyActivate();
         _gameClientWaitConnectionUIViewControlerMock.Verify(m => m.Deactivate(), Times.Once);
+        _namedPipeServerMock.Verify(m => m.Deactivate(), Times.Once);
     });
 }
 
