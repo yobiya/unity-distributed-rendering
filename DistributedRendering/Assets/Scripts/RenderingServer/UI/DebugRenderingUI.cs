@@ -4,6 +4,12 @@ using UnityEngine.UI;
 namespace RenderingServer
 {
 
+public interface IDebugRenderingUI
+{
+    void Activate(RenderTexture renderTexture);
+    void Deactivate();
+}
+
 public class DebugRenderingUI : MonoBehaviour, IDebugRenderingUI
 {
     [SerializeField]

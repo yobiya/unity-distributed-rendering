@@ -4,6 +4,12 @@ using VContainer;
 namespace RenderingServer
 {
 
+public interface IGameClientConnectionProcPart
+{
+    UniTask ActivateAsync();
+    void Deactivate();
+}
+
 /*
     ゲームクライアントとの接続を確立する機能
  */
