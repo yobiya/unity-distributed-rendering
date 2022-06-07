@@ -4,6 +4,7 @@ using RenderingServer;
 using VContainer;
 using VContainer.Unity;
 using Cysharp.Threading.Tasks;
+using System;
 
 public class RenderingServerScene : MonoBehaviour
 {
@@ -58,12 +59,7 @@ public class RenderingServerScene : MonoBehaviour
         _gameClientConnectionProcPart = _objectResolver.Resolve<IGameClientConnectionProcPart>();
         _syncronizeRenderingProcPart = _objectResolver.Resolve<ISyncronizeRenderingProcPart>();
 
-        // ゲームクライアントとの接続を確立する
-        UniTask.Defer(async () =>
-            {
-                await _gameClientConnectionProcPart.ActivateAsync();
-                await _syncronizeRenderingProcPart.ActivateAsync();
-            }).Forget();
+        ActivateProcPartAsync().Forget();
     }
 
     void Update()
@@ -73,5 +69,21 @@ public class RenderingServerScene : MonoBehaviour
     void OnDestroy()
     {
         _objectResolver.Dispose();
+    }
+
+    private async UniTask ActivateProcPartAsync()
+    {
+        var inversionProc = new InversionProc();
+
+        try
+        {
+            await inversionProc.RegisterAsync(_gameClientConnectionProcPart.ActivateAsync(), _gameClientConnectionProcPart.Deactivate);
+            await inversionProc.RegisterAsync(_syncronizeRenderingProcPart.ActivateAsync(), _syncronizeRenderingProcPart.Deactivate);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e.ToString());
+            inversionProc.Inversion();
+        }
     }
 }
