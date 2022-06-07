@@ -6,6 +6,12 @@ using VContainer;
 namespace GameClient
 {
 
+public interface IRenderingServerConnectingProcPart
+{
+    UniTask<INamedPipeClient.ConnectResult> ActivateAsync();
+    void Deactivate();
+}
+
 public class RenderingServerConnectingProcPart : IRenderingServerConnectingProcPart
 {
     private const int ConnectTimeOutTime = 3000;

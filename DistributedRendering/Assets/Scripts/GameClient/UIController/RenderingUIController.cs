@@ -3,6 +3,13 @@ using VContainer;
 namespace GameClient
 {
 
+public interface IRenderingUIController
+{
+    void Activate();
+    void Deactivate();
+    void RenderImageBuffer(byte[] buffer);
+}
+
 public class RenderingUIController : IRenderingUIController
 {
     private readonly IRenderingUI _renderingUI;

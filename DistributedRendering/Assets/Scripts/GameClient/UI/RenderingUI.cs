@@ -4,6 +4,13 @@ using UnityEngine.UI;
 namespace GameClient
 {
 
+public interface IRenderingUI
+{
+    void Activate();
+    void Deactivate();
+    void SetImageBuffer(byte[] buffer);
+}
+
 public class RenderingUI : MonoBehaviour, IRenderingUI
 {
     [SerializeField]

@@ -6,6 +6,11 @@ using VContainer;
 namespace GameClient
 {
 
+public interface ISyncronizeSerializeViewController
+{
+    byte[] Serialize();
+}
+
 public class SyncronizeSerializeViewController : ISyncronizeSerializeViewController
 {
     private readonly ISyncronizeView _syncronizeView;

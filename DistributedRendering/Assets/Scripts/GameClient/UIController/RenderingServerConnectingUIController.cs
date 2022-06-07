@@ -4,6 +4,17 @@ using VContainer;
 namespace GameClient
 {
 
+public interface IRenderingServerConnectingUIController
+{
+    event Action OnRequestConnecting;
+
+    void Activate();
+    void Deactivate();
+    void ShowConnecting();
+    void ShowConnected();
+    void ShowFailed();
+}
+
 public class RenderingServerConnectingUIController : IRenderingServerConnectingUIController
 {
     private readonly IRenderingServerConnectingUI _uiCollection;

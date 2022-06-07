@@ -6,6 +6,12 @@ using VContainer;
 namespace GameClient
 {
 
+public interface IServerRenderingProcPart
+{
+    UniTask ActivateAsync();
+    void Deactivate();
+}
+
 public class ServerRenderingProcPart : IServerRenderingProcPart
 {
     private readonly IRenderingUIController _renderingUIController;
