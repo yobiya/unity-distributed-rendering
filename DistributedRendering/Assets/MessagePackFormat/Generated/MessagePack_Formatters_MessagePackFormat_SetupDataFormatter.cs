@@ -32,7 +32,7 @@ namespace MessagePack.Formatters.MessagePackFormat
 
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             writer.WriteArrayHeader(1);
-            formatterResolver.GetFormatterWithVerify<UnityEngine.Rect>().Serialize(ref writer, value.renderingRect, options);
+            formatterResolver.GetFormatterWithVerify<UnityEngine.RectInt>().Serialize(ref writer, value.renderingRect, options);
         }
 
         public global::MessagePackFormat.SetupData Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
@@ -52,7 +52,7 @@ namespace MessagePack.Formatters.MessagePackFormat
                 switch (i)
                 {
                     case 0:
-                        ____result.renderingRect = formatterResolver.GetFormatterWithVerify<UnityEngine.Rect>().Deserialize(ref reader, options);
+                        ____result.renderingRect = formatterResolver.GetFormatterWithVerify<UnityEngine.RectInt>().Deserialize(ref reader, options);
                         break;
                     default:
                         reader.Skip();
