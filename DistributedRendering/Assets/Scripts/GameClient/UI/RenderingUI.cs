@@ -1,3 +1,4 @@
+using Common;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,18 +18,31 @@ public class RenderingUI : MonoBehaviour, IRenderingUI
     private RawImage _image;
 
     private Texture2D _texture2d;
+    private InversionProc _inversionProc = new InversionProc();
 
     public void Activate()
     {
-        gameObject.SetActive(true);
+        _inversionProc.Register(
+            () => gameObject.SetActive(true),
+            () => gameObject.SetActive(false));
 
-        _texture2d = new Texture2D(256, 256, TextureFormat.ARGB32, false);
-        _image.texture = _texture2d;
+        _inversionProc.Register(
+            () => _texture2d
+                    = new Texture2D(
+                        RenderingDefinisions.RenderingTextureWidth,
+                        RenderingDefinisions.RenderingTextureHight,
+                        TextureFormat.ARGB32,
+                        false),
+            () => Texture2D.Destroy(_texture2d));
+
+        _inversionProc.Register(
+            () => _image.texture = _texture2d,
+            () => _image.texture = null);
     }
 
     public void Deactivate()
     {
-        gameObject.SetActive(false);
+        _inversionProc.Inversion();
     }
 
     public void SetImageBuffer(byte[] buffer)
