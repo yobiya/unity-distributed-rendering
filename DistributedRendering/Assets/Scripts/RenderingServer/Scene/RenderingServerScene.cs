@@ -48,6 +48,7 @@ public class RenderingServerScene : MonoBehaviour
 
             // GameLogic
             containerBuilder.Register<INamedPipeServer, NamedPipeServer>(Lifetime.Scoped);
+            containerBuilder.Register<ISerializer, MessagePackSerializerWrapper>(Lifetime.Scoped);
 
             // ProcPart
             containerBuilder.Register<IGameClientConnectionProcPart, GameClientConnectionProcPart>(Lifetime.Scoped);
