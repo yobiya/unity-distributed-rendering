@@ -47,8 +47,9 @@ public class GameClientScene : MonoBehaviour
             containerBuilder.Register<IRenderingServerConnectingUIController, RenderingServerConnectingUIController>(Lifetime.Scoped);
             containerBuilder.Register<IRenderingUIController, RenderingUIController>(Lifetime.Scoped);
 
-            // GameObject
+            // GameLogic
             containerBuilder.Register<ITimerCreator, TimerCreator>(Lifetime.Scoped);
+            containerBuilder.Register<ISerializer, MessagePackSerializerWrapper>(Lifetime.Scoped);
 
             // ProcPart
             containerBuilder.Register<IServerRenderingProcPart, ServerRenderingProcPart>(Lifetime.Scoped);

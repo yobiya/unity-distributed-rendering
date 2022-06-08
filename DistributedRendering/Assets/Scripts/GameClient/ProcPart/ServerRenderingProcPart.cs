@@ -1,6 +1,8 @@
 using System.Threading;
 using Common;
 using Cysharp.Threading.Tasks;
+using MessagePackFormat;
+using UnityEngine;
 using VContainer;
 
 namespace GameClient
@@ -17,17 +19,20 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
     private readonly IRenderingUIController _renderingUIController;
     private readonly ISyncronizeSerializeViewController _syncronizeSerializeViewController;
     private readonly INamedPipeClient _namedPipeClient;
+    private readonly ISerializer _serializer;
     private readonly InversionProc _inversionProc = new InversionProc();
 
     [Inject]
     public ServerRenderingProcPart(
         IRenderingUIController renderingUIController,
         ISyncronizeSerializeViewController syncronizeSerializeViewController,
-        INamedPipeClient namedPipeClient)
+        INamedPipeClient namedPipeClient,
+        ISerializer serializer)
     {
         _renderingUIController = renderingUIController;
-        _namedPipeClient = namedPipeClient;
         _syncronizeSerializeViewController = syncronizeSerializeViewController;
+        _namedPipeClient = namedPipeClient;
+        _serializer = serializer;
     }
 
     public async UniTask ActivateAsync()
@@ -35,14 +40,20 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
         _inversionProc.Register(_renderingUIController.Activate, _renderingUIController.Deactivate);
 
         var cancellationTokenSource = new CancellationTokenSource();
-        _inversionProc.Register(() => {}, cancellationTokenSource.Cancel);
+        _inversionProc.RegisterInversion(cancellationTokenSource.Cancel);
+        var token = cancellationTokenSource.Token;
+
+        await SendSetupCommand(token);
 
         while (!cancellationTokenSource.IsCancellationRequested)
         {
             var sendData = _syncronizeSerializeViewController.Serialize();
-            await _namedPipeClient.SendDataAsync(sendData, cancellationTokenSource.Token);
+            var commandData = new byte[sendData.Length + 1];
+            sendData.CopyTo(commandData, 1);
+            commandData[0] = (byte)NamedPipeDefinisions.Command.Syncronize;
+            await _namedPipeClient.SendDataAsync(commandData, token);
 
-            var recievedData = await _namedPipeClient.RecieveDataAsync(cancellationTokenSource.Token);
+            var recievedData = await _namedPipeClient.RecieveDataAsync(token);
             _renderingUIController.RenderImageBuffer(recievedData);
 
             await UniTask.NextFrame();
@@ -52,6 +63,18 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
     public void Deactivate()
     {
         _inversionProc.Inversion();
+    }
+
+    private async UniTask SendSetupCommand(CancellationToken token)
+    {
+        var setupData = new SetupData();
+        setupData.renderingRect = new RectInt(RenderingDefinisions.RenderingTextureWidth / 2, 0, RenderingDefinisions.RenderingTextureWidth / 2, RenderingDefinisions.RenderingTextureHight);
+
+        var data = _serializer.Serialize(setupData);
+        var commandData = new byte[data.Length + 1];
+        commandData[0] = (byte)NamedPipeDefinisions.Command.Setup;
+        data.CopyTo(commandData, 1);
+        await _namedPipeClient.SendDataAsync(commandData, token);
     }
 }
 
