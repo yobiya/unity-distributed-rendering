@@ -1,6 +1,4 @@
 using System;
-using System.Buffers;
-using System.Linq;
 using System.Threading;
 using Common;
 using Cysharp.Threading.Tasks;
@@ -20,6 +18,7 @@ public interface ISyncronizeRenderingProcPart
 public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
 {
     private readonly INamedPipeServer _namedPipeServer;
+    private readonly ISerializer _serializer;
     private readonly ISyncronizeDeserializeViewController _syncronizeDeserializerViewController;
     private readonly IOffscreenRenderingViewController _offscreenRenderingViewController;
     private readonly IDebugRenderingUIControler _debugRenderingUIControler;
@@ -28,11 +27,13 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
     [Inject]
     public SyncronizeRenderingProcPart(
         INamedPipeServer namedPipeServer,
+        ISerializer serializer,
         ISyncronizeDeserializeViewController syncronizeDeserializerViewController,
         IOffscreenRenderingViewController offscreenRenderingViewController,
         IDebugRenderingUIControler debugRenderingUIControler)
     {
         _namedPipeServer = namedPipeServer;
+        _serializer = serializer;
         _syncronizeDeserializerViewController = syncronizeDeserializerViewController;
         _offscreenRenderingViewController = offscreenRenderingViewController;
         _debugRenderingUIControler = debugRenderingUIControler;
@@ -51,7 +52,6 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
         await _inversionProc.RegisterAsync(
             _debugRenderingUIControler.ActivateAsync(),
             _debugRenderingUIControler.Deactivate);
-
 
         while (!token.IsCancellationRequested)
         {
@@ -105,7 +105,7 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
             throw new NotSupportedException($"Command '{command.ToString()}' is not supported.");
         }
 
-        var setupData = MessagePackSerializer.Deserialize<SetupData>(GetBody(recievedData));
+        var setupData = _serializer.Deserialize<SetupData>(GetBody(recievedData));
 
         await _inversionProc.RegisterAsync(
             _offscreenRenderingViewController.ActivateAsync(setupData),
