@@ -1,6 +1,10 @@
+using System;
+using System.Buffers;
 using System.Collections;
 using System.Threading;
+using Common;
 using Cysharp.Threading.Tasks;
+using MessagePackFormat;
 using Moq;
 using NUnit.Framework;
 using UnityEngine;
@@ -49,6 +53,16 @@ public class SyncronizeRenderingProcPartTest
     [UnityTest]
     public IEnumerator ActivateToDeactivate() => UniTask.ToCoroutine(async () =>
     {
+        _namedPipeServerMock
+            .Setup(m => m.RecieveDataAsync(It.IsAny<CancellationToken>()))
+            .Returns(() =>
+                {
+                    var data = new byte[2];
+                    data[0] = (byte)NamedPipeDefinisions.Command.Setup; // 先頭にコマンドの値
+                    data[1] = 1;                                        // ダミーの本体
+                    return UniTask.FromResult(data);
+                });
+
         // ActivateAsyncはDesactivateが呼ばれるまで終わらないので
         // 最後のメソッドが呼ばれたときにDeactivateを呼んで終了させる
         _namedPipeServerMock
@@ -58,14 +72,14 @@ public class SyncronizeRenderingProcPartTest
         await _sut.ActivateAsync();
 
         // SyncronizeRenderingProcPartの有効化と無効化時に、一緒に有効化と無効化される要素
-        _offscreenRenderingViewControllerMock.Verify(m => m.ActivateAsync(), Times.Once);
+        _offscreenRenderingViewControllerMock.Verify(m => m.ActivateAsync(It.IsAny<SetupData>()), Times.Once);
         _offscreenRenderingViewControllerMock.Verify(m => m.Deactivate(), Times.Once);
         _debugRenderingUIControlerMock.Verify(m => m.ActivateAsync(), Times.Once);
         _debugRenderingUIControlerMock.Verify(m => m.Deactivate(), Times.Once);
 
         // ゲームクライアントからデータを受け取って同期させる
         _namedPipeServerMock.Verify(m => m.RecieveDataAsync(It.IsAny<CancellationToken>()), Times.Once);
-        _syncronizeDeserializeViewController.Verify(m => m.Deserialize(It.IsAny<byte[]>()), Times.Once);
+        _syncronizeDeserializeViewController.Verify(m => m.Deserialize(It.IsAny<ReadOnlyMemory<byte>>()), Times.Once);
 
         // 同期した後にレンダリングした画像をゲームクライアントに送る
         _offscreenRenderingViewControllerMock.Verify(m => m.Render(), Times.Once);

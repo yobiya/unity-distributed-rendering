@@ -1,6 +1,11 @@
+using System;
+using System.Buffers;
+using System.Linq;
 using System.Threading;
 using Common;
 using Cysharp.Threading.Tasks;
+using MessagePack;
+using MessagePackFormat;
 using VContainer;
 
 namespace RenderingServer
@@ -35,28 +40,38 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
 
     public async UniTask ActivateAsync()
     {
-        await _inversionProc.RegisterAsync(
-            _offscreenRenderingViewController.ActivateAsync(),
-            _offscreenRenderingViewController.Deactivate);
+        var cancellationTokenSource = new CancellationTokenSource();
+        var token = cancellationTokenSource.Token;
+
+        _inversionProc.RegisterInversion(cancellationTokenSource.Cancel);
+
+        // 最初にセットアップを行う
+        await SetUpCommandAsync(token);
+
         await _inversionProc.RegisterAsync(
             _debugRenderingUIControler.ActivateAsync(),
             _debugRenderingUIControler.Deactivate);
 
-        var cancellationTokenSource = new CancellationTokenSource();
-        _inversionProc.RegisterInversion(cancellationTokenSource.Cancel);
-        while (!cancellationTokenSource.Token.IsCancellationRequested)
+
+        while (!token.IsCancellationRequested)
         {
-            // ゲームクライアントから同期するデータを受け取る
-            var recievedData = await _namedPipeServer.RecieveDataAsync(cancellationTokenSource.Token);
+            var recievedData = await _namedPipeServer.RecieveDataAsync(token);
+
+            var command = PickCommand(recievedData);
+            if (command != NamedPipeDefinisions.Command.Syncronize)
+            {
+                // 同期コマンドのみ受け付ける
+                throw new NotSupportedException($"Command '{command.ToString()}' is not supported.");
+            }
 
             // 同期するデータをデシリアライズして、対応するオブジェクトに適用する
-            _syncronizeDeserializerViewController.Deserialize(recievedData);
+            _syncronizeDeserializerViewController.Deserialize(GetBody(recievedData));
 
             // レンダリングした結果をバイト配列に変換する
             var sendData = _offscreenRenderingViewController.Render();
 
             // ゲームクライアントにレンダリング結果を送る
-            await _namedPipeServer.SendDataAsync(sendData, cancellationTokenSource.Token);
+            await _namedPipeServer.SendDataAsync(sendData, token);
 
             await UniTask.NextFrame();
         }
@@ -65,6 +80,36 @@ public class SyncronizeRenderingProcPart : ISyncronizeRenderingProcPart
     public void Deactivate()
     {
         _inversionProc.Inversion();
+    }
+
+    private NamedPipeDefinisions.Command PickCommand(byte[] data)
+    {
+        // 先頭の1バイトにコマンドが入っている
+        return (NamedPipeDefinisions.Command)data[0];
+    }
+
+    private ReadOnlyMemory<byte> GetBody(byte[] data)
+    {
+        // コマンドの後ろのデータを返す
+        return new ReadOnlyMemory<byte>(data, 1, data.Length - 1);
+    }
+
+    private async UniTask SetUpCommandAsync(CancellationToken token)
+    {
+        var recievedData = await _namedPipeServer.RecieveDataAsync(token);
+
+        var command = PickCommand(recievedData);
+        if (command != NamedPipeDefinisions.Command.Setup)
+        {
+            // セットアップコマンドのみ受け付ける
+            throw new NotSupportedException($"Command '{command.ToString()}' is not supported.");
+        }
+
+        var setupData = MessagePackSerializer.Deserialize<SetupData>(GetBody(recievedData));
+
+        await _inversionProc.RegisterAsync(
+            _offscreenRenderingViewController.ActivateAsync(setupData),
+            _offscreenRenderingViewController.Deactivate);
     }
 }
 

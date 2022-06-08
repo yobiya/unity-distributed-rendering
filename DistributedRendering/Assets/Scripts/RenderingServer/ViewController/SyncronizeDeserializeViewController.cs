@@ -1,5 +1,5 @@
+using System;
 using Common;
-using MessagePack;
 using MessagePackFormat;
 using VContainer;
 
@@ -10,7 +10,7 @@ public interface ISyncronizeDeserializeViewController
 {
     void Activate();
     void Deactivate();
-    void Deserialize(byte[] data);
+    void Deserialize(ReadOnlyMemory<byte> data);
 }
 
 public class SyncronizeDeserializeViewController : ISyncronizeDeserializeViewController
@@ -33,7 +33,7 @@ public class SyncronizeDeserializeViewController : ISyncronizeDeserializeViewCon
     {
     }
 
-    public void Deserialize(byte[] data)
+    public void Deserialize(ReadOnlyMemory<byte> data)
     {
         var syncronizeData = _serializer.Deserialize<SyncronizeData>(data);
 
