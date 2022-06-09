@@ -399,11 +399,11 @@ GameObject:
   - component: {fileID: 280995437}
   m_Layer: 5
   m_Name: GameClientWaitConnectionUICollection
-  m_TagString: Untagged
+  m_TagString: DisableOnLoad
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &280995436
 RectTransform:
   m_ObjectHideFlags: 0
@@ -419,7 +419,7 @@ RectTransform:
   - {fileID: 1913438661}
   - {fileID: 99900825}
   m_Father: {fileID: 1468684429}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -812,8 +812,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 280995436}
   - {fileID: 1757220951}
+  - {fileID: 280995436}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -835,19 +835,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6009434328246584456, guid: 22ad4d77a82f44a43acd63567e28f83d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6009434328246584456, guid: 22ad4d77a82f44a43acd63567e28f83d, type: 3}
+      propertyPath: m_TagString
+      value: DisableOnLoad
       objectReference: {fileID: 0}
     - target: {fileID: 6009434328246584502, guid: 22ad4d77a82f44a43acd63567e28f83d, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6009434328246584502, guid: 22ad4d77a82f44a43acd63567e28f83d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -550.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6009434328246584502, guid: 22ad4d77a82f44a43acd63567e28f83d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -332.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6009434328246584502, guid: 22ad4d77a82f44a43acd63567e28f83d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -879,6 +883,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6009434328246584502, guid: 22ad4d77a82f44a43acd63567e28f83d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6009434328247458000, guid: 22ad4d77a82f44a43acd63567e28f83d, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1024
+      objectReference: {fileID: 0}
+    - target: {fileID: 6009434328247458000, guid: 22ad4d77a82f44a43acd63567e28f83d, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 6009434328247458000, guid: 22ad4d77a82f44a43acd63567e28f83d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6009434328247458000, guid: 22ad4d77a82f44a43acd63567e28f83d, type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

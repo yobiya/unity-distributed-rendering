@@ -25,6 +25,15 @@ public class RenderingServerScene : MonoBehaviour
 
     private IObjectResolver _objectResolver;
 
+    void Awake()
+    {
+        var gameObjects = GameObject.FindGameObjectsWithTag("DisableOnLoad");
+        foreach (var go in gameObjects)
+        {
+            go.SetActive(false);
+        }
+    }
+
     void Start()
     {
         var containerBuilder = new ContainerBuilder();
