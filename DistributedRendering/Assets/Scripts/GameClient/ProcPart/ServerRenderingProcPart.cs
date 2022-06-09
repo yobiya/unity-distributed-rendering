@@ -37,15 +37,20 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
 
     public async UniTask ActivateAsync()
     {
-        _inversionProc.Register(_renderingUIController.Activate, _renderingUIController.Deactivate);
+        var setupData = new SetupData();
+        setupData.renderingRect = new RectInt(RenderingDefinisions.RenderingTextureWidth / 2, 0, RenderingDefinisions.RenderingTextureWidth / 2, RenderingDefinisions.RenderingTextureHight);
+
+        _inversionProc.Register(
+            () => _renderingUIController.Activate(setupData),
+            _renderingUIController.Deactivate);
 
         var cancellationTokenSource = new CancellationTokenSource();
         _inversionProc.RegisterInversion(cancellationTokenSource.Cancel);
         var token = cancellationTokenSource.Token;
 
-        await SendSetupCommand(token);
+        await SendSetupCommand(setupData, token);
 
-        while (!cancellationTokenSource.IsCancellationRequested)
+        while (!token.IsCancellationRequested)
         {
             var sendData = _syncronizeSerializeViewController.Serialize();
             var commandData = new byte[sendData.Length + 1];
@@ -53,8 +58,12 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
             commandData[0] = (byte)NamedPipeDefinisions.Command.Syncronize;
             await _namedPipeClient.SendDataAsync(commandData, token);
 
+            // 自分の担当する範囲の描画を行う
+            _renderingUIController.RenderBaseImage();
+
+            // サーバーから受け取った画像を表示する
             var recievedData = await _namedPipeClient.RecieveDataAsync(token);
-            _renderingUIController.RenderImageBuffer(recievedData);
+            _renderingUIController.MargeImage(recievedData);
 
             await UniTask.NextFrame();
         }
@@ -65,11 +74,8 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
         _inversionProc.Inversion();
     }
 
-    private async UniTask SendSetupCommand(CancellationToken token)
+    private async UniTask SendSetupCommand(SetupData setupData, CancellationToken token)
     {
-        var setupData = new SetupData();
-        setupData.renderingRect = new RectInt(RenderingDefinisions.RenderingTextureWidth / 2, 0, RenderingDefinisions.RenderingTextureWidth / 2, RenderingDefinisions.RenderingTextureHight);
-
         var data = _serializer.Serialize(setupData);
         var commandData = new byte[data.Length + 1];
         commandData[0] = (byte)NamedPipeDefinisions.Command.Setup;

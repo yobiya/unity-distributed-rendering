@@ -55,7 +55,7 @@ public class ServerRenderingProcPartTest
         // ActivateAsyncメソッドはDeactivateメソッドが呼ばれるまで終わらない処理なので
         // 最後の処理が呼び出されたら、Deactivateメソッドを呼び出して終了させる
         _renderingUIControllerMock
-            .Setup(m => m.RenderImageBuffer(It.IsAny<byte[]>()))
+            .Setup(m => m.MargeImage(It.IsAny<byte[]>()))
             .Callback(_sut.Deactivate);
 
         _serializerMock
@@ -71,7 +71,7 @@ public class ServerRenderingProcPartTest
         await _sut.ActivateAsync();
 
         // 表示用のUIControllerはServerRenderingProcPartの有効化と無効化に合わせて、同じく有効化と無効化される
-        _renderingUIControllerMock.Verify(m => m.Activate(), Times.Once);
+        _renderingUIControllerMock.Verify(m => m.Activate(It.IsAny<SetupData>()), Times.Once);
         _renderingUIControllerMock.Verify(m => m.Deactivate(), Times.Once);
 
         // 描画設定をシリアライズ
@@ -83,9 +83,12 @@ public class ServerRenderingProcPartTest
         // 描画設定と同期するデータで2回送信する
         _namedPipeClientMock.Verify(m => m.SendDataAsync(It.IsAny<byte[]>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
 
+        // 自分の担当する範囲の描画を行う
+        _renderingUIControllerMock.Verify(m => m.RenderBaseImage(), Times.Once);
+
         // レンダリングサーバーからデータを受け取って、それを表示用に書き込む
         _namedPipeClientMock.Verify(m => m.RecieveDataAsync(It.IsAny<CancellationToken>()), Times.Once);
-        _renderingUIControllerMock.Verify(m => m.RenderImageBuffer(It.IsAny<byte[]>()), Times.Once);
+        _renderingUIControllerMock.Verify(m => m.MargeImage(It.IsAny<byte[]>()), Times.Once);
     });
 }
 

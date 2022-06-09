@@ -1,3 +1,4 @@
+using MessagePackFormat;
 using VContainer;
 
 namespace GameClient
@@ -5,9 +6,10 @@ namespace GameClient
 
 public interface IRenderingUIController
 {
-    void Activate();
+    void Activate(SetupData setupData);
     void Deactivate();
-    void RenderImageBuffer(byte[] buffer);
+    void RenderBaseImage();
+    void MargeImage(byte[] buffer);
 }
 
 public class RenderingUIController : IRenderingUIController
@@ -20,9 +22,9 @@ public class RenderingUIController : IRenderingUIController
         _renderingUI = renderingUI;
     }
 
-    public void Activate()
+    public void Activate(SetupData setupData)
     {
-        _renderingUI.Activate();
+        _renderingUI.Activate(setupData);
     }
 
     public void Deactivate()
@@ -30,9 +32,14 @@ public class RenderingUIController : IRenderingUIController
         _renderingUI.Deactivate();
     }
 
-    public void RenderImageBuffer(byte[] buffer)
+    public void RenderBaseImage()
     {
-        _renderingUI.SetImageBuffer(buffer);
+        _renderingUI.RenderBaseImage();
+    }
+
+    public void MargeImage(byte[] buffer)
+    {
+        _renderingUI.MargeImage(buffer);
     }
 }
 

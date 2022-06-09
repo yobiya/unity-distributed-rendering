@@ -1,4 +1,5 @@
 using Common;
+using MessagePackFormat;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,37 +8,40 @@ namespace GameClient
 
 public interface IRenderingUI
 {
-    void Activate();
+    void Activate(SetupData setupData);
     void Deactivate();
-    void SetImageBuffer(byte[] buffer);
+    void RenderBaseImage();
+    void MargeImage(byte[] buffer);
 }
 
 public class RenderingUI : MonoBehaviour, IRenderingUI
 {
     [SerializeField]
-    private RawImage _image;
+    private RawImage _serverRenderingImage;
 
-    private Texture2D _texture2d;
+    private Texture2D _serverRenderingTexture2d;
     private InversionProc _inversionProc = new InversionProc();
 
-    public void Activate()
+    public void Activate(SetupData setupData)
     {
+        _serverRenderingImage.rectTransform.sizeDelta = new Vector2(setupData.renderingRect.width, setupData.renderingRect.height);
+
         _inversionProc.Register(
             () => gameObject.SetActive(true),
             () => gameObject.SetActive(false));
 
         _inversionProc.Register(
-            () => _texture2d
+            () => _serverRenderingTexture2d
                     = new Texture2D(
-                        RenderingDefinisions.RenderingTextureWidth,
-                        RenderingDefinisions.RenderingTextureHight,
+                        setupData.renderingRect.width,
+                        setupData.renderingRect.height,
                         TextureFormat.ARGB32,
                         false),
-            () => Texture2D.Destroy(_texture2d));
+            () => Texture2D.Destroy(_serverRenderingTexture2d));
 
         _inversionProc.Register(
-            () => _image.texture = _texture2d,
-            () => _image.texture = null);
+            () => _serverRenderingImage.texture = _serverRenderingTexture2d,
+            () => _serverRenderingImage.texture = null);
     }
 
     public void Deactivate()
@@ -45,10 +49,14 @@ public class RenderingUI : MonoBehaviour, IRenderingUI
         _inversionProc.Inversion();
     }
 
-    public void SetImageBuffer(byte[] buffer)
+    public void RenderBaseImage()
     {
-        _texture2d.LoadRawTextureData(buffer);
-        _texture2d.Apply();
+    }
+
+    public void MargeImage(byte[] buffer)
+    {
+        _serverRenderingTexture2d.LoadRawTextureData(buffer);
+        _serverRenderingTexture2d.Apply();
     }
 }
 
