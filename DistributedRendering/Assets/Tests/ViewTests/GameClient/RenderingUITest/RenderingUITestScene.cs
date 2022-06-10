@@ -17,11 +17,7 @@ public class RenderingUITestScene : MonoBehaviour
 
     void Awake()
     {
-        var gameObjects = GameObject.FindGameObjectsWithTag(SystemDefinisions.DisableOnLoadTag);
-        foreach (var go in gameObjects)
-        {
-            go.SetActive(false);
-        }
+        DisableOnLoad.SetUp();
     }
 
     void Start()
