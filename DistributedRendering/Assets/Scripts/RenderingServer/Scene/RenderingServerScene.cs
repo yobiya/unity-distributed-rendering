@@ -27,7 +27,7 @@ public class RenderingServerScene : MonoBehaviour
 
     void Awake()
     {
-        var gameObjects = GameObject.FindGameObjectsWithTag("DisableOnLoad");
+        var gameObjects = GameObject.FindGameObjectsWithTag(SystemDefinisions.DisableOnLoadTag);
         foreach (var go in gameObjects)
         {
             go.SetActive(false);

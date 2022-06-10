@@ -26,6 +26,15 @@ public class GameClientScene : MonoBehaviour
 
     private IObjectResolver _objectResolver;
 
+    void Awake()
+    {
+        var gameObjects = GameObject.FindGameObjectsWithTag(SystemDefinisions.DisableOnLoadTag);
+        foreach (var go in gameObjects)
+        {
+            go.SetActive(false);
+        }
+    }
+
     void Start()
     {
         var containerBuilder = new ContainerBuilder();
