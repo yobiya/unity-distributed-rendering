@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using MessagePackFormat;
 using Moq;
 using NUnit.Framework;
+using UnityEngine;
 using UnityEngine.TestTools;
 
 namespace GameClient
@@ -68,10 +69,10 @@ public class ServerRenderingProcPartTest
                     return data;
                 });
 
-        await _sut.ActivateAsync();
+        await _sut.ActivateAsync(It.IsAny<Camera>());
 
         // 表示用のUIControllerはServerRenderingProcPartの有効化と無効化に合わせて、同じく有効化と無効化される
-        _renderingUIControllerMock.Verify(m => m.Activate(It.IsAny<SetupData>()), Times.Once);
+        _renderingUIControllerMock.Verify(m => m.Activate(It.IsAny<Camera>(), It.IsAny<SetupData>()), Times.Once);
         _renderingUIControllerMock.Verify(m => m.Deactivate(), Times.Once);
 
         // 描画設定をシリアライズ

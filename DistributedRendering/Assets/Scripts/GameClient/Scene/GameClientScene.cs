@@ -42,7 +42,7 @@ public class GameClientScene : MonoBehaviour
             // SerializeField
             containerBuilder.RegisterComponent<Camera>(_camera);
             containerBuilder.RegisterComponent<IRenderingServerConnectingUI>(_renderingServerConnectingUICollection);
-            containerBuilder.RegisterComponent<IRenderingUI>(_renderingUI);
+            containerBuilder.RegisterComponent<RenderingUI>(_renderingUI);
             containerBuilder.RegisterComponent<ICameraView>(_cameraView);
 
             // View
@@ -90,7 +90,7 @@ public class GameClientScene : MonoBehaviour
             }
         }
 
-        await _serverRenderingProcPart.ActivateAsync();
+        await _serverRenderingProcPart.ActivateAsync(_camera);
     }
 
     void Update()

@@ -10,6 +10,9 @@ public class RenderingUITestScene : MonoBehaviour
     [SerializeField]
     private RenderingUI _renderingUI;
 
+    [SerializeField]
+    private Camera _camera;
+
     private RenderingUIController _sut;
 
     void Awake()
@@ -28,7 +31,7 @@ public class RenderingUITestScene : MonoBehaviour
         var setupData = new SetupData();
         setupData.renderingRect = new RectInt(RenderingDefinisions.RenderingTextureWidth / 2, 0, RenderingDefinisions.RenderingTextureWidth / 2, RenderingDefinisions.RenderingTextureHight);
 
-        _sut.Activate(setupData);
+        _sut.Activate(_camera, setupData);
     }
 
     void Update()

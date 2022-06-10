@@ -6,24 +6,23 @@ using UnityEngine.UI;
 namespace GameClient
 {
 
-public interface IRenderingUI
+public class RenderingUI : MonoBehaviour
 {
-    void Activate(SetupData setupData);
-    void Deactivate();
-    void RenderBaseImage();
-    void MargeImage(byte[] buffer);
-}
+    [SerializeField]
+    private RawImage _selfRenderingImage;
 
-public class RenderingUI : MonoBehaviour, IRenderingUI
-{
     [SerializeField]
     private RawImage _serverRenderingImage;
 
+    private readonly InversionProc _inversionProc = new InversionProc();
+    private Camera _camera;
     private Texture2D _serverRenderingTexture2d;
-    private InversionProc _inversionProc = new InversionProc();
 
-    public void Activate(SetupData setupData)
+    public void Activate(Camera camera, SetupData setupData)
     {
+        _camera = camera;
+        _selfRenderingImage.rectTransform.sizeDelta = new Vector2(RenderingDefinisions.RenderingTextureWidth, RenderingDefinisions.RenderingTextureHight);
+        _selfRenderingImage.rectTransform.anchoredPosition = Vector2.zero;
         _serverRenderingImage.rectTransform.sizeDelta = new Vector2(setupData.renderingRect.width, setupData.renderingRect.height);
         _serverRenderingImage.rectTransform.anchoredPosition = new Vector2(setupData.renderingRect.x, setupData.renderingRect.y);
 

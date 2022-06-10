@@ -10,7 +10,7 @@ namespace GameClient
 
 public interface IServerRenderingProcPart
 {
-    UniTask ActivateAsync();
+    UniTask ActivateAsync(Camera camera);
     void Deactivate();
 }
 
@@ -35,13 +35,13 @@ public class ServerRenderingProcPart : IServerRenderingProcPart
         _serializer = serializer;
     }
 
-    public async UniTask ActivateAsync()
+    public async UniTask ActivateAsync(Camera camera)
     {
         var setupData = new SetupData();
         setupData.renderingRect = new RectInt(RenderingDefinisions.RenderingTextureWidth / 2, 0, RenderingDefinisions.RenderingTextureWidth / 2, RenderingDefinisions.RenderingTextureHight);
 
         _inversionProc.Register(
-            () => _renderingUIController.Activate(setupData),
+            () => _renderingUIController.Activate(camera, setupData),
             _renderingUIController.Deactivate);
 
         var cancellationTokenSource = new CancellationTokenSource();

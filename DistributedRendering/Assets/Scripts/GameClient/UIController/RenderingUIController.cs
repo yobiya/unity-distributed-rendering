@@ -1,4 +1,5 @@
 using MessagePackFormat;
+using UnityEngine;
 using VContainer;
 
 namespace GameClient
@@ -6,7 +7,7 @@ namespace GameClient
 
 public interface IRenderingUIController
 {
-    void Activate(SetupData setupData);
+    void Activate(Camera camera, SetupData setupData);
     void Deactivate();
     void RenderBaseImage();
     void MargeImage(byte[] buffer);
@@ -14,17 +15,17 @@ public interface IRenderingUIController
 
 public class RenderingUIController : IRenderingUIController
 {
-    private readonly IRenderingUI _renderingUI;
+    private readonly RenderingUI _renderingUI;
 
     [Inject]
-    public RenderingUIController(IRenderingUI renderingUI)
+    public RenderingUIController(RenderingUI renderingUI)
     {
         _renderingUI = renderingUI;
     }
 
-    public void Activate(SetupData setupData)
+    public void Activate(Camera camera, SetupData setupData)
     {
-        _renderingUI.Activate(setupData);
+        _renderingUI.Activate(camera, setupData);
     }
 
     public void Deactivate()
