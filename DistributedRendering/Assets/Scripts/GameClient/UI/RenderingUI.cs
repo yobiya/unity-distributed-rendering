@@ -25,6 +25,7 @@ public class RenderingUI : MonoBehaviour, IRenderingUI
     public void Activate(SetupData setupData)
     {
         _serverRenderingImage.rectTransform.sizeDelta = new Vector2(setupData.renderingRect.width, setupData.renderingRect.height);
+        _serverRenderingImage.rectTransform.anchoredPosition = new Vector2(setupData.renderingRect.x, setupData.renderingRect.y);
 
         _inversionProc.Register(
             () => gameObject.SetActive(true),
