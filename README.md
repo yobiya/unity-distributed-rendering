@@ -11,3 +11,8 @@ Unity 分散レンダリング
 ### NuGetForUnity経由ライブラリ
 
 * Moq
+
+### 使用リソース
+
+* ユニティちゃん
+  * © Unity Technologies Japan/UCL
