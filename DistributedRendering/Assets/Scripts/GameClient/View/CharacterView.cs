@@ -11,6 +11,14 @@ public class CharacterView : MonoBehaviour
     [SerializeField]
     private Rigidbody _rigidbody;
 
+    [SerializeField]
+    private Animator _animator;
+
+    void Update()
+    {
+        _animator.SetFloat("Speed", _rigidbody.velocity.magnitude);
+    }
+
     public void Activate()
     {
         gameObject.SetActive(true);
