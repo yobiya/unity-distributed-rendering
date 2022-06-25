@@ -24,6 +24,7 @@ public class CharacterView : MonoBehaviour
     public void Move(Vector3 direction)
     {
         _rigidbody.AddForce(direction * _moveSpeed);
+        transform.forward = direction;
     }
 }
 
