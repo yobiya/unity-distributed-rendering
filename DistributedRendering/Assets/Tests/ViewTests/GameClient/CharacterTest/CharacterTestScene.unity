@@ -239,23 +239,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _characterView: {fileID: 400501167}
   _characterInputView: {fileID: 565957527}
+  _cameraTransform: {fileID: 963194228}
 --- !u!4 &400077898 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3279471871761389486, guid: 44cc1fe5086481d46829ab374935c877, type: 3}
   m_PrefabInstance: {fileID: 3279471871386559460}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &400501162 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3279471871761746510, guid: 44cc1fe5086481d46829ab374935c877, type: 3}
+--- !u!114 &400501167 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 400501167, guid: 44cc1fe5086481d46829ab374935c877, type: 3}
   m_PrefabInstance: {fileID: 3279471871386559460}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &400501167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 400501162}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d694946a484216641b3e50e4a52dd5f6, type: 3}

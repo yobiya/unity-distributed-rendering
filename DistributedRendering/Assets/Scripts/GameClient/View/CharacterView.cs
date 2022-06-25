@@ -5,15 +5,11 @@ namespace GameClient
 
 public class CharacterView : MonoBehaviour
 {
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    private float _moveSpeed = 3.0f;
 
-    void Update()
-    {
-        
-    }
+    [SerializeField]
+    private Rigidbody _rigidbody;
 
     public void Activate()
     {
@@ -23,6 +19,11 @@ public class CharacterView : MonoBehaviour
     public void Deactivate()
     {
         gameObject.SetActive(false);
+    }
+
+    public void Move(Vector3 direction)
+    {
+        _rigidbody.AddForce(direction * _moveSpeed);
     }
 }
 

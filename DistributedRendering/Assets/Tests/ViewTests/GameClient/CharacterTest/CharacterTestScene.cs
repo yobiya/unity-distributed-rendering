@@ -14,6 +14,9 @@ public class CharacterTestScene : MonoBehaviour
     [SerializeField]
     private CharacterInputView _characterInputView;
 
+    [SerializeField]
+    private Transform _cameraTransform;
+
     private IObjectResolver _objectResolver;
     private ICharacterViewController _characterViewController;
 
@@ -29,6 +32,7 @@ public class CharacterTestScene : MonoBehaviour
             // SerializeField
             containerBuilder.RegisterComponent<CharacterView>(_characterView);
             containerBuilder.RegisterComponent<CharacterInputView>(_characterInputView);
+            containerBuilder.RegisterComponent<Transform>(_cameraTransform);
 
             // ViewController
             containerBuilder.Register<ICharacterViewController, CharacterViewController>(Lifetime.Scoped);
