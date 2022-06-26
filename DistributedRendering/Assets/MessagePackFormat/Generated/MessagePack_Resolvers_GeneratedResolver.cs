@@ -49,11 +49,13 @@ namespace MessagePack.Resolvers
 
         static GeneratedResolverGetFormatterHelper()
         {
-            lookup = new global::System.Collections.Generic.Dictionary<Type, int>(3)
+            lookup = new global::System.Collections.Generic.Dictionary<Type, int>(5)
             {
-                { typeof(global::MessagePackFormat.CameraData), 0 },
-                { typeof(global::MessagePackFormat.SetupData), 1 },
-                { typeof(global::MessagePackFormat.SyncronizeData), 2 },
+                { typeof(global::System.Collections.Generic.List<global::MessagePackFormat.TransformData>), 0 },
+                { typeof(global::MessagePackFormat.CameraData), 1 },
+                { typeof(global::MessagePackFormat.SetupData), 2 },
+                { typeof(global::MessagePackFormat.SyncronizeData), 3 },
+                { typeof(global::MessagePackFormat.TransformData), 4 },
             };
         }
 
@@ -67,9 +69,11 @@ namespace MessagePack.Resolvers
 
             switch (key)
             {
-                case 0: return new MessagePack.Formatters.MessagePackFormat.CameraDataFormatter();
-                case 1: return new MessagePack.Formatters.MessagePackFormat.SetupDataFormatter();
-                case 2: return new MessagePack.Formatters.MessagePackFormat.SyncronizeDataFormatter();
+                case 0: return new global::MessagePack.Formatters.ListFormatter<global::MessagePackFormat.TransformData>();
+                case 1: return new MessagePack.Formatters.MessagePackFormat.CameraDataFormatter();
+                case 2: return new MessagePack.Formatters.MessagePackFormat.SetupDataFormatter();
+                case 3: return new MessagePack.Formatters.MessagePackFormat.SyncronizeDataFormatter();
+                case 4: return new MessagePack.Formatters.MessagePackFormat.TransformDataFormatter();
                 default: return null;
             }
         }

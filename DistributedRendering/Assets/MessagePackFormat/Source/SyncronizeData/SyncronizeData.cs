@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using MessagePack;
 
 namespace MessagePackFormat
@@ -11,9 +12,18 @@ public class CameraData
 }
 
 [MessagePackObject]
+public class TransformData
+{
+    [Key(0)] public UnityEngine.Vector3 position;
+    [Key(1)] public UnityEngine.Vector3 rotation;
+    [Key(2)] public UnityEngine.Vector3 scale;
+}
+
+[MessagePackObject]
 public class SyncronizeData
 {
     [Key(0)] public CameraData camera = null;
+    [Key(1)] public List<TransformData> transforms = null;
 }
 
 }

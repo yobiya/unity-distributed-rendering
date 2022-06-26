@@ -19,10 +19,10 @@ namespace MessagePack.Formatters.MessagePackFormat
     using global::System.Buffers;
     using global::MessagePack;
 
-    public sealed class SyncronizeDataFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::MessagePackFormat.SyncronizeData>
+    public sealed class TransformDataFormatter : global::MessagePack.Formatters.IMessagePackFormatter<global::MessagePackFormat.TransformData>
     {
 
-        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::MessagePackFormat.SyncronizeData value, global::MessagePack.MessagePackSerializerOptions options)
+        public void Serialize(ref global::MessagePack.MessagePackWriter writer, global::MessagePackFormat.TransformData value, global::MessagePack.MessagePackSerializerOptions options)
         {
             if (value == null)
             {
@@ -31,12 +31,13 @@ namespace MessagePack.Formatters.MessagePackFormat
             }
 
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
-            writer.WriteArrayHeader(2);
-            formatterResolver.GetFormatterWithVerify<global::MessagePackFormat.CameraData>().Serialize(ref writer, value.camera, options);
-            formatterResolver.GetFormatterWithVerify<global::System.Collections.Generic.List<global::MessagePackFormat.TransformData>>().Serialize(ref writer, value.transforms, options);
+            writer.WriteArrayHeader(3);
+            formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Serialize(ref writer, value.position, options);
+            formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Serialize(ref writer, value.rotation, options);
+            formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Serialize(ref writer, value.scale, options);
         }
 
-        public global::MessagePackFormat.SyncronizeData Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
+        public global::MessagePackFormat.TransformData Deserialize(ref global::MessagePack.MessagePackReader reader, global::MessagePack.MessagePackSerializerOptions options)
         {
             if (reader.TryReadNil())
             {
@@ -46,17 +47,20 @@ namespace MessagePack.Formatters.MessagePackFormat
             options.Security.DepthStep(ref reader);
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             var length = reader.ReadArrayHeader();
-            var ____result = new global::MessagePackFormat.SyncronizeData();
+            var ____result = new global::MessagePackFormat.TransformData();
 
             for (int i = 0; i < length; i++)
             {
                 switch (i)
                 {
                     case 0:
-                        ____result.camera = formatterResolver.GetFormatterWithVerify<global::MessagePackFormat.CameraData>().Deserialize(ref reader, options);
+                        ____result.position = formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Deserialize(ref reader, options);
                         break;
                     case 1:
-                        ____result.transforms = formatterResolver.GetFormatterWithVerify<global::System.Collections.Generic.List<global::MessagePackFormat.TransformData>>().Deserialize(ref reader, options);
+                        ____result.rotation = formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Deserialize(ref reader, options);
+                        break;
+                    case 2:
+                        ____result.scale = formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Deserialize(ref reader, options);
                         break;
                     default:
                         reader.Skip();
