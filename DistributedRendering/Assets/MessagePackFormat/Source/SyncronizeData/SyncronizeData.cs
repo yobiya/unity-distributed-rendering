@@ -15,7 +15,7 @@ public class CameraData
 public class TransformData
 {
     [Key(0)] public UnityEngine.Vector3 position;
-    [Key(1)] public UnityEngine.Vector3 rotation;
+    [Key(1)] public UnityEngine.Quaternion rotation;
     [Key(2)] public UnityEngine.Vector3 scale;
 }
 

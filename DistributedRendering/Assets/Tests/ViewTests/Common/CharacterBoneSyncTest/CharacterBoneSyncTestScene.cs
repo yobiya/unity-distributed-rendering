@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using GameClient;
+using MessagePackFormat;
 using RenderingServer;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,6 +28,8 @@ public class CharacterBoneSyncTestScene : MonoBehaviour
     private SyncTestUIController _syncTestUIController;
     private SyncTestViewController _syncTestViewController;
 
+    private List<TransformData> _boneTransforms;
+
     void Awake()
     {
         DisableOnLoad.SetUp();
@@ -49,6 +53,10 @@ public class CharacterBoneSyncTestScene : MonoBehaviour
         _syncTestViewController = _objectResolver.Resolve<SyncTestViewController>();
 
         _syncTestUIController.Activate();
+        _syncTestViewController.Activate();
+
+        _syncTestUIController.OnReadBonesButtonClicked += () => _boneTransforms = _syncTestViewController.ReadBoneTransforms();
+        _syncTestUIController.OnWriteBonesButtonClicked += () => _syncTestViewController.WriteBoneTransforms(_boneTransforms);
     }
 }
 

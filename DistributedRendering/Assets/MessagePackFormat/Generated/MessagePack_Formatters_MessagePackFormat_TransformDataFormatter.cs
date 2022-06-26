@@ -33,7 +33,7 @@ namespace MessagePack.Formatters.MessagePackFormat
             global::MessagePack.IFormatterResolver formatterResolver = options.Resolver;
             writer.WriteArrayHeader(3);
             formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Serialize(ref writer, value.position, options);
-            formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Serialize(ref writer, value.rotation, options);
+            formatterResolver.GetFormatterWithVerify<UnityEngine.Quaternion>().Serialize(ref writer, value.rotation, options);
             formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Serialize(ref writer, value.scale, options);
         }
 
@@ -57,7 +57,7 @@ namespace MessagePack.Formatters.MessagePackFormat
                         ____result.position = formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Deserialize(ref reader, options);
                         break;
                     case 1:
-                        ____result.rotation = formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Deserialize(ref reader, options);
+                        ____result.rotation = formatterResolver.GetFormatterWithVerify<UnityEngine.Quaternion>().Deserialize(ref reader, options);
                         break;
                     case 2:
                         ____result.scale = formatterResolver.GetFormatterWithVerify<UnityEngine.Vector3>().Deserialize(ref reader, options);
